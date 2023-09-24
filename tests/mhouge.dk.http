@@ -1,0 +1,4 @@
+GET https://mhouge.dk
+x-header-1: mads
+x-header-2: was
+x-header-3: here

@@ -1,3 +1,3 @@
 [workspace]
-members = ["hitt-parser"]
+members = ["hitt-parser", "hitt-cli"]
 resolver = "2"

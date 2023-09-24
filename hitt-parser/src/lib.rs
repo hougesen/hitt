@@ -62,8 +62,8 @@ enum ParserMode {
 
 #[derive(Debug)]
 struct HeaderToken {
-    key: String,
-    value: String,
+    key: http::HeaderName,
+    value: http::HeaderValue,
 }
 
 #[inline]
@@ -92,7 +92,10 @@ fn parse_header(line: core::iter::Enumerate<std::str::Chars>) -> Option<HeaderTo
     }
 
     if !key.is_empty() {
-        return Some(HeaderToken { key, value });
+        let k = http::HeaderName::from_str(&key).expect("Unable to parse key as header key");
+        let v = http::HeaderValue::from_str(&value).expect("Unable to parse value as header value");
+
+        return Some(HeaderToken { key: k, value: v });
     }
 
     None
@@ -186,7 +189,7 @@ fn parse_tokens(buffer: String) -> Result<Vec<RequestToken>, RequestParseError> 
 pub struct HittRequest {
     pub method: http::method::Method,
     pub uri: http::uri::Uri,
-    pub headers: std::collections::HashMap<String, String>,
+    pub headers: http::HeaderMap,
     pub body: Option<String>,
 }
 
@@ -194,7 +197,7 @@ pub struct HittRequest {
 struct PartialHittRequest {
     method: Option<http::method::Method>,
     uri: Option<http::uri::Uri>,
-    headers: std::collections::HashMap<String, String>,
+    headers: http::HeaderMap,
     body: Option<String>,
 }
 
