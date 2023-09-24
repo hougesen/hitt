@@ -1,12 +1,4 @@
-use std::str::{Chars, FromStr};
-
-#[derive(Debug)]
-pub struct HittRequest {
-    pub method: http::method::Method,
-    pub uri: http::uri::Uri,
-    pub headers: std::collections::HashMap<String, String>,
-    pub body: Option<String>,
-}
+use std::str::FromStr;
 
 #[derive(Debug)]
 pub enum RequestParseError {
@@ -29,7 +21,7 @@ impl From<http::uri::InvalidUri> for RequestParseError {
 }
 
 #[inline]
-fn parse_method_input(chars: &mut core::iter::Enumerate<Chars>) -> String {
+fn parse_method_input(chars: &mut core::iter::Enumerate<std::str::Chars>) -> String {
     let mut method = String::new();
 
     for (_i, c) in chars {
@@ -46,7 +38,7 @@ fn parse_method_input(chars: &mut core::iter::Enumerate<Chars>) -> String {
 }
 
 #[inline]
-fn parse_uri_input(chars: &mut core::iter::Enumerate<Chars>) -> String {
+fn parse_uri_input(chars: &mut core::iter::Enumerate<std::str::Chars>) -> String {
     let mut url = String::new();
 
     for (_i, c) in chars {
@@ -75,7 +67,7 @@ struct HeaderToken {
 }
 
 #[inline]
-fn parse_header(line: core::iter::Enumerate<Chars>) -> Option<HeaderToken> {
+fn parse_header(line: core::iter::Enumerate<std::str::Chars>) -> Option<HeaderToken> {
     let mut key = String::new();
     let mut value = String::new();
     let mut is_key = true;
@@ -142,13 +134,13 @@ fn parse_tokens(buffer: String) -> Result<Vec<RequestToken>, RequestParseError> 
     for (_index, line) in buffer.lines().enumerate() {
         match &parser_mode {
             ParserMode::FirstStage => {
-                let mut qq = line.chars().enumerate();
+                let mut chrs = line.chars().enumerate();
 
-                let method = http::method::Method::from_str(&parse_method_input(&mut qq))?;
+                let method = http::method::Method::from_str(&parse_method_input(&mut chrs))?;
 
                 tokens.push(RequestToken::Method(method));
 
-                let uri = (parse_uri_input(&mut qq)).parse::<http::uri::Uri>()?;
+                let uri = (parse_uri_input(&mut chrs)).parse::<http::uri::Uri>()?;
 
                 tokens.push(RequestToken::Uri(uri));
 
@@ -190,6 +182,14 @@ fn parse_tokens(buffer: String) -> Result<Vec<RequestToken>, RequestParseError> 
     Ok(tokens)
 }
 
+#[derive(Debug)]
+pub struct HittRequest {
+    pub method: http::method::Method,
+    pub uri: http::uri::Uri,
+    pub headers: std::collections::HashMap<String, String>,
+    pub body: Option<String>,
+}
+
 #[derive(Default)]
 struct PartialHittRequest {
     method: Option<http::method::Method>,
@@ -215,6 +215,7 @@ impl PartialHittRequest {
     }
 }
 
+#[inline]
 pub fn parse_requests(buffer: String) -> Result<Vec<HittRequest>, RequestParseError> {
     let mut requests = Vec::new();
 
