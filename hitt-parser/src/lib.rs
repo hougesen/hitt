@@ -55,7 +55,7 @@ fn parse_uri_input(chars: &mut core::iter::Enumerate<std::str::Chars>) -> String
 }
 
 enum ParserMode {
-    FirstStage,
+    Request,
     Headers,
     Body,
 }
@@ -130,24 +130,48 @@ impl From<HeaderToken> for RequestToken {
 fn parse_tokens(buffer: String) -> Result<Vec<RequestToken>, RequestParseError> {
     let mut tokens: Vec<RequestToken> = Vec::new();
 
-    let mut parser_mode = ParserMode::FirstStage;
+    let mut parser_mode = ParserMode::Request;
 
     let mut body_parts: Vec<&str> = Vec::new();
 
     for (_index, line) in buffer.lines().enumerate() {
+        let trimmed_line = line.trim();
+
+        // check if line is comment (#) OR requests break (###)
+        if trimmed_line.starts_with('#') {
+            if trimmed_line.starts_with("###") {
+                tokens.push(if body_parts.is_empty() {
+                    RequestToken::Body(None)
+                } else {
+                    RequestToken::Body(Some(String::new()))
+                });
+
+                body_parts.clear();
+                parser_mode = ParserMode::Request;
+            }
+
+            continue;
+        }
+
+        // check if line is comment (//)
+        if trimmed_line.starts_with("//") {
+            continue;
+        }
+
         match &parser_mode {
-            ParserMode::FirstStage => {
-                let mut chrs = line.chars().enumerate();
+            ParserMode::Request => {
+                if !trimmed_line.is_empty() {
+                    let mut chrs = line.chars().enumerate();
+                    let method = http::method::Method::from_str(&parse_method_input(&mut chrs))?;
 
-                let method = http::method::Method::from_str(&parse_method_input(&mut chrs))?;
+                    tokens.push(RequestToken::Method(method));
 
-                tokens.push(RequestToken::Method(method));
+                    let uri = (parse_uri_input(&mut chrs)).parse::<http::uri::Uri>()?;
 
-                let uri = (parse_uri_input(&mut chrs)).parse::<http::uri::Uri>()?;
+                    tokens.push(RequestToken::Uri(uri));
 
-                tokens.push(RequestToken::Uri(uri));
-
-                parser_mode = ParserMode::Headers;
+                    parser_mode = ParserMode::Headers;
+                }
             }
 
             ParserMode::Headers => {
@@ -159,22 +183,7 @@ fn parse_tokens(buffer: String) -> Result<Vec<RequestToken>, RequestParseError> 
             }
 
             ParserMode::Body => {
-                let trmmed_line = line.trim();
-
-                if trmmed_line.is_empty() {
-                    tokens.push(RequestToken::Body(if body_parts.is_empty() {
-                        None
-                    } else {
-                        Some(body_parts.join(""))
-                    }));
-
-                    body_parts.clear();
-
-                    parser_mode = ParserMode::FirstStage;
-                    continue;
-                } else {
-                    body_parts.push(line);
-                }
+                body_parts.push(line);
             }
         };
     }
@@ -182,6 +191,7 @@ fn parse_tokens(buffer: String) -> Result<Vec<RequestToken>, RequestParseError> 
     if !body_parts.is_empty() {
         tokens.push(RequestToken::Body(Some(body_parts.join(""))));
     }
+
     Ok(tokens)
 }
 
@@ -235,7 +245,7 @@ pub fn parse_requests(buffer: String) -> Result<Vec<HittRequest>, RequestParseEr
                     p = PartialHittRequest::default();
                 }
 
-                p.method = Some(method)
+                p.method = Some(method);
             }
             RequestToken::Uri(uri) => {
                 p.uri = Some(uri);
@@ -250,7 +260,7 @@ pub fn parse_requests(buffer: String) -> Result<Vec<HittRequest>, RequestParseEr
 
                 p = PartialHittRequest::default();
             }
-        }
+        };
     }
 
     if p.method.is_some() {
