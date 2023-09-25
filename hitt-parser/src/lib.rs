@@ -73,20 +73,22 @@ mod test_parse_method_input {
 }
 
 #[inline]
-fn parse_uri_input(chars: &mut core::iter::Enumerate<std::str::Chars>) -> String {
-    let mut url = String::new();
+fn parse_uri_input(
+    chars: &mut core::iter::Enumerate<std::str::Chars>,
+) -> Result<http::uri::Uri, http::uri::InvalidUri> {
+    let mut uri = String::new();
 
     for (_i, c) in chars {
         if c.is_whitespace() {
-            if !url.is_empty() {
-                return url;
+            if !uri.is_empty() {
+                break;
             }
         } else {
-            url.push(c);
+            uri.push(c);
         }
     }
 
-    url
+    http::uri::Uri::from_str(&uri)
 }
 
 enum ParserMode {
@@ -235,7 +237,7 @@ fn parse_tokens(buffer: String) -> Result<Vec<RequestToken>, RequestParseError> 
 
                     tokens.push(RequestToken::Method(method));
 
-                    let uri = (parse_uri_input(&mut chrs)).parse::<http::uri::Uri>()?;
+                    let uri = parse_uri_input(&mut chrs)?;
 
                     tokens.push(RequestToken::Uri(uri));
 
