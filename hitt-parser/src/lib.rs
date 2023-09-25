@@ -320,6 +320,51 @@ fn parse_tokens(buffer: String) -> Result<Vec<RequestToken>, RequestParseError> 
     Ok(tokens)
 }
 
+#[cfg(test)]
+mod test_parse_tokens {
+
+    use crate::{parse_tokens, RequestToken};
+
+    #[test]
+    fn should_return_a_list_of_tokens() {
+        let method_input = "GET";
+        let uri_input = "https://mhouge.dk/";
+
+        let header1_key = "content-type";
+        let header1_value = "application/json";
+        let body_input = "{ \"key\": \"value\"  }";
+
+        let input_request =
+            format!("{method_input} {uri_input}\n{header1_key}: {header1_value}\n\n{body_input}");
+
+        let tokens = parse_tokens(input_request).expect("it to return Result<Vec<RequestToken>>");
+
+        assert_eq!(tokens.len(), 4);
+
+        for token in tokens {
+            match token {
+                RequestToken::Uri(uri_token) => assert_eq!(uri_input, uri_token.to_string(),),
+                RequestToken::Method(method_token) => {
+                    assert_eq!(method_input, method_token.as_str())
+                }
+                RequestToken::Header(header_token) => {
+                    assert_eq!(header1_key, header_token.key.to_string());
+
+                    assert_eq!(header1_value, header_token.value.to_str().unwrap());
+                }
+
+                RequestToken::Body(body) => {
+                    assert!(body.is_some());
+
+                    let body_inner = body.expect("body to be defined");
+
+                    assert_eq!(body_input, body_inner);
+                }
+            }
+        }
+    }
+}
+
 #[derive(Debug)]
 pub struct HittRequest {
     pub method: http::method::Method,
