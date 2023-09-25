@@ -1,0 +1,12 @@
+GET https://mhouge.dk/ HTTP/1.1
+
+###
+
+GET https://mhouge.dk/ HTTP/2
+
+###
+
+GET https://mhouge.dk/ HTTP/3
+
+###
+

@@ -21,41 +21,132 @@ impl From<http::uri::InvalidUri> for RequestParseError {
 }
 
 #[inline]
-fn parse_method_input(chars: &mut core::iter::Enumerate<std::str::Chars>) -> String {
+fn parse_method_input(
+    chars: &mut core::iter::Enumerate<std::str::Chars>,
+) -> Result<http::method::Method, http::method::InvalidMethod> {
     let mut method = String::new();
 
     for (_i, c) in chars {
         if c.is_whitespace() {
             if !method.is_empty() {
-                return method;
+                break;
             }
         } else {
             method.push(c);
         }
     }
 
-    method
+    http::method::Method::from_str(&method.to_uppercase())
 }
 
-#[inline]
-fn parse_uri_input(chars: &mut core::iter::Enumerate<std::str::Chars>) -> String {
-    let mut url = String::new();
+#[cfg(test)]
+mod test_parse_method_input {
+    use crate::parse_method_input;
 
-    for (_i, c) in chars {
-        if c.is_whitespace() {
-            if !url.is_empty() {
-                return url;
-            }
-        } else {
-            url.push(c);
+    const HTTP_METHODS: [&str; 9] = [
+        "GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS", "CONNECT", "TRACE",
+    ];
+
+    #[test]
+    fn it_should_accept_valid_methods() {
+        for method_input in HTTP_METHODS {
+            let input = format!("{method_input} https://mhouge.dk HTTP/2");
+
+            let parsed_method = parse_method_input(&mut input.chars().enumerate())
+                .expect("it should return a valid method");
+
+            assert_eq!(method_input, parsed_method.as_str());
         }
     }
 
-    url
+    #[test]
+    fn it_should_ignore_case() {
+        for method_input in HTTP_METHODS {
+            let input = format!("{} https://mhouge.dk HTTP/2", method_input.to_lowercase());
+
+            let parsed_method = parse_method_input(&mut input.chars().enumerate())
+                .expect("it should return a valid method");
+
+            assert_eq!(method_input, parsed_method.as_str());
+        }
+    }
+}
+
+#[inline]
+fn parse_uri_input(
+    chars: &mut core::iter::Enumerate<std::str::Chars>,
+) -> Result<http::uri::Uri, http::uri::InvalidUri> {
+    let mut uri = String::new();
+
+    for (_i, c) in chars {
+        if c.is_whitespace() {
+            if !uri.is_empty() {
+                break;
+            }
+        } else {
+            uri.push(c);
+        }
+    }
+
+    http::uri::Uri::from_str(&uri)
+}
+
+#[cfg(test)]
+mod test_parse_uri_input {
+    use crate::parse_uri_input;
+
+    #[test]
+    fn it_should_be_able_to_parse_uris() {
+        let input_uris = [
+            "https://mhouge.dk/",
+            "https://goout.dk/",
+            "https://mhouge.dk?key=value",
+        ];
+
+        for input_uri in input_uris {
+            let result = parse_uri_input(&mut format!("{input_uri} HTTP/2").chars().enumerate());
+
+            assert!(result.is_ok());
+        }
+    }
+
+    #[test]
+    fn it_should_ignore_leading_spaces() {
+        let input_uri = "https://mhouge.dk/";
+
+        let result =
+            parse_uri_input(&mut format!("         {input_uri} HTTP/2.0").chars().enumerate())
+                .expect("it should return a valid uri");
+
+        assert_eq!(result.to_string(), input_uri)
+    }
+
+    #[test]
+    fn it_should_reject_invalid_uris() {
+        let invalid_uris = ["m:a:d:s"];
+
+        for invalid_uri in invalid_uris {
+            parse_uri_input(&mut format!("{invalid_uri} HTTP/2").chars().enumerate())
+                .expect_err("it should return an error");
+        }
+    }
+
+    #[test]
+    fn it_should_support_query_paramers() {
+        let input_uri = "https://mhouge.dk/";
+
+        for i in 0..10 {
+            let result =
+                parse_uri_input(&mut format!("{input_uri}?key{i}=value{i}").chars().enumerate())
+                    .expect("it should return a valid uri");
+
+            assert_eq!(result.to_string(), format!("{input_uri}?key{i}=value{i}"));
+        }
+    }
 }
 
 enum ParserMode {
-    FirstStage,
+    Request,
     Headers,
     Body,
 }
@@ -84,7 +175,7 @@ fn parse_header(line: core::iter::Enumerate<std::str::Chars>) -> Option<HeaderTo
             _ => {
                 if is_key {
                     key.push(c);
-                } else {
+                } else if !(value.is_empty() && c == ' ') {
                     value.push(c)
                 }
             }
@@ -99,6 +190,40 @@ fn parse_header(line: core::iter::Enumerate<std::str::Chars>) -> Option<HeaderTo
     }
 
     None
+}
+
+#[cfg(test)]
+mod test_parse_header {
+    use std::str::FromStr;
+
+    use crate::parse_header;
+
+    #[test]
+    fn it_should_return_valid_headers() {
+        for i in 0..10 {
+            let line = format!("header{i}: value{i}");
+
+            let result = parse_header(line.chars().enumerate())
+                .expect("It should be able to parse valid headers");
+
+            let expected_key = http::HeaderName::from_str(&format!("header{i}"))
+                .expect("expected key to be valid");
+
+            assert_eq!(result.key, expected_key);
+
+            let expected_value = http::HeaderValue::from_str(&format!("value{i}"))
+                .expect("expected value to be valid");
+
+            assert_eq!(result.value, expected_value);
+        }
+    }
+
+    #[test]
+    fn it_should_ignore_empty_lines() {
+        let result = parse_header("".chars().enumerate());
+
+        assert!(result.is_none());
+    }
 }
 
 #[derive(Debug)]
@@ -127,27 +252,51 @@ impl From<HeaderToken> for RequestToken {
     }
 }
 
-fn parse_tokens(buffer: String) -> Result<Vec<RequestToken>, RequestParseError> {
+fn tokenize(buffer: &str) -> Result<Vec<RequestToken>, RequestParseError> {
     let mut tokens: Vec<RequestToken> = Vec::new();
 
-    let mut parser_mode = ParserMode::FirstStage;
+    let mut parser_mode = ParserMode::Request;
 
     let mut body_parts: Vec<&str> = Vec::new();
 
     for (_index, line) in buffer.lines().enumerate() {
+        let trimmed_line = line.trim();
+
+        // check if line is comment (#) OR requests break (###)
+        if trimmed_line.starts_with('#') {
+            if trimmed_line.starts_with("###") {
+                tokens.push(if body_parts.is_empty() {
+                    RequestToken::Body(None)
+                } else {
+                    RequestToken::Body(Some(String::new()))
+                });
+
+                body_parts.clear();
+                parser_mode = ParserMode::Request;
+            }
+
+            continue;
+        }
+
+        // check if line is comment (//)
+        if trimmed_line.starts_with("//") {
+            continue;
+        }
+
         match &parser_mode {
-            ParserMode::FirstStage => {
-                let mut chrs = line.chars().enumerate();
+            ParserMode::Request => {
+                if !trimmed_line.is_empty() {
+                    let mut chrs = line.chars().enumerate();
+                    let method = parse_method_input(&mut chrs)?;
 
-                let method = http::method::Method::from_str(&parse_method_input(&mut chrs))?;
+                    tokens.push(RequestToken::Method(method));
 
-                tokens.push(RequestToken::Method(method));
+                    let uri = parse_uri_input(&mut chrs)?;
 
-                let uri = (parse_uri_input(&mut chrs)).parse::<http::uri::Uri>()?;
+                    tokens.push(RequestToken::Uri(uri));
 
-                tokens.push(RequestToken::Uri(uri));
-
-                parser_mode = ParserMode::Headers;
+                    parser_mode = ParserMode::Headers;
+                }
             }
 
             ParserMode::Headers => {
@@ -159,22 +308,7 @@ fn parse_tokens(buffer: String) -> Result<Vec<RequestToken>, RequestParseError> 
             }
 
             ParserMode::Body => {
-                let trmmed_line = line.trim();
-
-                if trmmed_line.is_empty() {
-                    tokens.push(RequestToken::Body(if body_parts.is_empty() {
-                        None
-                    } else {
-                        Some(body_parts.join(""))
-                    }));
-
-                    body_parts.clear();
-
-                    parser_mode = ParserMode::FirstStage;
-                    continue;
-                } else {
-                    body_parts.push(line);
-                }
+                body_parts.push(line);
             }
         };
     }
@@ -182,7 +316,99 @@ fn parse_tokens(buffer: String) -> Result<Vec<RequestToken>, RequestParseError> 
     if !body_parts.is_empty() {
         tokens.push(RequestToken::Body(Some(body_parts.join(""))));
     }
+
     Ok(tokens)
+}
+
+#[cfg(test)]
+mod test_tokenize {
+
+    use crate::{tokenize, RequestToken};
+
+    #[test]
+    fn should_return_a_list_of_tokens() {
+        let method_input = "GET";
+        let uri_input = "https://mhouge.dk/";
+
+        let header1_key = "content-type";
+        let header1_value = "application/json";
+        let body_input = "{ \"key\": \"value\"  }";
+
+        let input_request =
+            format!("{method_input} {uri_input}\n{header1_key}: {header1_value}\n\n{body_input}");
+
+        let tokens = tokenize(&input_request).expect("it to return Result<Vec<RequestToken>>");
+
+        assert_eq!(tokens.len(), 4);
+
+        for token in tokens {
+            match token {
+                RequestToken::Uri(uri_token) => assert_eq!(uri_input, uri_token.to_string(),),
+                RequestToken::Method(method_token) => {
+                    assert_eq!(method_input, method_token.as_str())
+                }
+                RequestToken::Header(header_token) => {
+                    assert_eq!(header1_key, header_token.key.to_string());
+
+                    assert_eq!(header1_value, header_token.value.to_str().unwrap());
+                }
+
+                RequestToken::Body(body) => {
+                    assert!(body.is_some());
+
+                    let body_inner = body.expect("body to be defined");
+
+                    assert_eq!(body_input, body_inner);
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn it_should_be_able_to_parse_multiple_requests() {
+        let input = r"
+GET https://mhouge.dk/ HTTP/1.1
+x-test-header: test value
+
+###
+
+GET https://mhouge.dk/ HTTP/2
+x-test-header: test value
+
+###
+
+GET https://mhouge.dk/ HTTP/3
+x-test-header: test value
+###
+";
+        let tokens = tokenize(input).expect("it to return a list of tokens");
+
+        assert_eq!(12, tokens.len());
+
+        for token in tokens {
+            match token {
+                RequestToken::Method(method_token) => assert_eq!("GET", method_token.as_str()),
+
+                RequestToken::Uri(uri_token) => {
+                    assert_eq!("https://mhouge.dk/", uri_token.to_string())
+                }
+
+                RequestToken::Header(header_token) => {
+                    assert_eq!("x-test-header", header_token.key.as_str());
+
+                    assert_eq!(
+                        "test value",
+                        header_token
+                            .value
+                            .to_str()
+                            .expect("header field to be defined")
+                    );
+                }
+
+                RequestToken::Body(body_token) => assert!(body_token.is_none()),
+            }
+        }
+    }
 }
 
 #[derive(Debug)]
@@ -219,10 +445,10 @@ impl PartialHittRequest {
 }
 
 #[inline]
-pub fn parse_requests(buffer: String) -> Result<Vec<HittRequest>, RequestParseError> {
+pub fn parse_requests(buffer: &str) -> Result<Vec<HittRequest>, RequestParseError> {
     let mut requests = Vec::new();
 
-    let tokens = parse_tokens(buffer)?;
+    let tokens = tokenize(buffer)?;
 
     let mut p = PartialHittRequest::default();
 
@@ -235,7 +461,7 @@ pub fn parse_requests(buffer: String) -> Result<Vec<HittRequest>, RequestParseEr
                     p = PartialHittRequest::default();
                 }
 
-                p.method = Some(method)
+                p.method = Some(method);
             }
             RequestToken::Uri(uri) => {
                 p.uri = Some(uri);
@@ -250,7 +476,7 @@ pub fn parse_requests(buffer: String) -> Result<Vec<HittRequest>, RequestParseEr
 
                 p = PartialHittRequest::default();
             }
-        }
+        };
     }
 
     if p.method.is_some() {
@@ -261,12 +487,14 @@ pub fn parse_requests(buffer: String) -> Result<Vec<HittRequest>, RequestParseEr
 }
 
 #[cfg(test)]
-mod tests {
+mod test_parse_requests {
     use std::str::FromStr;
 
     use crate::parse_requests;
 
-    const HTTP_METHODS: [&str; 7] = ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"];
+    const HTTP_METHODS: [&str; 9] = [
+        "GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS", "CONNECT", "TRACE",
+    ];
 
     #[test]
     fn it_should_parse_http_method_correctly() {
@@ -276,7 +504,7 @@ mod tests {
             let expected_method = http::Method::from_str(method).expect("m is a valid method");
 
             let parsed_requests =
-                parse_requests(format!("{method} {url}")).expect("request should be valid");
+                parse_requests(&format!("{method} {url}")).expect("request should be valid");
 
             println!("parsed_requests: {:#?}", parsed_requests);
 
@@ -294,5 +522,72 @@ mod tests {
 
             assert_eq!(None, first_request.body);
         });
+    }
+
+    #[test]
+    fn it_should_be_able_to_parse_requests() {
+        let method_input = "GET";
+        let uri_input = "https://mhouge.dk/";
+
+        let header1_key = "content-type";
+        let header1_value = "application/json";
+        let body_input = "{ \"key\": \"value\"  }";
+
+        let input_request =
+            format!("{method_input} {uri_input}\n{header1_key}: {header1_value}\n\n{body_input}");
+
+        let result = parse_requests(&input_request).expect("it to return a list of requests");
+
+        assert!(result.len() == 1);
+
+        let request = &result[0];
+
+        assert_eq!(method_input, request.method.as_str());
+
+        assert_eq!(uri_input, request.uri.to_string());
+
+        let body_inner = request.body.clone().expect("body to be defined");
+
+        assert_eq!(body_inner, body_input);
+
+        assert_eq!(1, request.headers.len());
+
+        let header1_output = request
+            .headers
+            .get(header1_key)
+            .expect("header1_key to exist");
+
+        assert_eq!(header1_value, header1_output.to_str().unwrap(),);
+    }
+
+    #[test]
+    fn it_should_be_able_to_parse_multiple_requests() {
+        let input = r"
+GET https://mhouge.dk/ HTTP/1.1
+
+###
+
+GET https://mhouge.dk/ HTTP/2
+
+###
+
+GET https://mhouge.dk/ HTTP/3
+
+###
+";
+
+        let requests = parse_requests(input).expect("to get a list of requests");
+
+        assert_eq!(3, requests.len());
+
+        for request in requests {
+            assert_eq!("GET", request.method.as_str());
+
+            assert_eq!("https://mhouge.dk/", request.uri.to_string());
+
+            assert!(request.headers.is_empty());
+
+            assert!(request.body.is_none());
+        }
     }
 }
