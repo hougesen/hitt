@@ -101,6 +101,40 @@ fn parse_header(line: core::iter::Enumerate<std::str::Chars>) -> Option<HeaderTo
     None
 }
 
+#[cfg(test)]
+mod test_parse_header {
+    use std::str::FromStr;
+
+    use crate::parse_header;
+
+    #[test]
+    fn it_should_return_valid_headers() {
+        for i in 0..10 {
+            let line = format!("header{i}: value{i}");
+
+            let result = parse_header(line.chars().enumerate())
+                .expect("It should be able to parse valid headers");
+
+            let expected_key = http::HeaderName::from_str(&format!("header{i}"))
+                .expect("expected key to be valid");
+
+            assert_eq!(result.key, expected_key);
+
+            let expected_value = http::HeaderValue::from_str(&format!("value{i}"))
+                .expect("expected value to be valid");
+
+            assert_eq!(result.value, expected_value);
+        }
+    }
+
+    #[test]
+    fn it_should_ignore_empty_lines() {
+        let result = parse_header("".chars().enumerate());
+
+        assert!(result.is_none());
+    }
+}
+
 #[derive(Debug)]
 enum RequestToken {
     Method(http::method::Method),
@@ -271,7 +305,7 @@ pub fn parse_requests(buffer: String) -> Result<Vec<HittRequest>, RequestParseEr
 }
 
 #[cfg(test)]
-mod tests {
+mod test_parse_requests {
     use std::str::FromStr;
 
     use crate::parse_requests;
