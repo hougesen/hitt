@@ -84,7 +84,7 @@ fn parse_header(line: core::iter::Enumerate<std::str::Chars>) -> Option<HeaderTo
             _ => {
                 if is_key {
                     key.push(c);
-                } else {
+                } else if !(value.is_empty() && c == ' ') {
                     value.push(c)
                 }
             }
