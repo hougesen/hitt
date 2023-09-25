@@ -21,20 +21,55 @@ impl From<http::uri::InvalidUri> for RequestParseError {
 }
 
 #[inline]
-fn parse_method_input(chars: &mut core::iter::Enumerate<std::str::Chars>) -> String {
+fn parse_method_input(
+    chars: &mut core::iter::Enumerate<std::str::Chars>,
+) -> Result<http::method::Method, http::method::InvalidMethod> {
     let mut method = String::new();
 
     for (_i, c) in chars {
         if c.is_whitespace() {
             if !method.is_empty() {
-                return method;
+                break;
             }
         } else {
             method.push(c);
         }
     }
 
-    method
+    http::method::Method::from_str(&method.to_uppercase())
+}
+
+#[cfg(test)]
+mod test_parse_method_input {
+    use crate::parse_method_input;
+
+    const HTTP_METHODS: [&str; 9] = [
+        "GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS", "CONNECT", "TRACE",
+    ];
+
+    #[test]
+    fn it_should_accept_valid_methods() {
+        for method_input in HTTP_METHODS {
+            let input = format!("{method_input} https://mhouge.dk HTTP/2");
+
+            let parsed_method = parse_method_input(&mut input.chars().enumerate())
+                .expect("it should return a valid method");
+
+            assert_eq!(method_input, parsed_method.as_str());
+        }
+    }
+
+    #[test]
+    fn it_should_ignore_case() {
+        for method_input in HTTP_METHODS {
+            let input = format!("{} https://mhouge.dk HTTP/2", method_input.to_lowercase());
+
+            let parsed_method = parse_method_input(&mut input.chars().enumerate())
+                .expect("it should return a valid method");
+
+            assert_eq!(method_input, parsed_method.as_str());
+        }
+    }
 }
 
 #[inline]
@@ -196,7 +231,7 @@ fn parse_tokens(buffer: String) -> Result<Vec<RequestToken>, RequestParseError> 
             ParserMode::Request => {
                 if !trimmed_line.is_empty() {
                     let mut chrs = line.chars().enumerate();
-                    let method = http::method::Method::from_str(&parse_method_input(&mut chrs))?;
+                    let method = parse_method_input(&mut chrs)?;
 
                     tokens.push(RequestToken::Method(method));
 
@@ -310,7 +345,9 @@ mod test_parse_requests {
 
     use crate::parse_requests;
 
-    const HTTP_METHODS: [&str; 7] = ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"];
+    const HTTP_METHODS: [&str; 9] = [
+        "GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS", "CONNECT", "TRACE",
+    ];
 
     #[test]
     fn it_should_parse_http_method_correctly() {
