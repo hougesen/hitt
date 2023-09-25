@@ -35,7 +35,7 @@ async fn main() -> anyhow::Result<(), Box<dyn std::error::Error>> {
 
         let fcontent = get_file_content(path).await?;
 
-        for req in hitt_parser::parse_requests(fcontent).unwrap() {
+        for req in hitt_parser::parse_requests(&fcontent).unwrap() {
             let result = send_request(req).await?;
 
             println!("{} {}", result.status(), result.url());

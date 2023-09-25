@@ -252,7 +252,7 @@ impl From<HeaderToken> for RequestToken {
     }
 }
 
-fn parse_tokens(buffer: String) -> Result<Vec<RequestToken>, RequestParseError> {
+fn tokenize(buffer: &str) -> Result<Vec<RequestToken>, RequestParseError> {
     let mut tokens: Vec<RequestToken> = Vec::new();
 
     let mut parser_mode = ParserMode::Request;
@@ -321,9 +321,9 @@ fn parse_tokens(buffer: String) -> Result<Vec<RequestToken>, RequestParseError> 
 }
 
 #[cfg(test)]
-mod test_parse_tokens {
+mod test_tokenize {
 
-    use crate::{parse_tokens, RequestToken};
+    use crate::{tokenize, RequestToken};
 
     #[test]
     fn should_return_a_list_of_tokens() {
@@ -337,7 +337,7 @@ mod test_parse_tokens {
         let input_request =
             format!("{method_input} {uri_input}\n{header1_key}: {header1_value}\n\n{body_input}");
 
-        let tokens = parse_tokens(input_request).expect("it to return Result<Vec<RequestToken>>");
+        let tokens = tokenize(&input_request).expect("it to return Result<Vec<RequestToken>>");
 
         assert_eq!(tokens.len(), 4);
 
@@ -360,6 +360,52 @@ mod test_parse_tokens {
 
                     assert_eq!(body_input, body_inner);
                 }
+            }
+        }
+    }
+
+    #[test]
+    fn it_should_be_able_to_parse_multiple_requests() {
+        let input = r"
+GET https://mhouge.dk/ HTTP/1.1
+x-test-header: test value
+
+###
+
+GET https://mhouge.dk/ HTTP/2
+x-test-header: test value
+
+###
+
+GET https://mhouge.dk/ HTTP/3
+x-test-header: test value
+###
+";
+        let tokens = tokenize(input).expect("it to return a list of tokens");
+
+        assert_eq!(12, tokens.len());
+
+        for token in tokens {
+            match token {
+                RequestToken::Method(method_token) => assert_eq!("GET", method_token.as_str()),
+
+                RequestToken::Uri(uri_token) => {
+                    assert_eq!("https://mhouge.dk/", uri_token.to_string())
+                }
+
+                RequestToken::Header(header_token) => {
+                    assert_eq!("x-test-header", header_token.key.as_str());
+
+                    assert_eq!(
+                        "test value",
+                        header_token
+                            .value
+                            .to_str()
+                            .expect("header field to be defined")
+                    );
+                }
+
+                RequestToken::Body(body_token) => assert!(body_token.is_none()),
             }
         }
     }
@@ -399,10 +445,10 @@ impl PartialHittRequest {
 }
 
 #[inline]
-pub fn parse_requests(buffer: String) -> Result<Vec<HittRequest>, RequestParseError> {
+pub fn parse_requests(buffer: &str) -> Result<Vec<HittRequest>, RequestParseError> {
     let mut requests = Vec::new();
 
-    let tokens = parse_tokens(buffer)?;
+    let tokens = tokenize(buffer)?;
 
     let mut p = PartialHittRequest::default();
 
@@ -458,7 +504,7 @@ mod test_parse_requests {
             let expected_method = http::Method::from_str(method).expect("m is a valid method");
 
             let parsed_requests =
-                parse_requests(format!("{method} {url}")).expect("request should be valid");
+                parse_requests(&format!("{method} {url}")).expect("request should be valid");
 
             println!("parsed_requests: {:#?}", parsed_requests);
 
@@ -476,5 +522,72 @@ mod test_parse_requests {
 
             assert_eq!(None, first_request.body);
         });
+    }
+
+    #[test]
+    fn it_should_be_able_to_parse_requests() {
+        let method_input = "GET";
+        let uri_input = "https://mhouge.dk/";
+
+        let header1_key = "content-type";
+        let header1_value = "application/json";
+        let body_input = "{ \"key\": \"value\"  }";
+
+        let input_request =
+            format!("{method_input} {uri_input}\n{header1_key}: {header1_value}\n\n{body_input}");
+
+        let result = parse_requests(&input_request).expect("it to return a list of requests");
+
+        assert!(result.len() == 1);
+
+        let request = &result[0];
+
+        assert_eq!(method_input, request.method.as_str());
+
+        assert_eq!(uri_input, request.uri.to_string());
+
+        let body_inner = request.body.clone().expect("body to be defined");
+
+        assert_eq!(body_inner, body_input);
+
+        assert_eq!(1, request.headers.len());
+
+        let header1_output = request
+            .headers
+            .get(header1_key)
+            .expect("header1_key to exist");
+
+        assert_eq!(header1_value, header1_output.to_str().unwrap(),);
+    }
+
+    #[test]
+    fn it_should_be_able_to_parse_multiple_requests() {
+        let input = r"
+GET https://mhouge.dk/ HTTP/1.1
+
+###
+
+GET https://mhouge.dk/ HTTP/2
+
+###
+
+GET https://mhouge.dk/ HTTP/3
+
+###
+";
+
+        let requests = parse_requests(input).expect("to get a list of requests");
+
+        assert_eq!(3, requests.len());
+
+        for request in requests {
+            assert_eq!("GET", request.method.as_str());
+
+            assert_eq!("https://mhouge.dk/", request.uri.to_string());
+
+            assert!(request.headers.is_empty());
+
+            assert!(request.body.is_none());
+        }
     }
 }
