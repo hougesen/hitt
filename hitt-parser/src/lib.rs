@@ -145,6 +145,155 @@ mod test_parse_uri_input {
     }
 }
 
+fn parse_http_version(
+    chars: &mut core::iter::Enumerate<std::str::Chars>,
+) -> Option<http::version::Version> {
+    let mut s = String::new();
+
+    for (_, ch) in chars {
+        if ch.is_whitespace() {
+            if !s.is_empty() {
+                break;
+            }
+
+            continue;
+        }
+
+        s.push(ch);
+    }
+
+    if s.is_empty() {
+        return None;
+    }
+
+    match s.to_lowercase().as_str() {
+        "http/0.9" => Some(http::Version::HTTP_09),
+        "http/1.0" | "http/1" => Some(http::Version::HTTP_10),
+        "http/1.1" => Some(http::Version::HTTP_11),
+        "http/2.0" | "http/2" => Some(http::Version::HTTP_2),
+        "http/3.0" | "http/3" => Some(http::Version::HTTP_3),
+        _ => None,
+    }
+}
+
+#[cfg(test)]
+mod test_parse_http_version {
+    use crate::parse_http_version;
+
+    #[test]
+    fn it_should_parse_http_0_9() {
+        let input = ["HTTP/0.9", "   HTTP/0.9", "HTTP/0.9   ", "   HTTP/0.9   "];
+
+        input.iter().for_each(|s| {
+            let uppercase_result = parse_http_version(&mut s.chars().enumerate())
+                .expect("it to return a http version");
+
+            assert_eq!(http::Version::HTTP_09, uppercase_result);
+
+            let lowercase_result = parse_http_version(&mut s.to_lowercase().chars().enumerate())
+                .expect("it to return a http version");
+
+            assert_eq!(http::Version::HTTP_09, lowercase_result);
+        })
+    }
+
+    #[test]
+    fn it_should_parse_http_1_0() {
+        let input = [
+            "HTTP/1",
+            "   HTTP/1",
+            "HTTP/1   ",
+            "   HTTP/1   ",
+            "HTTP/1.0",
+            "   HTTP/1.0",
+            "HTTP/1.0   ",
+            "   HTTP/1.0   ",
+        ];
+
+        input.iter().for_each(|s| {
+            let uppercase_result = parse_http_version(&mut s.chars().enumerate())
+                .expect("it to return a http version");
+
+            assert_eq!(http::Version::HTTP_10, uppercase_result);
+
+            let lowercase_result = parse_http_version(&mut s.to_lowercase().chars().enumerate())
+                .expect("it to return a http version");
+
+            assert_eq!(http::Version::HTTP_10, lowercase_result);
+        })
+    }
+
+    #[test]
+    fn it_should_parse_http_1_1() {
+        // NOTE: should HTTP/1 mean the same as HTTP/1.1?
+        let input = ["HTTP/1.1", "   HTTP/1.1", "HTTP/1.1   ", "   HTTP/1.1   "];
+
+        input.iter().for_each(|s| {
+            let uppercase_result = parse_http_version(&mut s.chars().enumerate())
+                .expect("it to return a http version");
+
+            assert_eq!(http::Version::HTTP_11, uppercase_result);
+
+            let lowercase_result = parse_http_version(&mut s.to_lowercase().chars().enumerate())
+                .expect("it to return a http version");
+
+            assert_eq!(http::Version::HTTP_11, lowercase_result);
+        })
+    }
+
+    #[test]
+    fn it_should_parse_http_2_0() {
+        let input = [
+            "HTTP/2",
+            "   HTTP/2",
+            "HTTP/2   ",
+            "   HTTP/2   ",
+            "HTTP/2.0",
+            "   HTTP/2.0",
+            "HTTP/2.0   ",
+            "   HTTP/2.0   ",
+        ];
+
+        input.iter().for_each(|s| {
+            let uppercase_result = parse_http_version(&mut s.chars().enumerate())
+                .expect("it to return a http version");
+
+            assert_eq!(http::Version::HTTP_2, uppercase_result);
+
+            let lowercase_result = parse_http_version(&mut s.to_lowercase().chars().enumerate())
+                .expect("it to return a http version");
+
+            assert_eq!(http::Version::HTTP_2, lowercase_result);
+        })
+    }
+
+    #[test]
+    fn it_should_parse_http_3_0() {
+        let input = [
+            "HTTP/3",
+            "   HTTP/3",
+            "HTTP/3   ",
+            "   HTTP/3   ",
+            "HTTP/3.0",
+            "   HTTP/3.0",
+            "HTTP/3.0   ",
+            "   HTTP/3.0   ",
+        ];
+
+        input.iter().for_each(|s| {
+            let uppercase_result = parse_http_version(&mut s.chars().enumerate())
+                .expect("it to return a http version");
+
+            assert_eq!(http::Version::HTTP_3, uppercase_result);
+
+            let lowercase_result = parse_http_version(&mut s.to_lowercase().chars().enumerate())
+                .expect("it to return a http version");
+
+            assert_eq!(http::Version::HTTP_3, lowercase_result);
+        })
+    }
+}
+
 enum ParserMode {
     Request,
     Headers,
@@ -230,6 +379,7 @@ mod test_parse_header {
 enum RequestToken {
     Method(http::method::Method),
     Uri(http::uri::Uri),
+    HttpVersion(http::version::Version),
     Header(HeaderToken),
     Body(Option<String>),
 }
@@ -295,6 +445,10 @@ fn tokenize(buffer: &str) -> Result<Vec<RequestToken>, RequestParseError> {
 
                     tokens.push(RequestToken::Uri(uri));
 
+                    if let Some(http_version) = parse_http_version(&mut chrs) {
+                        tokens.push(RequestToken::HttpVersion(http_version))
+                    }
+
                     parser_mode = ParserMode::Headers;
                 }
             }
@@ -329,17 +483,17 @@ mod test_tokenize {
     fn should_return_a_list_of_tokens() {
         let method_input = "GET";
         let uri_input = "https://mhouge.dk/";
-
+        let http_version = "HTTP/2";
         let header1_key = "content-type";
         let header1_value = "application/json";
         let body_input = "{ \"key\": \"value\"  }";
 
         let input_request =
-            format!("{method_input} {uri_input}\n{header1_key}: {header1_value}\n\n{body_input}");
+            format!("{method_input} {uri_input} {http_version}\n{header1_key}: {header1_value}\n\n{body_input}");
 
         let tokens = tokenize(&input_request).expect("it to return Result<Vec<RequestToken>>");
 
-        assert_eq!(tokens.len(), 4);
+        assert_eq!(tokens.len(), 5);
 
         for token in tokens {
             match token {
@@ -353,12 +507,16 @@ mod test_tokenize {
                     assert_eq!(header1_value, header_token.value.to_str().unwrap());
                 }
 
-                RequestToken::Body(body) => {
-                    assert!(body.is_some());
+                RequestToken::Body(body_token) => {
+                    assert!(body_token.is_some());
 
-                    let body_inner = body.expect("body to be defined");
+                    let body_inner = body_token.expect("body to be defined");
 
                     assert_eq!(body_input, body_inner);
+                }
+
+                RequestToken::HttpVersion(version_token) => {
+                    assert_eq!(version_token, http::version::Version::HTTP_2)
                 }
             }
         }
@@ -367,6 +525,16 @@ mod test_tokenize {
     #[test]
     fn it_should_be_able_to_parse_multiple_requests() {
         let input = r"
+GET https://mhouge.dk/ HTTP/0.9
+x-test-header: test value
+
+###
+
+GET https://mhouge.dk/ HTTP/1.0
+x-test-header: test value
+
+###
+
 GET https://mhouge.dk/ HTTP/1.1
 x-test-header: test value
 
@@ -380,14 +548,21 @@ x-test-header: test value
 GET https://mhouge.dk/ HTTP/3
 x-test-header: test value
 ###
+
+
+
 ";
         let tokens = tokenize(input).expect("it to return a list of tokens");
 
-        assert_eq!(12, tokens.len());
+        assert_eq!(25, tokens.len());
 
+        let mut request_index: u8 = 0;
         for token in tokens {
             match token {
-                RequestToken::Method(method_token) => assert_eq!("GET", method_token.as_str()),
+                RequestToken::Method(method_token) => {
+                    assert_eq!("GET", method_token.as_str());
+                    request_index += 1;
+                }
 
                 RequestToken::Uri(uri_token) => {
                     assert_eq!("https://mhouge.dk/", uri_token.to_string())
@@ -406,6 +581,15 @@ x-test-header: test value
                 }
 
                 RequestToken::Body(body_token) => assert!(body_token.is_none()),
+
+                RequestToken::HttpVersion(version_token) => match request_index {
+                    1 => assert_eq!(version_token, http::Version::HTTP_09),
+                    2 => assert_eq!(version_token, http::Version::HTTP_10),
+                    3 => assert_eq!(version_token, http::Version::HTTP_11),
+                    4 => assert_eq!(version_token, http::Version::HTTP_2),
+                    5 => assert_eq!(version_token, http::Version::HTTP_3),
+                    _ => panic!("this case should never hit"),
+                },
             }
         }
     }
@@ -417,6 +601,7 @@ pub struct HittRequest {
     pub uri: http::uri::Uri,
     pub headers: http::HeaderMap,
     pub body: Option<String>,
+    pub http_version: Option<http::version::Version>,
 }
 
 #[derive(Default)]
@@ -425,6 +610,7 @@ struct PartialHittRequest {
     uri: Option<http::uri::Uri>,
     headers: http::HeaderMap,
     body: Option<String>,
+    http_version: Option<http::version::Version>,
 }
 
 impl PartialHittRequest {
@@ -436,6 +622,7 @@ impl PartialHittRequest {
                     uri,
                     headers: self.headers,
                     body: self.body,
+                    http_version: self.http_version,
                 }),
                 None => Err(RequestParseError::MissingUri),
             },
@@ -463,18 +650,25 @@ pub fn parse_requests(buffer: &str) -> Result<Vec<HittRequest>, RequestParseErro
 
                 p.method = Some(method);
             }
+
             RequestToken::Uri(uri) => {
                 p.uri = Some(uri);
             }
+
             RequestToken::Header(header) => {
                 p.headers.insert(header.key, header.value);
             }
+
             RequestToken::Body(body) => {
                 p.body = body;
 
                 requests.push(p.build()?);
 
                 p = PartialHittRequest::default();
+            }
+
+            RequestToken::HttpVersion(version_token) => {
+                p.http_version = Some(version_token);
             }
         };
     }
@@ -557,12 +751,22 @@ mod test_parse_requests {
             .get(header1_key)
             .expect("header1_key to exist");
 
-        assert_eq!(header1_value, header1_output.to_str().unwrap(),);
+        assert_eq!(header1_value, header1_output.to_str().unwrap());
+
+        assert!(request.http_version.is_none());
     }
 
     #[test]
     fn it_should_be_able_to_parse_multiple_requests() {
         let input = r"
+GET https://mhouge.dk/ HTTP/0.9
+
+###
+
+GET https://mhouge.dk/ HTTP/1.0
+
+###
+
 GET https://mhouge.dk/ HTTP/1.1
 
 ###
@@ -578,9 +782,9 @@ GET https://mhouge.dk/ HTTP/3
 
         let requests = parse_requests(input).expect("to get a list of requests");
 
-        assert_eq!(3, requests.len());
+        assert_eq!(5, requests.len());
 
-        for request in requests {
+        for (request_index, request) in requests.iter().enumerate() {
             assert_eq!("GET", request.method.as_str());
 
             assert_eq!("https://mhouge.dk/", request.uri.to_string());
@@ -588,6 +792,17 @@ GET https://mhouge.dk/ HTTP/3
             assert!(request.headers.is_empty());
 
             assert!(request.body.is_none());
+
+            let http_version = request.http_version.expect("http_version to be defined");
+
+            match request_index {
+                0 => assert_eq!(http_version, http::Version::HTTP_09),
+                1 => assert_eq!(http_version, http::Version::HTTP_10),
+                2 => assert_eq!(http_version, http::Version::HTTP_11),
+                3 => assert_eq!(http_version, http::Version::HTTP_2),
+                4 => assert_eq!(http_version, http::Version::HTTP_3),
+                _ => panic!("this case should never hit"),
+            }
         }
     }
 }
