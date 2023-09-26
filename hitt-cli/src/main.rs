@@ -11,6 +11,7 @@ async fn send_request(input: HittRequest) -> Result<reqwest::Response, reqwest::
         .request(input.method, input.uri.to_string())
         .headers(input.headers)
         .body(input.body.unwrap_or_default())
+        .version(input.http_version.unwrap_or(reqwest::Version::HTTP_11))
         .build()?;
 
     client.execute(req).await
