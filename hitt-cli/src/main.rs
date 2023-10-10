@@ -1,21 +1,7 @@
 use std::str::FromStr;
 
-use hitt_parser::HittRequest;
-
+use hitt_request::send_request;
 use tokio::fs;
-
-async fn send_request(input: HittRequest) -> Result<reqwest::Response, reqwest::Error> {
-    let client = reqwest::Client::new();
-
-    let req = client
-        .request(input.method, input.uri.to_string())
-        .headers(input.headers)
-        .body(input.body.unwrap_or_default())
-        .version(input.http_version.unwrap_or(reqwest::Version::HTTP_11))
-        .build()?;
-
-    client.execute(req).await
-}
 
 async fn get_file_content(path: std::path::PathBuf) -> anyhow::Result<String> {
     let buffr = fs::read(path).await?;
@@ -31,16 +17,19 @@ async fn main() -> anyhow::Result<(), Box<dyn std::error::Error>> {
         std::process::exit(1);
     }
 
+    let http_client = reqwest::Client::new();
+
     if let Some(path_arg) = args.into_iter().nth(1) {
         let path = std::path::PathBuf::from_str(&path_arg)?;
 
         let fcontent = get_file_content(path).await?;
 
         for req in hitt_parser::parse_requests(&fcontent).unwrap() {
-            let result = send_request(req).await?;
+            let result = send_request(&http_client, &req).await?;
 
-            println!("{} {}", result.status(), result.url());
+            println!("{:?}", result);
         }
     }
+
     Ok(())
 }

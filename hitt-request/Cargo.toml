@@ -1,11 +1,10 @@
 [package]
-name = "hitt-cli"
+name = "hitt-request"
 version = "0.0.1"
 edition = "2021"
 
 [dependencies]
-anyhow = "1.0.75"
 hitt-parser = { path = "../hitt-parser" }
-hitt-request = { path = "../hitt-request" }
 reqwest = "0.11.20"
+serde = "1.0.188"
 tokio = { version = "1.32.0", features = ["full"] }
