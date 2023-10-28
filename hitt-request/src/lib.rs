@@ -8,23 +8,6 @@ pub struct HittResponse {
     pub body: String,
 }
 
-impl std::fmt::Debug for HittResponse {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let _ = f.write_fmt(format_args!(
-            "{} {} {}\n",
-            self.method, self.url, self.status_code
-        ));
-
-        for (key, value) in self.headers.iter() {
-            let _ = f.write_fmt(format_args!("{}:{:?}\n", key, value));
-        }
-
-        let _ = f.write_fmt(format_args!("\n{}\n", self.body));
-
-        Ok(())
-    }
-}
-
 pub async fn send_request(
     http_client: &reqwest::Client,
     input: &HittRequest,
