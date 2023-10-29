@@ -7,6 +7,7 @@ pub struct HittResponse {
     pub headers: reqwest::header::HeaderMap,
     pub body: String,
     pub http_version: http::version::Version,
+    pub duration: std::time::Duration,
 }
 
 pub async fn send_request(
@@ -23,7 +24,10 @@ pub async fn send_request(
         .version(input.http_version.unwrap_or(reqwest::Version::HTTP_11))
         .build()?;
 
+    // TODO: implement more precise benchmark?
+    let start = std::time::Instant::now();
     let res = http_client.execute(req).await?;
+    let duration = start.elapsed();
 
     let status_code = res.status();
     let headers = res.headers().to_owned();
@@ -39,5 +43,6 @@ pub async fn send_request(
         headers,
         body,
         http_version,
+        duration,
     })
 }
