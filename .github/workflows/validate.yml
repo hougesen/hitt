@@ -1,0 +1,43 @@
+name: validate
+
+on:
+    push:
+
+jobs:
+    lint:
+        name: lint
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+            - name: Install Rust
+              uses: dtolnay/rust-toolchain@stable
+              with:
+                  components: clippy, rustfmt
+            - name: Check formatting
+              run: cargo fmt --check
+            - name: Check for clippy lints
+              run: cargo clippy
+    test:
+        name: test
+        strategy:
+            fail-fast: false
+            matrix:
+                rust-version:
+                    - nightly
+                    - stable
+                    - '1.63'
+                os:
+                    - ubuntu-latest
+        runs-on: ${{ matrix.os }}
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+            - name: Install Rust
+              uses: dtolnay/rust-toolchain@stable
+              with:
+                  toolchain: ${{ matrix.rust-version }}
+            - name: Build
+              run: cargo build
+            - name: Test
+              run: cargo test
