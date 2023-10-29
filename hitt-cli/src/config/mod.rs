@@ -2,14 +2,14 @@
 #[clap(
     author = "Mads Hougesen, mhouge.dk",
     version,
-    about = "hitt is a HTTP testing tool focused on speed and simplicity."
+    about = "hitt is a command line HTTP testing tool focused on speed and simplicity."
 )]
 pub(crate) struct CliArguments {
-    /// Path to .http file
+    /// Path to .http file, or directory if supplied with the `--recursive` argument
     #[arg()]
     pub(crate) path: String,
 
-    /// Exit on error status code
+    /// Exit on error response status code
     #[arg(long, default_value_t = false)]
     pub(crate) fail_fast: bool,
 
