@@ -8,6 +8,7 @@ pub(crate) fn print_status(
     method: &str,
     url: &str,
     status_code: u16,
+    duration: &std::time::Duration,
 ) {
     let text_color = if status_code < 400 {
         TEXT_GREEN
@@ -15,8 +16,5 @@ pub(crate) fn print_status(
         TEXT_RED
     };
 
-    println!(
-        "{STYLE_BOLD}{text_color}{:?} {method} {url} {status_code}{TEXT_RESET}{STYLE_RESET}",
-        http_version
-    );
+    println!("{STYLE_BOLD}{text_color}{http_version:?} {method} {url} {status_code} {}ms{TEXT_RESET}{STYLE_RESET}", duration.as_millis());
 }

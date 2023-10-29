@@ -29,6 +29,7 @@ pub(crate) fn handle_response(response: HittResponse, args: &CliArguments) {
         &response.method,
         &response.url,
         response.status_code.as_u16(),
+        &response.duration,
     );
 
     if !args.hide_headers {
