@@ -8,7 +8,7 @@ name = "hitt"
 path = "src/main.rs"
 
 [dependencies]
-clap = { version = "4.4.7", features = ["derive"] }
+clap = { version = "4.3.24", features = ["derive"] }
 hitt-parser = { path = "../hitt-parser" }
 hitt-request = { path = "../hitt-request" }
 jsonformat = "2.0.0"
