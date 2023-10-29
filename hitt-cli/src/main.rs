@@ -1,10 +1,9 @@
 use std::str::FromStr;
 
 use hitt_request::{send_request, HittResponse};
-use tokio::fs;
 
 async fn get_file_content(path: std::path::PathBuf) -> anyhow::Result<String> {
-    let buffr = fs::read(path).await?;
+    let buffr = tokio::fs::read(path).await?;
 
     Ok(String::from_utf8_lossy(&buffr).to_string())
 }
@@ -21,6 +20,7 @@ struct CliConfig {
 }
 
 impl Default for CliConfig {
+    #[inline]
     fn default() -> CliConfig {
         CliConfig {
             fail_fast: true,
@@ -30,10 +30,12 @@ impl Default for CliConfig {
     }
 }
 
+#[inline]
 fn print_status(method: &str, url: &str, status_code: u16) {
     println!("{method} {url} {status_code}");
 }
 
+#[inline]
 fn print_headers(headers: &reqwest::header::HeaderMap) {
     for (key, value) in headers {
         if let Ok(value) = value.to_str() {
@@ -44,16 +46,19 @@ fn print_headers(headers: &reqwest::header::HeaderMap) {
     }
 }
 
+#[inline]
 fn format_json(input: &str) -> String {
     jsonformat::format(input, jsonformat::Indentation::TwoSpace)
 }
 
+#[inline]
 fn print_pretty_json(input: &str) {
     let formatted_json = format_json(input);
 
     println!("{formatted_json}");
 }
 
+#[inline]
 fn print_body(body: &str, content_type: Option<&str>) {
     match content_type {
         Some(content_type) => {
@@ -112,7 +117,6 @@ async fn main() -> anyhow::Result<(), Box<dyn std::error::Error>> {
                 Ok(response) => {
                     print_response(response, &config);
                 }
-
                 Err(request_error) => {
                     let error_message = format!(
                         "Error sending request {} {}\n{:#?}",
@@ -120,10 +124,10 @@ async fn main() -> anyhow::Result<(), Box<dyn std::error::Error>> {
                     );
 
                     if config.fail_fast {
-                        panic!("{}", error_message);
+                        panic!("{error_message}");
                     }
 
-                    eprintln!("{}", error_message);
+                    eprintln!("{error_message}");
                 }
             }
         }
