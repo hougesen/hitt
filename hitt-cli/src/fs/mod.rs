@@ -54,7 +54,7 @@ async fn handle_dir_entry(
             let entry_path = entry.path();
 
             if let Some(ext) = entry_path.extension() {
-                if ext == "http" {
+                if ext == "http" || ext == "rest" {
                     return handle_file(http_client, entry_path, args).await;
                 }
             }
