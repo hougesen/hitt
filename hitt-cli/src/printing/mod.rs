@@ -25,6 +25,7 @@ pub const TEXT_RESET: &str = "\x1B[39m";
 
 pub(crate) fn print_response(response: HittResponse, args: &CliArguments) {
     print_status(
+        &response.http_version,
         &response.method,
         &response.url,
         response.status_code.as_u16(),

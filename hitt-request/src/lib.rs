@@ -1,4 +1,4 @@
-use hitt_parser::HittRequest;
+use hitt_parser::{http, HittRequest};
 
 pub struct HittResponse {
     pub url: String,
@@ -6,6 +6,7 @@ pub struct HittResponse {
     pub status_code: reqwest::StatusCode,
     pub headers: reqwest::header::HeaderMap,
     pub body: String,
+    pub http_version: http::version::Version,
 }
 
 pub async fn send_request(
@@ -27,6 +28,8 @@ pub async fn send_request(
     let status_code = res.status();
     let headers = res.headers().to_owned();
 
+    let http_version = res.version();
+
     let body = res.text().await.unwrap_or_default();
 
     Ok(HittResponse {
@@ -35,5 +38,6 @@ pub async fn send_request(
         status_code,
         headers,
         body,
+        http_version,
     })
 }
