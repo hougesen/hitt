@@ -8,14 +8,14 @@ use printing::print_response;
 mod config;
 mod printing;
 
-async fn get_file_content(path: std::path::PathBuf) -> anyhow::Result<String> {
+async fn get_file_content(path: std::path::PathBuf) -> Result<String, std::io::Error> {
     let buffr = tokio::fs::read(path).await?;
 
     Ok(String::from_utf8_lossy(&buffr).to_string())
 }
 
 #[tokio::main]
-async fn main() -> anyhow::Result<(), Box<dyn std::error::Error>> {
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = CliArguments::parse();
 
     let http_client = reqwest::Client::new();
