@@ -9,12 +9,14 @@ pub enum RequestParseError {
 }
 
 impl From<http::method::InvalidMethod> for RequestParseError {
+    #[inline]
     fn from(value: http::method::InvalidMethod) -> Self {
         Self::InvalidHttpMethod(value)
     }
 }
 
 impl From<http::uri::InvalidUri> for RequestParseError {
+    #[inline]
     fn from(value: http::uri::InvalidUri) -> Self {
         RequestParseError::InvalidUri(value)
     }
@@ -385,18 +387,21 @@ enum RequestToken {
 }
 
 impl From<http::method::Method> for RequestToken {
+    #[inline]
     fn from(value: http::method::Method) -> Self {
         RequestToken::Method(value)
     }
 }
 
 impl From<http::uri::Uri> for RequestToken {
+    #[inline]
     fn from(value: http::uri::Uri) -> Self {
         RequestToken::Uri(value)
     }
 }
 
 impl From<HeaderToken> for RequestToken {
+    #[inline]
     fn from(value: HeaderToken) -> Self {
         RequestToken::Header(value)
     }
