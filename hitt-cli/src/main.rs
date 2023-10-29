@@ -1,33 +1,14 @@
+use clap::Parser;
+use config::CliArguments;
+use hitt_request::{send_request, HittResponse};
 use std::str::FromStr;
 
-use hitt_request::{send_request, HittResponse};
+mod config;
 
 async fn get_file_content(path: std::path::PathBuf) -> anyhow::Result<String> {
     let buffr = tokio::fs::read(path).await?;
 
     Ok(String::from_utf8_lossy(&buffr).to_string())
-}
-
-struct CliConfig {
-    /// Crash on request error if set to true
-    fail_fast: bool,
-
-    /// Whether or not to show response body
-    print_body: bool,
-
-    /// Whether or not to show response headers
-    print_headers: bool,
-}
-
-impl Default for CliConfig {
-    #[inline]
-    fn default() -> CliConfig {
-        CliConfig {
-            fail_fast: true,
-            print_body: true,
-            print_headers: true,
-        }
-    }
 }
 
 #[inline]
@@ -72,18 +53,20 @@ fn print_body(body: &str, content_type: Option<&str>) {
     }
 }
 
-fn print_response(response: HittResponse, config: &CliConfig) {
+fn print_response(response: HittResponse, args: &CliArguments) {
     print_status(
         &response.method,
         &response.url,
         response.status_code.as_u16(),
     );
 
-    if config.print_headers {
+    if !args.hide_headers {
+        println!("");
+
         print_headers(&response.headers);
     }
 
-    if config.print_body && !response.body.is_empty() {
+    if !args.hide_body && !response.body.is_empty() {
         let content_type = response
             .headers
             .get("content-type")
@@ -93,43 +76,34 @@ fn print_response(response: HittResponse, config: &CliConfig) {
 
         print_body(&response.body, content_type);
     }
+
+    if args.fail_fast
+        && (response.status_code.is_client_error() || response.status_code.is_server_error())
+    {
+        // NOTE: should the exit code be changed?
+        std::process::exit(0);
+    }
 }
 
 #[tokio::main]
 async fn main() -> anyhow::Result<(), Box<dyn std::error::Error>> {
-    let args = std::env::args();
-
-    if args.len() <= 1 {
-        std::process::exit(1);
-    }
-
-    let config = CliConfig::default();
+    let args = CliArguments::parse();
 
     let http_client = reqwest::Client::new();
 
-    if let Some(path_arg) = args.into_iter().nth(1) {
-        let path = std::path::PathBuf::from_str(&path_arg)?;
+    let path = std::path::PathBuf::from_str(&args.path)?;
 
-        let fcontent = get_file_content(path).await?;
+    let fcontent = get_file_content(path).await?;
 
-        for req in hitt_parser::parse_requests(&fcontent).unwrap() {
-            match send_request(&http_client, &req).await {
-                Ok(response) => {
-                    print_response(response, &config);
-                }
-                Err(request_error) => {
-                    let error_message = format!(
-                        "Error sending request {} {}\n{:#?}",
-                        req.method, req.uri, request_error,
-                    );
-
-                    if config.fail_fast {
-                        panic!("{error_message}");
-                    }
-
-                    eprintln!("{error_message}");
-                }
+    for req in hitt_parser::parse_requests(&fcontent).unwrap() {
+        match send_request(&http_client, &req).await {
+            Ok(response) => {
+                print_response(response, &args);
             }
+            Err(request_error) => panic!(
+                "Error sending request {} {}\n{:#?}",
+                req.method, req.uri, request_error,
+            ),
         }
     }
 
