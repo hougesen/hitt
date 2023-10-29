@@ -1,4 +1,3 @@
-/// Simple program to greet a person
 #[derive(clap::Parser, Debug)]
 #[clap(
     author = "Mads Hougesen, mhouge.dk",
