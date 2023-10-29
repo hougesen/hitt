@@ -40,7 +40,12 @@ fn print_pretty_json(input: &str) {
 }
 
 #[inline]
-fn print_body(body: &str, content_type: Option<&str>) {
+fn print_body(body: &str, content_type: Option<&str>, disable_pretty_printing: bool) {
+    if disable_pretty_printing {
+        println!("{body}");
+        return;
+    }
+
     match content_type {
         Some(content_type) => {
             if content_type.starts_with("application/json") {
@@ -74,7 +79,7 @@ fn print_response(response: HittResponse, args: &CliArguments) {
 
         println!("");
 
-        print_body(&response.body, content_type);
+        print_body(&response.body, content_type, args.disable_formatting);
     }
 
     if args.fail_fast
