@@ -2,39 +2,44 @@ use std::str::FromStr;
 
 use clap::Parser;
 use config::CliArguments;
-use hitt_request::send_request;
-use printing::print_response;
+use fs::{handle_dir, handle_file, is_directory};
+use printing::print_error;
 
 mod config;
+mod fs;
 mod printing;
 
-async fn get_file_content(path: std::path::PathBuf) -> Result<String, std::io::Error> {
-    let buffr = tokio::fs::read(path).await?;
-
-    Ok(String::from_utf8_lossy(&buffr).to_string())
+async fn run(
+    http_client: &reqwest::Client,
+    path: std::path::PathBuf,
+    args: &CliArguments,
+) -> Result<(), std::io::Error> {
+    match is_directory(&path).await {
+        Ok(true) => handle_dir(http_client, path, args).await,
+        Ok(false) => handle_file(http_client, path, args).await,
+        Err(io_error) => {
+            print_error(format!(
+                "error checking if {path:?} is a directory\n{io_error:#?}"
+            ));
+            std::process::exit(1);
+        }
+    }
 }
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
+async fn main() -> Result<(), std::io::Error> {
     let args = CliArguments::parse();
 
     let http_client = reqwest::Client::new();
 
-    let path = std::path::PathBuf::from_str(&args.path)?;
-
-    let fcontent = get_file_content(path).await?;
-
-    for req in hitt_parser::parse_requests(&fcontent).unwrap() {
-        match send_request(&http_client, &req).await {
-            Ok(response) => {
-                print_response(response, &args);
-            }
-            Err(request_error) => panic!(
-                "Error sending request {} {}\n{:#?}",
-                req.method, req.uri, request_error,
-            ),
+    match std::path::PathBuf::from_str(&args.path) {
+        Ok(path) => run(&http_client, path, &args).await,
+        Err(parse_path_error) => {
+            print_error(format!(
+                "error parsing path {} as filepath\n{parse_path_error:#?}",
+                args.path
+            ));
+            std::process::exit(1);
         }
     }
-
-    Ok(())
 }

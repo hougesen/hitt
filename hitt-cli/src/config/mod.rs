@@ -24,4 +24,8 @@ pub(crate) struct CliArguments {
     /// Disable pretty printing of response body
     #[arg(long, default_value_t = false)]
     pub(crate) disable_formatting: bool,
+
+    /// Enable to run directory recursively
+    #[arg(long, short, default_value_t = false)]
+    pub(crate) recursive: bool,
 }

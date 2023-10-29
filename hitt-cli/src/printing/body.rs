@@ -7,7 +7,7 @@ fn format_json(input: &str) -> String {
 
 #[inline]
 fn __print_body(body: &str) {
-    println!("{TEXT_YELLOW}{body}{TEXT_RESET}")
+    println!("\n{TEXT_YELLOW}{body}{TEXT_RESET}")
 }
 
 #[inline]

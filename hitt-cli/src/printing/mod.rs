@@ -23,7 +23,7 @@ pub const TEXT_YELLOW: &str = "\x1B[33m";
 
 pub const TEXT_RESET: &str = "\x1B[39m";
 
-pub(crate) fn print_response(response: HittResponse, args: &CliArguments) {
+pub(crate) fn handle_response(response: HittResponse, args: &CliArguments) {
     print_status(
         &response.http_version,
         &response.method,
@@ -41,8 +41,6 @@ pub(crate) fn print_response(response: HittResponse, args: &CliArguments) {
             .get("content-type")
             .map(|x| x.to_str().expect("response content-type to be valid"));
 
-        println!();
-
         print_body(&response.body, content_type, args.disable_formatting);
     }
 
@@ -52,4 +50,9 @@ pub(crate) fn print_response(response: HittResponse, args: &CliArguments) {
         // NOTE: should the exit code be changed?
         std::process::exit(0);
     }
+}
+
+#[inline]
+pub fn print_error(message: String) {
+    eprintln!("{TEXT_RED}hitt: {message}{TEXT_RESET}")
 }
