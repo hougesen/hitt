@@ -1,5 +1,7 @@
 use std::str::FromStr;
 
+pub use http;
+
 #[derive(Debug)]
 pub enum RequestParseError {
     InvalidHttpMethod(http::method::InvalidMethod),
