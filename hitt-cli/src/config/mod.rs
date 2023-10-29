@@ -22,6 +22,6 @@ pub(crate) struct CliArguments {
     pub(crate) hide_headers: bool,
 
     /// Disable pretty printing of response body
-    #[arg(long, default_value_t = true)]
+    #[arg(long, default_value_t = false)]
     pub(crate) disable_formatting: bool,
 }
