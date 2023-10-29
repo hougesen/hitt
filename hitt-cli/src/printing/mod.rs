@@ -11,6 +11,18 @@ mod body;
 mod headers;
 mod status;
 
+pub const STYLE_RESET: &str = "\x1B[0m";
+
+pub const STYLE_BOLD: &str = "\x1B[1m";
+
+pub const TEXT_RED: &str = "\x1B[31m";
+
+pub const TEXT_GREEN: &str = "\x1B[32m";
+
+pub const TEXT_YELLOW: &str = "\x1B[33m";
+
+pub const TEXT_RESET: &str = "\x1B[39m";
+
 pub(crate) fn print_response(response: HittResponse, args: &CliArguments) {
     print_status(
         &response.method,
@@ -19,8 +31,6 @@ pub(crate) fn print_response(response: HittResponse, args: &CliArguments) {
     );
 
     if !args.hide_headers {
-        println!();
-
         print_headers(&response.headers);
     }
 
