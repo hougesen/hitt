@@ -54,6 +54,6 @@ pub(crate) fn handle_response(response: HittResponse, args: &CliArguments) {
 }
 
 #[inline]
-pub fn print_error(message: String) {
+pub(crate) fn print_error(message: String) {
     eprintln!("{TEXT_RED}hitt: {message}{TEXT_RESET}")
 }

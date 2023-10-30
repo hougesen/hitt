@@ -1,9 +1,6 @@
-use crate::printing::{TEXT_RESET, TEXT_YELLOW};
+use hitt_formatter::ContentType;
 
-#[inline]
-fn format_json(input: &str) -> String {
-    jsonformat::format(input, jsonformat::Indentation::TwoSpace)
-}
+use crate::printing::{TEXT_RESET, TEXT_YELLOW};
 
 #[inline]
 fn __print_body(body: &str) {
@@ -18,13 +15,16 @@ pub(crate) fn print_body(body: &str, content_type: Option<&str>, disable_pretty_
     }
 
     match content_type {
-        Some(content_type) => {
-            if content_type.starts_with("application/json") {
-                __print_body(&format_json(body));
-            } else {
-                __print_body(body);
+        Some(content_type) => match ContentType::from(content_type) {
+            ContentType::Unknown => __print_body(body),
+            i => {
+                if let Some(formatted) = hitt_formatter::format(body, i) {
+                    __print_body(&formatted)
+                } else {
+                    __print_body(body)
+                }
             }
-        }
+        },
         None => __print_body(body),
     }
 }
