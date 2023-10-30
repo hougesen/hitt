@@ -1,0 +1,8 @@
+POST https://jsonplaceholder.typicode.com/posts
+content-type: application/json
+
+{
+    "title": "hitt test",
+    "body": "example hitt requests with json body",
+    "userId": 1
+}
