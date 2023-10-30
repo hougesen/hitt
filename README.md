@@ -8,7 +8,7 @@ To send a request create a file ending in `.http`.
 
 The syntax of `.http` files is pretty straightforward:
 
-```
+```text
 GET https://mhouge.dk/
 ```
 
@@ -24,7 +24,7 @@ That is all that is need to send a request.
 
 Request headers can be added by writing key value pairs (`KEY:VALUE`) on a new line after the method and URL:
 
-```
+```text
 GET https://mhouge.dk/
 key:value
 ```
@@ -37,7 +37,7 @@ A body can be sent with the request by creating a blank line, followed by the de
 
 Please note, hitt **does not** infer content type. That has to be written as a header.
 
-```
+```text
 POST https://mhouge.dk/
 content-type:application/json
 
@@ -50,7 +50,7 @@ content-type:application/json
 
 Multiple requests can be written in a single file by adding a line with `###` as a separator:
 
-```
+```text
 GET https://mhouge.dk/
 
 ###
