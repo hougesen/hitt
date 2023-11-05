@@ -9,9 +9,9 @@ name = "hitt"
 path = "src/main.rs"
 
 [dependencies]
-async-recursion = "1.0.5"
 clap = { version = "4.3.24", features = ["derive"] }
 console = "0.15.7"
+ignore = "0.4.20"
 hitt-formatter = { path = "../hitt-formatter" }
 hitt-parser = { path = "../hitt-parser" }
 hitt-request = { path = "../hitt-request" }

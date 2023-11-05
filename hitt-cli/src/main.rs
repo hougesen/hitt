@@ -1,6 +1,5 @@
 use clap::Parser;
-use commands::new::new_command;
-use commands::run::run_command;
+use commands::{new::new_command, run::run_command};
 use config::{Cli, Commands};
 
 mod commands;
