@@ -2,32 +2,14 @@ use std::str::FromStr;
 
 pub use http;
 
-#[derive(Debug)]
-pub enum RequestParseError {
-    InvalidHttpMethod(http::method::InvalidMethod),
-    InvalidUri(http::uri::InvalidUri),
-    MissingMethod,
-    MissingUri,
-}
+use crate::error::RequestParseError;
 
-impl From<http::method::InvalidMethod> for RequestParseError {
-    #[inline]
-    fn from(value: http::method::InvalidMethod) -> Self {
-        Self::InvalidHttpMethod(value)
-    }
-}
-
-impl From<http::uri::InvalidUri> for RequestParseError {
-    #[inline]
-    fn from(value: http::uri::InvalidUri) -> Self {
-        RequestParseError::InvalidUri(value)
-    }
-}
+pub mod error;
 
 #[inline]
 fn parse_method_input(
     chars: &mut core::iter::Enumerate<std::str::Chars>,
-) -> Result<http::method::Method, http::method::InvalidMethod> {
+) -> Result<http::method::Method, RequestParseError> {
     let mut method = String::new();
 
     for (_i, c) in chars {
@@ -40,7 +22,10 @@ fn parse_method_input(
         }
     }
 
-    http::method::Method::from_str(&method.to_uppercase())
+    let uppercase_method = method.to_uppercase();
+
+    http::method::Method::from_str(&uppercase_method)
+        .map_err(|_| RequestParseError::InvalidHttpMethod(uppercase_method))
 }
 
 #[cfg(test)]
@@ -79,7 +64,7 @@ mod test_parse_method_input {
 #[inline]
 fn parse_uri_input(
     chars: &mut core::iter::Enumerate<std::str::Chars>,
-) -> Result<http::uri::Uri, http::uri::InvalidUri> {
+) -> Result<http::uri::Uri, RequestParseError> {
     let mut uri = String::new();
 
     for (_i, c) in chars {
@@ -92,7 +77,7 @@ fn parse_uri_input(
         }
     }
 
-    http::uri::Uri::from_str(&uri)
+    http::uri::Uri::from_str(&uri).map_err(|_| RequestParseError::InvalidUri(uri))
 }
 
 #[cfg(test)]
@@ -311,7 +296,9 @@ struct HeaderToken {
 }
 
 #[inline]
-fn parse_header(line: core::iter::Enumerate<std::str::Chars>) -> Option<HeaderToken> {
+fn parse_header(
+    line: core::iter::Enumerate<std::str::Chars>,
+) -> Result<Option<HeaderToken>, RequestParseError> {
     let mut key = String::new();
     let mut value = String::new();
     let mut is_key = true;
@@ -336,13 +323,14 @@ fn parse_header(line: core::iter::Enumerate<std::str::Chars>) -> Option<HeaderTo
     }
 
     if !key.is_empty() {
-        let k = http::HeaderName::from_str(&key).expect("Unable to parse key as header key");
-        let v = http::HeaderValue::from_str(&value).expect("Unable to parse value as header value");
-
-        return Some(HeaderToken { key: k, value: v });
+        return Ok(Some(HeaderToken {
+            key: http::HeaderName::from_str(&key)
+                .map_err(|_| RequestParseError::InvalidHeaderName(key.to_string()))?,
+            value: http::HeaderValue::from_str(&value)
+                .map_err(|_| RequestParseError::InvalidHeaderValue(value.to_string()))?,
+        }));
     }
-
-    None
+    Ok(None)
 }
 
 #[cfg(test)]
@@ -357,7 +345,8 @@ mod test_parse_header {
             let line = format!("header{i}: value{i}");
 
             let result = parse_header(line.chars().enumerate())
-                .expect("It should be able to parse valid headers");
+                .expect("It should be able to parse valid headers")
+                .expect("headers to be defined");
 
             let expected_key = http::HeaderName::from_str(&format!("header{i}"))
                 .expect("expected key to be valid");
@@ -373,7 +362,7 @@ mod test_parse_header {
 
     #[test]
     fn it_should_ignore_empty_lines() {
-        let result = parse_header("".chars().enumerate());
+        let result = parse_header("".chars().enumerate()).expect("it to be parseable");
 
         assert!(result.is_none());
     }
@@ -463,7 +452,7 @@ fn tokenize(buffer: &str) -> Result<Vec<RequestToken>, RequestParseError> {
             ParserMode::Headers => {
                 if line.trim().is_empty() {
                     parser_mode = ParserMode::Body;
-                } else if let Some(header_token) = parse_header(line.chars().enumerate()) {
+                } else if let Some(header_token) = parse_header(line.chars().enumerate())? {
                     tokens.push(RequestToken::Header(header_token));
                 }
             }

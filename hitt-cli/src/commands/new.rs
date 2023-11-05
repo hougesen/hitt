@@ -5,6 +5,7 @@ use hitt_parser::http::{HeaderName, HeaderValue, Uri};
 
 use crate::{
     config::NewCommandArguments,
+    error::HittCliError,
     terminal::{
         editor::editor_input,
         input::{confirm_input, select_input, text_input_prompt},
@@ -88,13 +89,13 @@ fn set_body(term: &Term, content_type: Option<&str>) -> Result<Option<String>, s
     editor_input(term, content_type)
 }
 
-async fn save_request(
+fn save_request(
     path: &std::path::Path,
     method: String,
     url: String,
     headers: &[(String, String)],
     body: Option<String>,
-) -> Result<(), std::io::Error> {
+) -> Result<(), HittCliError> {
     let mut contents = format!("{method} {url}\n");
 
     if !headers.is_empty() {
@@ -112,7 +113,7 @@ async fn save_request(
         contents.push('\n');
     }
 
-    tokio::fs::write(path, contents).await
+    std::fs::write(path, contents).map_err(|error| HittCliError::IoWrite(path.to_path_buf(), error))
 }
 
 async fn check_if_exist(term: &Term, path: &std::path::Path) -> Result<(), std::io::Error> {
@@ -131,7 +132,7 @@ async fn check_if_exist(term: &Term, path: &std::path::Path) -> Result<(), std::
     Ok(())
 }
 
-pub(crate) async fn new_command(args: &NewCommandArguments) -> Result<(), std::io::Error> {
+pub(crate) async fn new_command(args: &NewCommandArguments) -> Result<(), HittCliError> {
     let term = console::Term::stdout();
 
     check_if_exist(&term, &args.path).await?;
@@ -144,5 +145,5 @@ pub(crate) async fn new_command(args: &NewCommandArguments) -> Result<(), std::i
 
     let body = set_body(&term, try_find_content_type(&headers))?;
 
-    save_request(&args.path, method, url, &headers, body).await
+    save_request(&args.path, method, url, &headers, body)
 }

@@ -1,32 +1,37 @@
+use hitt_request::send_request;
+
 use crate::{
     config::RunCommandArguments,
-    fs::{find_http_files, handle_file},
-    terminal::print_error,
+    error::HittCliError,
+    fs::{find_http_files, parse_requests_threaded},
+    terminal::handle_response,
 };
 
-pub(crate) async fn run_command(args: &RunCommandArguments) -> Result<(), std::io::Error> {
+pub(crate) async fn run_command(args: &RunCommandArguments) -> Result<(), HittCliError> {
     let http_client = reqwest::Client::new();
 
-    // TODO: figure out a way to remove this clone
-    let cloned_path = args.path.clone();
+    let http_file_paths = match std::fs::metadata(&args.path).map(|metadata| metadata.is_dir())? {
+        true => find_http_files(&args.path),
+        false => vec![args.path.clone()],
+    };
 
-    match std::fs::metadata(&args.path).map(|metadata| metadata.is_dir()) {
-        Ok(true) => {
-            let http_files = find_http_files(&args.path);
+    let parsed_files = parse_requests_threaded(http_file_paths).await?;
 
-            for http_file in http_files {
-                handle_file(&http_client, http_file, args).await?;
-            }
+    for (path, file) in parsed_files {
+        println!("hitt: running {:?}", path);
 
-            Ok(())
-        }
-        Ok(false) => handle_file(&http_client, cloned_path, args).await,
-        Err(io_error) => {
-            print_error(format!(
-                "error checking if {:?} is a directory\n{io_error:#?}",
-                args.path
-            ));
-            std::process::exit(1);
+        for req in file {
+            match send_request(&http_client, &req).await {
+                Ok(response) => {
+                    handle_response(response, args);
+                    Ok(())
+                }
+                Err(request_error) => {
+                    Err(HittCliError::Reqwest(req.method, req.uri, request_error))
+                }
+            }?;
         }
     }
+
+    Ok(())
 }
