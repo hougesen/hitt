@@ -19,7 +19,7 @@ pub(crate) enum Commands {
 pub(crate) struct RunCommandArguments {
     /// Path to .http file, or directory if supplied with the `--recursive` argument
     #[arg()]
-    pub(crate) path: String,
+    pub(crate) path: std::path::PathBuf,
 
     /// Exit on error response status code
     #[arg(long, default_value_t = false)]
@@ -45,7 +45,6 @@ pub(crate) struct RunCommandArguments {
 /// Create new http request
 #[derive(Args, Debug)]
 pub(crate) struct NewCommandArguments {
-    /// Path to .http file, or directory if supplied with the `--recursive` argument
     #[arg()]
-    pub(crate) path: String,
+    pub(crate) path: std::path::PathBuf,
 }

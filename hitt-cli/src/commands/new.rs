@@ -7,7 +7,7 @@ use crate::{
     config::NewCommandArguments,
     terminal::{
         input::{boolean_input, select_input, text_input_prompt},
-        print_error, TEXT_RED, TEXT_RESET,
+        TEXT_RED, TEXT_RESET,
     },
 };
 
@@ -107,26 +107,15 @@ async fn save_request(
 }
 
 pub(crate) async fn new_command(args: &NewCommandArguments) -> Result<(), std::io::Error> {
-    match std::path::PathBuf::from_str(&args.path) {
-        Ok(path) => {
-            let term = console::Term::stdout();
+    let term = console::Term::stdout();
 
-            let method = set_method(&term)?;
+    let method = set_method(&term)?;
 
-            let url = set_url(&term)?;
+    let url = set_url(&term)?;
 
-            let headers = set_headers(&term)?;
+    let headers = set_headers(&term)?;
 
-            let body = set_body(&term)?;
+    let body = set_body(&term)?;
 
-            save_request(&path, method, url, &headers, body).await
-        }
-        Err(parse_path_error) => {
-            print_error(format!(
-                "error parsing path {} as filepath\n{parse_path_error:#?}",
-                args.path
-            ));
-            std::process::exit(1);
-        }
-    }
+    save_request(&args.path, method, url, &headers, body).await
 }
