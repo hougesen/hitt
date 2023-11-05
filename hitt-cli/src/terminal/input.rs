@@ -33,7 +33,11 @@ pub(crate) fn text_input_prompt(
     Ok(input)
 }
 
-pub(crate) fn boolean_input(term: &Term, prompt: &str) -> Result<bool, std::io::Error> {
+pub(crate) fn boolean_input(
+    term: &Term,
+    prompt: &str,
+    default_value: Key,
+) -> Result<bool, std::io::Error> {
     loop {
         let mut line_count = 0;
 
@@ -44,12 +48,12 @@ pub(crate) fn boolean_input(term: &Term, prompt: &str) -> Result<bool, std::io::
 
         term.clear_last_lines(line_count)?;
 
-        if input == Key::Char('y') || input == Key::Enter {
+        if input == Key::Char('y') || (input == Key::Enter && default_value == Key::Char('y')) {
             write_prompt_answer(term, prompt, "y")?;
             return Ok(true);
         }
 
-        if input == Key::Char('n') {
+        if input == Key::Char('n') || (input == Key::Enter && default_value == Key::Char('n')) {
             write_prompt_answer(term, prompt, "n")?;
             return Ok(false);
         }

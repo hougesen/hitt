@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-use console::Term;
+use console::{Key, Term};
 use hitt_parser::http::{HeaderName, HeaderValue, Uri};
 
 use crate::{
@@ -31,7 +31,8 @@ fn set_url(term: &Term) -> Result<String, std::io::Error> {
 fn set_headers(term: &Term) -> Result<Vec<(String, String)>, std::io::Error> {
     let mut headers = Vec::new();
 
-    let mut writing_headers = boolean_input(term, "Do you want to add headers? (Y/n)")?;
+    let mut writing_headers =
+        boolean_input(term, "Do you want to add headers? (Y/n)", Key::Char('y'))?;
 
     let key_validator = |input: &str| !input.is_empty() && HeaderName::from_str(input).is_ok();
     let format_key_error =
@@ -58,14 +59,18 @@ fn set_headers(term: &Term) -> Result<Vec<(String, String)>, std::io::Error> {
 
         headers.push((key, value));
 
-        writing_headers = boolean_input(term, "Do you want to add more headers? (Y/n)")?;
+        writing_headers = boolean_input(
+            term,
+            "Do you want to add more headers? (Y/n)",
+            Key::Char('y'),
+        )?;
     }
 
     Ok(headers)
 }
 
 fn set_body(term: &Term) -> Result<Option<String>, std::io::Error> {
-    if !boolean_input(term, "Do you want to add a body? (Y/n)")? {
+    if !boolean_input(term, "Do you want to add a body? (Y/n)", Key::Char('y'))? {
         return Ok(None);
     }
 
@@ -106,8 +111,26 @@ async fn save_request(
     tokio::fs::write(path, contents).await
 }
 
+async fn check_if_exist(term: &Term, path: &std::path::Path) -> Result<(), std::io::Error> {
+    if tokio::fs::try_exists(path).await? {
+        let should_continue = boolean_input(
+            term,
+            &format!("File '{path:?}' already exist, do you want to continue? (y/N)"),
+            Key::Char('n'),
+        )?;
+
+        if !should_continue {
+            std::process::exit(0);
+        }
+    }
+
+    Ok(())
+}
+
 pub(crate) async fn new_command(args: &NewCommandArguments) -> Result<(), std::io::Error> {
     let term = console::Term::stdout();
+
+    check_if_exist(&term, &args.path).await?;
 
     let method = set_method(&term)?;
 
