@@ -1,12 +1,9 @@
 use console::Term;
 use hitt_request::HittResponse;
 
-use crate::{
-    config::RunCommandArguments,
-    terminal::{body::print_body, headers::print_headers},
-};
+use crate::config::RunCommandArguments;
 
-use self::status::print_status;
+use self::{body::print_body, headers::print_headers, status::print_status};
 
 pub(crate) mod body;
 pub(crate) mod editor;
@@ -54,11 +51,6 @@ pub(crate) fn handle_response(response: HittResponse, args: &RunCommandArguments
         // NOTE: should the exit code be changed?
         std::process::exit(0);
     }
-}
-
-#[inline]
-pub(crate) fn print_error(message: String) {
-    eprintln!("{TEXT_RED}hitt: {message}{TEXT_RESET}")
 }
 
 pub(crate) fn write_prompt(term: &Term, prompt: &str) -> Result<(), std::io::Error> {
