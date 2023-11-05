@@ -1,13 +1,25 @@
-#[derive(clap::Parser, Debug)]
-#[clap(
-    author = "Mads Hougesen, mhouge.dk",
-    version,
-    about = "hitt is a command line HTTP testing tool focused on speed and simplicity."
-)]
-pub(crate) struct CliArguments {
+use clap::{Args, Parser, Subcommand};
+
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
+#[command(propagate_version = true)]
+pub(crate) struct Cli {
+    #[command(subcommand)]
+    pub command: Commands,
+}
+
+#[derive(Subcommand, Debug)]
+pub(crate) enum Commands {
+    Run(RunCommandArguments),
+    New(NewCommandArguments),
+}
+
+/// Send request
+#[derive(Args, Debug)]
+pub(crate) struct RunCommandArguments {
     /// Path to .http file, or directory if supplied with the `--recursive` argument
     #[arg()]
-    pub(crate) path: String,
+    pub(crate) path: std::path::PathBuf,
 
     /// Exit on error response status code
     #[arg(long, default_value_t = false)]
@@ -28,4 +40,11 @@ pub(crate) struct CliArguments {
     /// Enable to run directory recursively
     #[arg(long, short, default_value_t = false)]
     pub(crate) recursive: bool,
+}
+
+/// Create new http request
+#[derive(Args, Debug)]
+pub(crate) struct NewCommandArguments {
+    #[arg()]
+    pub(crate) path: std::path::PathBuf,
 }

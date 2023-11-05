@@ -1,4 +1,4 @@
-use crate::printing::{TEXT_RESET, TEXT_YELLOW};
+use crate::terminal::{TEXT_RESET, TEXT_YELLOW};
 
 use super::print_error;
 

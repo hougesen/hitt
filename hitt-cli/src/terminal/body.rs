@@ -1,6 +1,6 @@
 use hitt_formatter::ContentType;
 
-use crate::printing::{TEXT_RESET, TEXT_YELLOW};
+use crate::terminal::{TEXT_RESET, TEXT_YELLOW};
 
 #[inline]
 fn __print_body(body: &str) {

@@ -15,7 +15,7 @@ GET https://mhouge.dk/
 The file can then be run using the following command:
 
 ```sh
-hitt <PATH_TO_FILE>
+hitt run <PATH_TO_FILE>
 ```
 
 That is all that is need to send a request.
@@ -63,7 +63,7 @@ GET https://mhouge.dk/
 By default, hitt does not exit on error status codes. That behavior can be changed by supplying the `--fail-fast` argument.
 
 ```sh
-hitt --fail-fast <PATH_TO_FOLDER>
+hitt run --fail-fast <PATH_TO_FOLDER>
 ```
 
 ### Running all files in directory
@@ -71,7 +71,7 @@ hitt --fail-fast <PATH_TO_FOLDER>
 The `--recursive` argument can be passed to run all files in a directory:
 
 ```sh
-hitt --recursive <PATH_TO_FOLDER>
+hitt run --recursive <PATH_TO_FOLDER>
 ```
 
 The order of each file execution is platform and file system dependent. That might change in the future, but for now you **should not** rely on the order.
@@ -81,7 +81,7 @@ The order of each file execution is platform and file system dependent. That mig
 The `--hide-headers` argument can be passed to hide the response headers in the output:
 
 ```sh
-hitt --hide-headers <PATH_TO_FILE>
+hitt run --hide-headers <PATH_TO_FILE>
 ```
 
 ### Hiding response body
@@ -89,7 +89,7 @@ hitt --hide-headers <PATH_TO_FILE>
 The `--hide-body` argument can be passed to hide the response body in the output:
 
 ```sh
-hitt --hide-body <PATH_TO_FILE>
+hitt run --hide-body <PATH_TO_FILE>
 ```
 
 ### Disabling pretty printing
@@ -97,7 +97,7 @@ hitt --hide-body <PATH_TO_FILE>
 The `--disable-formatting` argument can be passed to disable pretty printing of response body:
 
 ```sh
-hitt --disable-formatting <PATH_TO_FILE>
+hitt run --disable-formatting <PATH_TO_FILE>
 ```
 
 ## Disclaimer
