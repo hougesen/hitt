@@ -9,6 +9,7 @@ use crate::{
 use self::status::print_status;
 
 pub(crate) mod body;
+pub(crate) mod editor;
 pub(crate) mod headers;
 pub(crate) mod input;
 pub(crate) mod status;

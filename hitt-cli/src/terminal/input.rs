@@ -33,7 +33,7 @@ pub(crate) fn text_input_prompt(
     Ok(input)
 }
 
-pub(crate) fn boolean_input(
+pub(crate) fn confirm_input(
     term: &Term,
     prompt: &str,
     default_value: Key,
@@ -48,12 +48,18 @@ pub(crate) fn boolean_input(
 
         term.clear_last_lines(line_count)?;
 
-        if input == Key::Char('y') || (input == Key::Enter && default_value == Key::Char('y')) {
+        if input == Key::Char('y')
+            || input == Key::Char('Y')
+            || (input == Key::Enter && default_value == Key::Char('y'))
+        {
             write_prompt_answer(term, prompt, "y")?;
             return Ok(true);
         }
 
-        if input == Key::Char('n') || (input == Key::Enter && default_value == Key::Char('n')) {
+        if input == Key::Char('n')
+            || input == Key::Char('N')
+            || (input == Key::Enter && default_value == Key::Char('n'))
+        {
             write_prompt_answer(term, prompt, "n")?;
             return Ok(false);
         }
@@ -117,3 +123,76 @@ pub(crate) fn select_input(
 
     Ok(selected)
 }
+
+/*
+pub(crate) fn editor_input(term: &Term) -> Result<String, std::io::Error> {
+    let mut input: Vec<Vec<char>> = vec![vec![]];
+
+    loop {
+        let mut line_count = 0;
+
+        write_prompt(term, "Body input")?;
+        line_count += 1;
+
+        let input_len = input.len();
+
+        for line in input.iter() {
+            let formatted_line: String = line.iter().collect();
+
+            term.write
+            term.write_line(&formatted_line)?;
+            line_count += 1;
+        }
+
+        let (x, y) = term.size();
+
+        term.move_cursor_to(0, x as usize - 3)?;
+
+        match term.read_key()? {
+            Key::Unknown => todo!(),
+            Key::UnknownEscSeq(_) => todo!(),
+
+            Key::Enter => input.push(Vec::new()),
+            Key::Escape => todo!(),
+            Key::Backspace => {
+                if input[input_len - 1].is_empty() {
+                    if input_len > 1 {
+                        input.pop();
+                    }
+                } else {
+                    input[input_len - 1].pop();
+                }
+            }
+            Key::Home => todo!(),
+            Key::End => break,
+            Key::Tab => todo!(),
+            Key::BackTab => todo!(),
+            Key::Alt => todo!(),
+            Key::Del => todo!(),
+            Key::Shift => todo!(),
+            Key::Insert => todo!(),
+            Key::ArrowLeft
+            | Key::ArrowRight
+            | Key::ArrowUp
+            | Key::ArrowDown
+            | Key::PageUp
+            | Key::PageDown => continue,
+            Key::Char(ch) => input[input_len - 1].push(ch),
+            v => todo!(),
+        };
+
+        term.clear_last_lines(line_count)?;
+    }
+
+    let mut x = String::new();
+
+    for line in input {
+        for c in line {
+            x.push(c);
+        }
+        x.push('\n');
+    }
+
+    Ok(x.trim().to_string())
+}
+*/
