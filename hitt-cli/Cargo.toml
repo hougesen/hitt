@@ -2,6 +2,7 @@
 name = "hitt-cli"
 version = "0.0.1"
 edition = "2021"
+description = "Command line HTTP testing tool focused on speed and simplicity"
 
 [[bin]]
 name = "hitt"
@@ -10,6 +11,7 @@ path = "src/main.rs"
 [dependencies]
 async-recursion = "1.0.5"
 clap = { version = "4.3.24", features = ["derive"] }
+console = "0.15.7"
 hitt-formatter = { path = "../hitt-formatter" }
 hitt-parser = { path = "../hitt-parser" }
 hitt-request = { path = "../hitt-request" }

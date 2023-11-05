@@ -2,8 +2,8 @@ use async_recursion::async_recursion;
 use hitt_request::send_request;
 
 use crate::{
-    config::CliArguments,
-    printing::{handle_response, print_error},
+    config::RunCommandArguments,
+    terminal::{handle_response, print_error},
 };
 
 async fn get_file_content(path: std::path::PathBuf) -> Result<String, std::io::Error> {
@@ -19,7 +19,7 @@ pub(crate) async fn is_directory(path: &std::path::Path) -> Result<bool, std::io
 pub(crate) async fn handle_file(
     http_client: &reqwest::Client,
     path: std::path::PathBuf,
-    args: &CliArguments,
+    args: &RunCommandArguments,
 ) -> Result<(), std::io::Error> {
     println!("hitt: running {path:?}");
 
@@ -44,7 +44,7 @@ pub(crate) async fn handle_file(
 async fn handle_dir_entry(
     http_client: &reqwest::Client,
     entry: tokio::fs::DirEntry,
-    args: &CliArguments,
+    args: &RunCommandArguments,
 ) -> Result<(), std::io::Error> {
     let metadata = entry.metadata().await?;
 
@@ -68,7 +68,7 @@ async fn handle_dir_entry(
 pub(crate) async fn handle_dir(
     http_client: &reqwest::Client,
     path: std::path::PathBuf,
-    args: &CliArguments,
+    args: &RunCommandArguments,
 ) -> Result<(), std::io::Error> {
     if !args.recursive {
         print_error(format!(

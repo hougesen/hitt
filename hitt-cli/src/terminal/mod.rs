@@ -1,15 +1,17 @@
+use console::Term;
 use hitt_request::HittResponse;
 
 use crate::{
-    config::CliArguments,
-    printing::{body::print_body, headers::print_headers},
+    config::RunCommandArguments,
+    terminal::{body::print_body, headers::print_headers},
 };
 
 use self::status::print_status;
 
-mod body;
-mod headers;
-mod status;
+pub(crate) mod body;
+pub(crate) mod headers;
+pub(crate) mod input;
+pub(crate) mod status;
 
 pub const STYLE_RESET: &str = "\x1B[0m";
 
@@ -23,7 +25,7 @@ pub const TEXT_YELLOW: &str = "\x1B[33m";
 
 pub const TEXT_RESET: &str = "\x1B[39m";
 
-pub(crate) fn handle_response(response: HittResponse, args: &CliArguments) {
+pub(crate) fn handle_response(response: HittResponse, args: &RunCommandArguments) {
     print_status(
         &response.http_version,
         &response.method,
@@ -56,4 +58,16 @@ pub(crate) fn handle_response(response: HittResponse, args: &CliArguments) {
 #[inline]
 pub(crate) fn print_error(message: String) {
     eprintln!("{TEXT_RED}hitt: {message}{TEXT_RESET}")
+}
+
+pub(crate) fn write_prompt(term: &Term, prompt: &str) -> Result<(), std::io::Error> {
+    term.write_line(prompt)
+}
+
+pub(crate) fn write_prompt_answer(
+    term: &Term,
+    prompt: &str,
+    answer: &str,
+) -> Result<(), std::io::Error> {
+    term.write_line(&format!("{prompt} {TEXT_GREEN}[{answer}]{TEXT_RESET}"))
 }
