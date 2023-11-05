@@ -475,7 +475,7 @@ fn tokenize(buffer: &str) -> Result<Vec<RequestToken>, RequestParseError> {
     }
 
     if !body_parts.is_empty() {
-        tokens.push(RequestToken::Body(Some(body_parts.join(""))));
+        tokens.push(RequestToken::Body(Some(body_parts.join("\n"))));
     }
 
     Ok(tokens)
