@@ -22,4 +22,4 @@ hitt-parser = { path = "hitt-parser", version = "0.0.1" }
 hitt-request = { path = "hitt-request", version = "0.0.1" }
 http = { version = "0.2.9" }
 reqwest = { version = "0.11.23" }
-tokio = { version = "1.32.0", features = ["fs", "macros", "rt-multi-thread"] }
+tokio = { version = "1.35.1", features = ["fs", "macros", "rt-multi-thread"] }
