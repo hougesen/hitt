@@ -117,8 +117,6 @@ local hitt_plugin = {
 }
 ```
 
-![hitt neovim window](/docs/static/hitt-neovim-window.jpg)
-
 ### Usage
 
 The plugin exposes a single commnad `:HittSendRequest`, which can be bound to a keymap like this:
@@ -130,6 +128,8 @@ local hitt = require("hitt")
 
 vim.keymap.set("n", "<leader>rr", hitt.HittSendRequest, {})
 ```
+
+![hitt neovim window](/docs/static/hitt-neovim-window.jpg)
 
 ## Disclaimer
 
