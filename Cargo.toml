@@ -2,7 +2,6 @@
 members = ["hitt-cli", "hitt-formatter", "hitt-parser", "hitt-request"]
 resolver = "2"
 
-
 [workspace.package]
 version = "0.0.1"
 authors = ["Mads Hougesen <mads@mhouge.dk>"]
@@ -12,3 +11,5 @@ rust-version = "1.70.0"
 repository = "https://github.com/hougesen/hitt"
 documentation = "https://github.com/hougesen/hitt#readme"
 keywords = ["http", "cli"]
+description = "command line HTTP testing tool focused on speed and simplicity"
+homepage = "https://github.com/hougesen/hitt"
