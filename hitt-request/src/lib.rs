@@ -1,5 +1,7 @@
 use hitt_parser::{http, HittRequest};
 
+pub use reqwest;
+
 pub struct HittResponse {
     pub url: String,
     pub method: String,
