@@ -18,7 +18,7 @@ name = "hitt"
 path = "src/main.rs"
 
 [dependencies]
-clap = { version = "4.3.24", features = ["derive"] }
+clap = { version = "4.4.11", features = ["derive"] }
 console = { version = "0.15.7" }
 hitt-formatter = { workspace = true }
 hitt-parser = { workspace = true }
