@@ -1,42 +1,28 @@
 name: validate
 
-on: push
+on: [push]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: full
 
 jobs:
-  lint:
-    name: lint
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          components: clippy, rustfmt
-      - name: Check formatting
-        run: cargo fmt --check
-      - name: Check for clippy lints
-        run: cargo clippy
   test:
     name: test
     strategy:
-      fail-fast: false
       matrix:
-        rust-version:
-          - nightly
-          - stable
-          - "1.70"
-        os:
-          - ubuntu-latest
+        os: [windows-latest, macos-latest, ubuntu-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          toolchain: ${{ matrix.rust-version }}
-      - name: Build
-        run: cargo build
-      - name: Test
-        run: cargo test
+      - uses: actions/checkout@v4
+      - uses: Swatinem/rust-cache@v2
+      - run: rustup toolchain install stable --profile minimal
+      - run: rustup component add rustfmt clippy
+      - run: cargo fetch
+      - run: cargo fmt -- --check --color always
+      - run: cargo clippy
+      - run: cargo test
