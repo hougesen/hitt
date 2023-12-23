@@ -1,5 +1,3 @@
-use hitt_request::reqwest;
-
 use crate::terminal::{TEXT_RED, TEXT_RESET, TEXT_YELLOW};
 
 #[inline]

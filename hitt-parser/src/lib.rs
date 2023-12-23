@@ -1,7 +1,5 @@
 use std::str::FromStr;
 
-pub use http;
-
 use crate::error::RequestParseError;
 
 pub mod error;

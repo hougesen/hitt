@@ -1,5 +1,3 @@
-use hitt_parser::http;
-
 use crate::terminal::{STYLE_BOLD, STYLE_RESET, TEXT_GREEN, TEXT_RED, TEXT_RESET};
 
 #[inline]

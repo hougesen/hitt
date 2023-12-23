@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
 use console::{Key, Term};
-use hitt_parser::http::{HeaderName, HeaderValue, Uri};
+use http::{HeaderName, HeaderValue, Uri};
 
 use crate::{
     config::NewCommandArguments,

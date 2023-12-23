@@ -1,7 +1,5 @@
 use core::fmt;
 
-use hitt_request::reqwest;
-
 use crate::terminal::{TEXT_RED, TEXT_RESET};
 
 #[derive(Debug)]
@@ -11,11 +9,7 @@ pub enum HittCliError {
     Io(std::io::Error),
     IoRead(std::path::PathBuf, std::io::Error),
     IoWrite(std::path::PathBuf, std::io::Error),
-    Reqwest(
-        hitt_parser::http::Method,
-        hitt_parser::http::Uri,
-        reqwest::Error,
-    ),
+    Reqwest(http::Method, http::Uri, reqwest::Error),
 }
 
 impl fmt::Display for HittCliError {
