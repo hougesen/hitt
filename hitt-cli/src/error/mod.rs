@@ -1,5 +1,7 @@
 use core::fmt;
 
+use hitt_request::reqwest;
+
 use crate::terminal::{TEXT_RED, TEXT_RESET};
 
 #[derive(Debug)]

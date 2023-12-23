@@ -1,4 +1,4 @@
-use hitt_request::send_request;
+use hitt_request::{reqwest, send_request};
 
 use crate::{
     config::RunCommandArguments,

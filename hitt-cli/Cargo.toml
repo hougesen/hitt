@@ -15,7 +15,6 @@ ignore = "0.4.20"
 hitt-formatter = { path = "../hitt-formatter" }
 hitt-parser = { path = "../hitt-parser" }
 hitt-request = { path = "../hitt-request" }
-reqwest = "0.11.20"
 shell-words = "1.1.0"
 tempfile = "3.8.1"
 tokio = { version = "1.32.0", features = ["fs", "macros", "rt-multi-thread"] }
