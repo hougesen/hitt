@@ -132,6 +132,13 @@ vim.keymap.set("n", "<leader>rr", hitt.HittSendRequest, {})
 
 ![hitt neovim window](/docs/static/hitt-neovim-window.jpg)
 
+### Configuration
+
+| Name          | Default | Description                 |
+| ------------- | ------- | --------------------------- |
+| window_width  | 80      | Window width in percentage  |
+| window_height | 80      | Window height in percentage |
+
 ## Disclaimer
 
 hitt is most likely not ready for main stream usage. I ([Mads Hougesen](https://mhouge.dk)) am primarily developing it based on features I believe to be useful, or fun to develop.
