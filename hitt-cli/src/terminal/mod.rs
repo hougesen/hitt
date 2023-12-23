@@ -1,7 +1,7 @@
 use console::Term;
 use hitt_request::HittResponse;
 
-use crate::config::RunCommandArguments;
+use crate::{config::RunCommandArguments, error::HittCliError};
 
 use self::{body::print_body, headers::print_headers, status::print_status};
 
@@ -23,17 +23,22 @@ pub const TEXT_YELLOW: &str = "\x1B[33m";
 
 pub const TEXT_RESET: &str = "\x1B[39m";
 
-pub(crate) fn handle_response(response: HittResponse, args: &RunCommandArguments) {
+pub(crate) fn handle_response(
+    term: &console::Term,
+    response: HittResponse,
+    args: &RunCommandArguments,
+) -> Result<(), HittCliError> {
     print_status(
+        term,
         &response.http_version,
         &response.method,
         &response.url,
         response.status_code.as_u16(),
         &response.duration,
-    );
+    )?;
 
     if !args.hide_headers {
-        print_headers(&response.headers);
+        print_headers(term, &response.headers)?;
     }
 
     if !args.hide_body && !response.body.is_empty() {
@@ -42,15 +47,18 @@ pub(crate) fn handle_response(response: HittResponse, args: &RunCommandArguments
             .get("content-type")
             .map(|x| x.to_str().expect("response content-type to be valid"));
 
-        print_body(&response.body, content_type, args.disable_formatting);
+        print_body(term, &response.body, content_type, args.disable_formatting)?;
     }
 
     if args.fail_fast
         && (response.status_code.is_client_error() || response.status_code.is_server_error())
     {
+        term.flush()?;
         // NOTE: should the exit code be changed?
         std::process::exit(0);
     }
+
+    Ok(())
 }
 
 pub(crate) fn write_prompt(term: &Term, prompt: &str) -> Result<(), std::io::Error> {

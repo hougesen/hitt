@@ -16,14 +16,18 @@ mod terminal;
 async fn main() -> Result<(), HittCliError> {
     let cli = Cli::parse();
 
+    let term = console::Term::stdout();
+
     let command_result = match &cli.command {
-        Commands::Run(args) => run_command(args).await,
-        Commands::New(args) => new_command(args).await,
+        Commands::Run(args) => run_command(&term, args).await,
+        Commands::New(args) => new_command(&term, args).await,
     };
 
     if let Err(err) = command_result {
-        eprintln!("{}", err);
+        term.write_line(&err.to_string())?;
     }
+
+    term.flush()?;
 
     Ok(())
 }
