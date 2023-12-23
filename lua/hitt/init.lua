@@ -61,8 +61,8 @@ local function show_response(content)
     local total_width = vim.api.nvim_win_get_width(0)
     local total_height = vim.api.nvim_win_get_height(0)
 
-    local window_width = math.floor(total_width * (M.conf.window_width_percentage / 100))
-    local window_height = math.floor(total_height * (M.conf.window_height_percentage / 100))
+    local window_width = math.floor(total_width * (M.conf.window_width / 100))
+    local window_height = math.floor(total_height * (M.conf.window_height / 100))
 
     local row = math.floor((total_height - window_height) / 2)
     local col = math.floor((total_width - window_width) / 2)

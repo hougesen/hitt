@@ -1,8 +1,8 @@
 local M = {}
 
 M.defaults = {
-    window_width_percentage = 80,
-    window_height_percentage = 80,
+    window_width = 80,
+    window_height = 80,
 }
 
 ---@param options unknown
