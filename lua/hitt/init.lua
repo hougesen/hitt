@@ -7,7 +7,13 @@ local M = {
 ---@param path string
 ---@return string | nil
 local function send_request(path)
-    local cmd = string.format("hitt run --vim %s", path)
+    local cmd = "hitt run --vim"
+
+    if M.conf.fail_fast == true then
+        cmd = cmd .. " --fail-fast"
+    end
+
+    cmd = cmd .. " " .. path
 
     local status, handle, error_msg = pcall(io.popen, cmd)
 

@@ -3,6 +3,7 @@ local M = {}
 M.defaults = {
     window_width = 80,
     window_height = 80,
+    fail_fast = false,
 }
 
 ---@param options unknown

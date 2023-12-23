@@ -134,10 +134,11 @@ vim.keymap.set("n", "<leader>rr", hitt.HittSendRequest, {})
 
 ### Configuration
 
-| Name          | Default | Description                 |
-| ------------- | ------- | --------------------------- |
-| window_width  | 80      | Window width in percentage  |
-| window_height | 80      | Window height in percentage |
+| Name          | Default | Description                       |
+| ------------- | ------- | --------------------------------- |
+| window_width  | 80      | Window width in percentage        |
+| window_height | 80      | Window height in percentage       |
+| fail_fast     | false   | Enables the `--fail-fast` options |
 
 ## Disclaimer
 
