@@ -16,11 +16,13 @@ path = "src/main.rs"
 
 [dependencies]
 clap = { version = "4.3.24", features = ["derive"] }
-console = "0.15.7"
-ignore = "0.4.20"
-hitt-formatter = { path = "../hitt-formatter" }
-hitt-parser = { path = "../hitt-parser" }
-hitt-request = { path = "../hitt-request" }
-shell-words = "1.1.0"
-tempfile = "3.8.1"
-tokio = { version = "1.32.0", features = ["fs", "macros", "rt-multi-thread"] }
+console = { version = "0.15.7" }
+hitt-formatter = { workspace = true }
+hitt-parser = { workspace = true }
+hitt-request = { workspace = true }
+http = { workspace = true }
+ignore = { version = "0.4.20" }
+reqwest = { workspace = true }
+shell-words = { version = "1.1.0" }
+tempfile = { version = "3.8.1" }
+tokio = { workspace = true }
