@@ -26,24 +26,6 @@ local function send_request(path)
     return file
 end
 
-local function calculate_window_size()
-    local total_width = vim.api.nvim_win_get_width(0)
-    local total_height = vim.api.nvim_win_get_height(0)
-
-    local window_width = math.floor(total_width * 0.80)
-    local window_height = math.floor(total_height * 0.80)
-
-    local row = math.floor((total_height - window_height) / 2)
-    local col = math.floor((total_width - window_width) / 2)
-
-    return {
-        row,
-        col,
-        width = window_width,
-        height = window_height,
-    }
-end
-
 ---@param content string
 local function show_response(content)
     local buf = vim.api.nvim_create_buf(false, true)
