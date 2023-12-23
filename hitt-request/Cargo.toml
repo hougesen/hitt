@@ -1,6 +1,6 @@
 [package]
 name = "hitt-request"
-description = ""
+description = "Request utility library for the hitt http testing tool"
 version.workspace = true
 authors.workspace = true
 edition.workspace = true
