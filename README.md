@@ -114,6 +114,7 @@ hitt can be run directly from Neovim.
 ```lua
 local hitt_plugin = {
     "hougesen/hitt",
+    opts = {},
 }
 ```
 
