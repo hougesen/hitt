@@ -13,6 +13,8 @@ documentation = "https://github.com/hougesen/hitt#readme"
 keywords = ["http", "cli"]
 description = "command line HTTP testing tool focused on speed and simplicity"
 homepage = "https://github.com/hougesen/hitt"
+readme = "README.md"
+categories = ["command-line-utilities", "development-tools"]
 
 [workspace.dependencies]
 hitt-formatter = { path = "hitt-formatter", version = "0.0.1" }
