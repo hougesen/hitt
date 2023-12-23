@@ -2,6 +2,14 @@
 
 hitt is a command line HTTP testing tool focused on speed and simplicity.
 
+## Install
+
+hitt can be installed using Cargo, the package manager for Rust.
+
+```sh
+cargo install hitt
+```
+
 ## Usage
 
 To send a request create a file ending in `.http`.
