@@ -24,7 +24,7 @@ hitt-formatter = { workspace = true }
 hitt-parser = { workspace = true }
 hitt-request = { workspace = true }
 http = { workspace = true }
-ignore = { version = "0.4.20" }
+ignore = { version = "0.4.21" }
 reqwest = { workspace = true }
 shell-words = { version = "1.1.0" }
 tempfile = { version = "3.8.1" }
