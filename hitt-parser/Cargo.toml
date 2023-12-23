@@ -1,7 +1,14 @@
 [package]
 name = "hitt-parser"
-version = "0.0.1"
-edition = "2021"
+description = "Parser for http files for the hitt http testing tool"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+keywords.workspace = true
+rust-version.workspace = true
+homepage.workspace = true
 
 [dependencies]
 http = "0.2.9"
