@@ -7,7 +7,10 @@ use crate::{
     terminal::handle_response,
 };
 
-pub(crate) async fn run_command(args: &RunCommandArguments) -> Result<(), HittCliError> {
+pub(crate) async fn run_command(
+    term: &console::Term,
+    args: &RunCommandArguments,
+) -> Result<(), HittCliError> {
     let http_client = reqwest::Client::new();
 
     let http_file_paths = match std::fs::metadata(&args.path).map(|metadata| metadata.is_dir())? {
@@ -18,20 +21,21 @@ pub(crate) async fn run_command(args: &RunCommandArguments) -> Result<(), HittCl
     let parsed_files = parse_requests_threaded(http_file_paths).await?;
 
     for (path, file) in parsed_files {
-        println!("hitt: running {:?}", path);
+        if !args.vim {
+            term.write_line(&format!("hitt: running {:?}", path))?;
+        }
 
         for req in file {
             match send_request(&http_client, &req).await {
-                Ok(response) => {
-                    handle_response(response, args);
-                    Ok(())
-                }
+                Ok(response) => handle_response(term, response, args),
                 Err(request_error) => {
                     Err(HittCliError::Reqwest(req.method, req.uri, request_error))
                 }
             }?;
         }
     }
+
+    term.flush()?;
 
     Ok(())
 }

@@ -40,6 +40,9 @@ pub(crate) struct RunCommandArguments {
     /// Enable to run directory recursively
     #[arg(long, short, default_value_t = false)]
     pub(crate) recursive: bool,
+
+    #[arg(long, default_value_t = false)]
+    pub(crate) vim: bool,
 }
 
 /// Create new http request

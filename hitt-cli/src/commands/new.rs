@@ -125,6 +125,7 @@ async fn check_if_exist(term: &Term, path: &std::path::Path) -> Result<(), std::
         )?;
 
         if !should_continue {
+            term.flush()?;
             std::process::exit(0);
         }
     }
@@ -132,18 +133,19 @@ async fn check_if_exist(term: &Term, path: &std::path::Path) -> Result<(), std::
     Ok(())
 }
 
-pub(crate) async fn new_command(args: &NewCommandArguments) -> Result<(), HittCliError> {
-    let term = console::Term::stdout();
+pub(crate) async fn new_command(
+    term: &console::Term,
+    args: &NewCommandArguments,
+) -> Result<(), HittCliError> {
+    check_if_exist(term, &args.path).await?;
 
-    check_if_exist(&term, &args.path).await?;
+    let method = set_method(term)?;
 
-    let method = set_method(&term)?;
+    let url = set_url(term)?;
 
-    let url = set_url(&term)?;
+    let headers = set_headers(term)?;
 
-    let headers = set_headers(&term)?;
-
-    let body = set_body(&term, try_find_content_type(&headers))?;
+    let body = set_body(term, try_find_content_type(&headers))?;
 
     save_request(&args.path, method, url, &headers, body)
 }

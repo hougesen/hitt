@@ -405,7 +405,7 @@ fn tokenize(buffer: &str) -> Result<Vec<RequestToken>, RequestParseError> {
 
     let mut body_parts: Vec<&str> = Vec::new();
 
-    for (_index, line) in buffer.lines().enumerate() {
+    for line in buffer.lines() {
         let trimmed_line = line.trim();
 
         // check if line is comment (#) OR requests break (###)
@@ -695,8 +695,6 @@ mod test_parse_requests {
 
             let parsed_requests =
                 parse_requests(&format!("{method} {url}")).expect("request should be valid");
-
-            println!("parsed_requests: {:#?}", parsed_requests);
 
             assert!(parsed_requests.len() == 1);
 
