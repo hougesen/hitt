@@ -128,7 +128,7 @@ local hitt_plugin = {
 
 ### Usage
 
-The plugin exposes a single commnad `:HittSendRequest`, which can be bound to a keymap like this:
+The plugin exposes a single command `:HittSendRequest`, which can be bound to a keymap like this:
 
 ```lua
 -- ~/.config/nvim/after/plugin/hitt.lua
