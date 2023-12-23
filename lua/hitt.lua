@@ -101,7 +101,7 @@ function M.HittSendRequest()
 end
 
 function M.setup()
-    vim.keymap.set("n", "<leader>rr", M.HittSendRequest, {})
+    vim.api.nvim_create_user_command("HittSendRequest", M.HittSendRequest, { desc = "Send http request using hitt" })
 end
 
 return M
