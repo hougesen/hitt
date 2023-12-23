@@ -100,6 +100,37 @@ The `--disable-formatting` argument can be passed to disable pretty printing of 
 hitt run --disable-formatting <PATH_TO_FILE>
 ```
 
+## Neovim
+
+hitt can be run directly from Neovim.
+
+> [!NOTE]
+> The `hitt` executable must be available in your path for the plugin to work.
+
+### Install
+
+#### Lazy
+
+```lua
+local hitt_plugin = {
+    "hougesen/hitt",
+}
+```
+
+![hitt neovim window](/docs/static/hitt-neovim-window.jpg)
+
+### Usage
+
+The plugin exposes a single commnad `:HittSendRequest`, which can be bound to a keymap like this:
+
+```lua
+-- ~/.config/nvim/after/plugin/hitt.lua
+
+local hitt = require("hitt")
+
+vim.keymap.set("n", "<leader>rr", hitt.HittSendRequest, {})
+```
+
 ## Disclaimer
 
 hitt is most likely not ready for main stream usage. I ([Mads Hougesen](https://mhouge.dk)) am primarily developing it based on features I believe to be useful, or fun to develop.
