@@ -15,4 +15,15 @@ export default defineNuxtConfig({
   },
 
   css: ['~/assets/css/main.css'],
+
+  content: {
+    documentDriven: true,
+
+    highlight: {
+      theme: {
+        default: 'github-dark',
+      },
+      preload: ['sh', 'lua'],
+    },
+  },
 });
