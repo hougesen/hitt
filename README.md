@@ -138,7 +138,7 @@ local hitt = require("hitt")
 vim.keymap.set("n", "<leader>rr", hitt.HittSendRequest, {})
 ```
 
-![hitt neovim window](/docs/static/hitt-neovim-window.jpg)
+![hitt neovim window](/docs/public/hitt-neovim-window.png)
 
 ### Configuration
 

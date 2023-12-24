@@ -1,7 +1,19 @@
 {
   "name": "hitt-documentation",
+  "description": "Documentation website for hitt",
   "private": true,
   "type": "module",
+  "licence": "MIT",
+  "contributors": [
+    "Mads Hougesen <mads@mhouge.dk> (https://mhouge.dk)"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hougesen/hitt"
+  },
+  "bugs": {
+    "url": "https://github.com/hougesen/hitt"
+  },
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
@@ -14,5 +26,9 @@
     "nuxt": "^3.8.2",
     "vue": "^3.3.12",
     "vue-router": "^4.2.5"
+  },
+  "dependencies": {
+    "@nuxt/content": "^2.10.0",
+    "@nuxt/image": "^1.1.0"
   }
 }
