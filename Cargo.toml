@@ -12,7 +12,7 @@ repository = "https://github.com/hougesen/hitt"
 documentation = "https://github.com/hougesen/hitt#readme"
 keywords = ["http", "cli"]
 description = "command line HTTP testing tool focused on speed and simplicity"
-homepage = "https://github.com/hougesen/hitt"
+homepage = "https://hitt.mhouge.dk"
 readme = "README.md"
 categories = ["command-line-utilities", "development-tools"]
 
