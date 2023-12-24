@@ -6,4 +6,13 @@ export default defineNuxtConfig({
   image: {
     domains: ['mhouge.dk', 'hitt.mhouge.dk'],
   },
+
+  postcss: {
+    plugins: {
+      tailwindcss: {},
+      autoprefixer: {},
+    },
+  },
+
+  css: ['~/assets/css/main.css'],
 });
