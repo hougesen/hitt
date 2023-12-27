@@ -18,7 +18,7 @@ pub(crate) async fn run_command(
         false => vec![args.path.clone()],
     };
 
-    let timeout = args.timeout.map(std::time::Duration::from_millis);
+    let timeout = args.timeout.map(core::time::Duration::from_millis);
 
     let parsed_files = parse_requests_threaded(http_file_paths).await?;
 
