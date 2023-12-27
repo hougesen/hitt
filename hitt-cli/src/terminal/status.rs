@@ -7,7 +7,7 @@ pub(crate) fn print_status(
     method: &str,
     url: &str,
     status_code: u16,
-    duration: &std::time::Duration,
+    duration: &core::time::Duration,
 ) -> Result<(), std::io::Error> {
     let text_color = if status_code < 400 {
         TEXT_GREEN

@@ -7,7 +7,7 @@ pub struct HittResponse {
     pub headers: reqwest::header::HeaderMap,
     pub body: String,
     pub http_version: http::version::Version,
-    pub duration: std::time::Duration,
+    pub duration: core::time::Duration,
 }
 
 pub async fn send_request(

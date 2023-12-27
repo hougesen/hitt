@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use core::str::FromStr;
 
 use crate::error::RequestParseError;
 
@@ -6,7 +6,7 @@ pub mod error;
 
 #[inline]
 fn parse_method_input(
-    chars: &mut core::iter::Enumerate<std::str::Chars>,
+    chars: &mut core::iter::Enumerate<core::str::Chars>,
 ) -> Result<http::method::Method, RequestParseError> {
     let mut method = String::new();
 
@@ -61,7 +61,7 @@ mod test_parse_method_input {
 
 #[inline]
 fn parse_uri_input(
-    chars: &mut core::iter::Enumerate<std::str::Chars>,
+    chars: &mut core::iter::Enumerate<core::str::Chars>,
 ) -> Result<http::uri::Uri, RequestParseError> {
     let mut uri = String::new();
 
@@ -133,7 +133,7 @@ mod test_parse_uri_input {
 }
 
 fn parse_http_version(
-    chars: &mut core::iter::Enumerate<std::str::Chars>,
+    chars: &mut core::iter::Enumerate<core::str::Chars>,
 ) -> Option<http::version::Version> {
     let mut s = String::new();
 
@@ -295,7 +295,7 @@ struct HeaderToken {
 
 #[inline]
 fn parse_header(
-    line: core::iter::Enumerate<std::str::Chars>,
+    line: core::iter::Enumerate<core::str::Chars>,
 ) -> Result<Option<HeaderToken>, RequestParseError> {
     let mut key = String::new();
     let mut value = String::new();
@@ -333,7 +333,7 @@ fn parse_header(
 
 #[cfg(test)]
 mod test_parse_header {
-    use std::str::FromStr;
+    use core::str::FromStr;
 
     use crate::parse_header;
 
@@ -676,7 +676,7 @@ pub fn parse_requests(buffer: &str) -> Result<Vec<HittRequest>, RequestParseErro
 
 #[cfg(test)]
 mod test_parse_requests {
-    use std::str::FromStr;
+    use core::str::FromStr;
 
     use crate::parse_requests;
 

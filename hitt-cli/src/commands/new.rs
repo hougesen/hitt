@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use core::str::FromStr;
 
 use console::{Key, Term};
 use http::{HeaderName, HeaderValue, Uri};

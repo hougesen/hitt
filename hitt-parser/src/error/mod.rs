@@ -8,8 +8,8 @@ pub enum RequestParseError {
     InvalidHeaderValue(String),
 }
 
-impl std::fmt::Display for RequestParseError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl core::fmt::Display for RequestParseError {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         match self {
             RequestParseError::InvalidHttpMethod(method) => {
                 write!(f, "invalid HTTP method '{method}'")
