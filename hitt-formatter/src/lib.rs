@@ -10,10 +10,10 @@ pub enum ContentType {
 impl From<&str> for ContentType {
     fn from(value: &str) -> Self {
         if value.starts_with("application/json") {
-            return ContentType::Json;
+            return Self::Json;
         }
 
-        ContentType::Unknown
+        Self::Unknown
     }
 }
 
