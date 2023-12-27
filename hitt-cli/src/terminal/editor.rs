@@ -87,6 +87,8 @@ pub fn editor_input(
 
     let (cmd, args) = build_editor_cmd(default_editor);
 
+    let lower_y_key = Key::Char('y');
+
     loop {
         let status = open_editor(&cmd, &args, path)?;
 
@@ -94,7 +96,7 @@ pub fn editor_input(
             let confirm_close = confirm_input(
                 term,
                 "The body was not set, did you exit on purpose? (Y/n)",
-                Key::Char('y'),
+                &lower_y_key,
             )?;
 
             if confirm_close {

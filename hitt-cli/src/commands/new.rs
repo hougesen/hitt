@@ -36,8 +36,10 @@ fn set_url(term: &Term) -> Result<String, std::io::Error> {
 fn set_headers(term: &Term) -> Result<Vec<(String, String)>, std::io::Error> {
     let mut headers = Vec::new();
 
+    let lower_y_key = Key::Char('y');
+
     let mut writing_headers =
-        confirm_input(term, "Do you want to add headers? (Y/n)", Key::Char('y'))?;
+        confirm_input(term, "Do you want to add headers? (Y/n)", &lower_y_key)?;
 
     let key_validator = |input: &str| !input.is_empty() && HeaderName::from_str(input).is_ok();
     let format_key_error =
@@ -64,11 +66,8 @@ fn set_headers(term: &Term) -> Result<Vec<(String, String)>, std::io::Error> {
 
         headers.push((key, value));
 
-        writing_headers = confirm_input(
-            term,
-            "Do you want to add more headers? (Y/n)",
-            Key::Char('y'),
-        )?;
+        writing_headers =
+            confirm_input(term, "Do you want to add more headers? (Y/n)", &lower_y_key)?;
     }
 
     Ok(headers)
@@ -87,7 +86,7 @@ fn try_find_content_type(headers: &[(String, String)]) -> Option<&str> {
 
 #[inline]
 fn set_body(term: &Term, content_type: Option<&str>) -> Result<Option<String>, std::io::Error> {
-    if !confirm_input(term, "Do you want to add a body? (Y/n)", Key::Char('y'))? {
+    if !confirm_input(term, "Do you want to add a body? (Y/n)", &Key::Char('y'))? {
         return Ok(None);
     }
 
@@ -96,8 +95,8 @@ fn set_body(term: &Term, content_type: Option<&str>) -> Result<Option<String>, s
 
 fn save_request(
     path: &std::path::Path,
-    method: String,
-    url: String,
+    method: &str,
+    url: &str,
     headers: &[(String, String)],
     body: Option<String>,
 ) -> Result<(), HittCliError> {
@@ -127,7 +126,7 @@ async fn check_if_exist(term: &Term, path: &std::path::Path) -> Result<(), std::
         let should_continue = confirm_input(
             term,
             &format!("File '{path:?}' already exist, do you want to continue? (y/N)"),
-            Key::Char('n'),
+            &Key::Char('n'),
         )?;
 
         if !should_continue {
@@ -153,5 +152,5 @@ pub(crate) async fn new_command(
 
     let body = set_body(term, try_find_content_type(&headers))?;
 
-    save_request(&args.path, method, url, &headers, body)
+    save_request(&args.path, &method, &url, &headers, body)
 }

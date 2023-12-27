@@ -26,7 +26,7 @@ pub const TEXT_RESET: &str = "\x1B[39m";
 
 pub(crate) fn handle_response(
     term: &console::Term,
-    response: HittResponse,
+    response: &HittResponse,
     args: &RunCommandArguments,
 ) -> Result<(), HittCliError> {
     print_status(
