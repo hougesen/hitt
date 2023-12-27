@@ -13,6 +13,7 @@ pub struct HittResponse {
 pub async fn send_request(
     http_client: &reqwest::Client,
     input: &HittRequest,
+    timeout: &Option<core::time::Duration>,
 ) -> Result<HittResponse, reqwest::Error> {
     let url = input.uri.to_string();
 
@@ -29,6 +30,12 @@ pub async fn send_request(
     if input.body.is_some() {
         if let Some(body) = input.body.clone() {
             partial_req = partial_req.body(body);
+        }
+    }
+
+    if timeout.is_some() {
+        if let Some(dur) = *timeout {
+            partial_req = partial_req.timeout(dur);
         }
     }
 

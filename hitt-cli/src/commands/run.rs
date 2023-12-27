@@ -18,6 +18,8 @@ pub(crate) async fn run_command(
         false => vec![args.path.clone()],
     };
 
+    let timeout = args.timeout.map(std::time::Duration::from_millis);
+
     let parsed_files = parse_requests_threaded(http_file_paths).await?;
 
     for (path, file) in parsed_files {
@@ -26,9 +28,13 @@ pub(crate) async fn run_command(
         }
 
         for req in file {
-            match send_request(&http_client, &req).await {
+            match send_request(&http_client, &req, &timeout).await {
                 Ok(response) => handle_response(term, response, args),
                 Err(request_error) => {
+                    if request_error.is_timeout() {
+                        return Err(HittCliError::RequestTimeout(req.method, req.uri));
+                    }
+
                     Err(HittCliError::Reqwest(req.method, req.uri, request_error))
                 }
             }?;

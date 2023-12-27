@@ -41,6 +41,10 @@ pub(crate) struct RunCommandArguments {
     #[arg(long, short, default_value_t = false)]
     pub(crate) recursive: bool,
 
+    /// Request timeout in milliseconds
+    #[arg(long)]
+    pub(crate) timeout: Option<u64>,
+
     #[arg(long, default_value_t = false, hide = true)]
     pub(crate) vim: bool,
 }
