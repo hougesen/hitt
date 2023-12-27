@@ -9,6 +9,8 @@ repository.workspace = true
 keywords.workspace = true
 rust-version.workspace = true
 homepage.workspace = true
+readme = "README.md"
+categories = []
 
 [dependencies]
 hitt-parser = { workspace = true }
