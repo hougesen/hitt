@@ -10,27 +10,20 @@ pub enum HittCliError {
     IoRead(std::path::PathBuf, std::io::Error),
     IoWrite(std::path::PathBuf, std::io::Error),
     Reqwest(http::Method, http::Uri, reqwest::Error),
+    RequestTimeout(http::Method, http::Uri),
 }
 
 impl fmt::Display for HittCliError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let error_message = match self {
-            HittCliError::Parse(path, error) => {
-                format!("error parsing file {path:?} - {error}")
-            }
-            HittCliError::IoRead(path, error) => {
-                format!("error reading {path:?} - {error:#?}")
-            }
-            HittCliError::IoWrite(path, error) => {
-                format!("error writing {path:?} - {error:#?}")
-            }
+            HittCliError::Parse(path, error) => format!("error parsing file {path:?} - {error}"),
+            HittCliError::IoRead(path, error) => format!("error reading {path:?} - {error:#?}"),
+            HittCliError::IoWrite(path, error) => format!("error writing {path:?} - {error:#?}"),
             HittCliError::Join(error) => format!("error joining handles - {error:#?}"),
             HittCliError::Io(error) => format!("io error {error:#?}"),
-            HittCliError::Reqwest(method, uri, error) => {
-                format!(
-                    "error sending request {method} {uri} - {:#?}",
-                    error.to_string()
-                )
+            HittCliError::Reqwest(method, uri, error) => format!("{method} {uri} - {error}"),
+            HittCliError::RequestTimeout(method, uri) => {
+                format!("{method} {uri} - request timed out")
             }
         };
 
