@@ -3,7 +3,9 @@ use hitt_parser::HittRequest;
 use crate::error::HittCliError;
 
 async fn get_file_content(path: &std::path::Path) -> Result<String, std::io::Error> {
-    std::fs::read(path).map(|buf| String::from_utf8_lossy(&buf).to_string())
+    tokio::fs::read(path)
+        .await
+        .map(|buf| String::from_utf8_lossy(&buf).to_string())
 }
 
 pub async fn parse_requests_threaded(
