@@ -10,6 +10,7 @@ pub struct HittResponse {
     pub duration: core::time::Duration,
 }
 
+#[inline]
 pub async fn send_request(
     http_client: &reqwest::Client,
     input: &HittRequest,

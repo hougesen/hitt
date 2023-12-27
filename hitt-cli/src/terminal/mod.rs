@@ -61,10 +61,12 @@ pub(crate) fn handle_response(
     Ok(())
 }
 
+#[inline]
 pub(crate) fn write_prompt(term: &Term, prompt: &str) -> Result<(), std::io::Error> {
     term.write_line(prompt)
 }
 
+#[inline]
 pub(crate) fn write_prompt_answer(
     term: &Term,
     prompt: &str,

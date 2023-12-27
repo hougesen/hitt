@@ -8,6 +8,7 @@ pub enum ContentType {
 }
 
 impl From<&str> for ContentType {
+    #[inline]
     fn from(value: &str) -> Self {
         if value.starts_with("application/json") {
             return Self::Json;
