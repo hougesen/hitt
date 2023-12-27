@@ -108,6 +108,15 @@ The `--disable-formatting` argument can be passed to disable pretty printing of 
 hitt run --disable-formatting <PATH_TO_FILE>
 ```
 
+### Request timeout
+
+Request timeout can be set using the `--timeout` arguments.
+The input should be in milliseconds.
+
+```sh
+hitt run --timeout 100 <PATH_TO_FILE>
+```
+
 ## Neovim
 
 hitt can be run directly from Neovim.
