@@ -2,12 +2,14 @@ use error::RequestParseError;
 use header::{parse_header, HeaderToken};
 use method::parse_method_input;
 use uri::parse_uri_input;
+use variables::parse_variable_declaration;
 use version::parse_http_version;
 
 pub mod error;
 mod header;
 mod method;
 mod uri;
+mod variables;
 mod version;
 
 enum ParserMode {
@@ -33,6 +35,8 @@ fn tokenize(buffer: &str) -> Result<Vec<RequestToken>, RequestParseError> {
 
     let mut body_parts: Vec<&str> = Vec::new();
 
+    let mut variables = std::collections::HashMap::new();
+
     for line in buffer.lines() {
         let trimmed_line = line.trim();
 
@@ -55,6 +59,18 @@ fn tokenize(buffer: &str) -> Result<Vec<RequestToken>, RequestParseError> {
         // check if line is comment (//)
         if trimmed_line.starts_with("//") {
             continue;
+        }
+
+        if trimmed_line.starts_with('@') {
+            let mut chrs = trimmed_line.chars().enumerate();
+
+            // move forward once since we don't care about the '@'
+            chrs.next();
+
+            if let Some((name, value)) = parse_variable_declaration(&mut chrs) {
+                variables.insert(name, value);
+                continue;
+            }
         }
 
         match parser_mode {
