@@ -16,15 +16,13 @@ pub enum HittCliError {
 impl fmt::Display for HittCliError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let error_message = match self {
-            HittCliError::Parse(path, error) => format!("error parsing file {path:?} - {error}"),
-            HittCliError::IoRead(path, error) => format!("error reading {path:?} - {error:#?}"),
-            HittCliError::IoWrite(path, error) => format!("error writing {path:?} - {error:#?}"),
-            HittCliError::Join(error) => format!("error joining handles - {error:#?}"),
-            HittCliError::Io(error) => format!("io error {error:#?}"),
-            HittCliError::Reqwest(method, uri, error) => format!("{method} {uri} - {error}"),
-            HittCliError::RequestTimeout(method, uri) => {
-                format!("{method} {uri} - request timed out")
-            }
+            Self::Parse(path, error) => format!("error parsing file {path:?} - {error}"),
+            Self::IoRead(path, error) => format!("error reading {path:?} - {error:#?}"),
+            Self::IoWrite(path, error) => format!("error writing {path:?} - {error:#?}"),
+            Self::Join(error) => format!("error joining handles - {error:#?}"),
+            Self::Io(error) => format!("io error {error:#?}"),
+            Self::Reqwest(method, uri, error) => format!("{method} {uri} - {error}"),
+            Self::RequestTimeout(method, uri) => format!("{method} {uri} - request timed out"),
         };
 
         write!(f, "{TEXT_RED}hitt: {error_message}{TEXT_RESET}")

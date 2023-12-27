@@ -378,21 +378,21 @@ enum RequestToken {
 impl From<http::method::Method> for RequestToken {
     #[inline]
     fn from(value: http::method::Method) -> Self {
-        RequestToken::Method(value)
+        Self::Method(value)
     }
 }
 
 impl From<http::uri::Uri> for RequestToken {
     #[inline]
     fn from(value: http::uri::Uri) -> Self {
-        RequestToken::Uri(value)
+        Self::Uri(value)
     }
 }
 
 impl From<HeaderToken> for RequestToken {
     #[inline]
     fn from(value: HeaderToken) -> Self {
-        RequestToken::Header(value)
+        Self::Header(value)
     }
 }
 
