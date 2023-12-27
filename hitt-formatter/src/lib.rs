@@ -19,7 +19,7 @@ impl From<&str> for ContentType {
 }
 
 #[inline]
-pub fn format(input: &str, content_type: ContentType) -> Option<String> {
+pub fn format(input: &str, content_type: &ContentType) -> Option<String> {
     match content_type {
         ContentType::Json => Some(format_json(input)),
         ContentType::Unknown => None,

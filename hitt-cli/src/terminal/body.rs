@@ -11,24 +11,16 @@ fn __print_body(term: &console::Term, body: &str) -> Result<(), std::io::Error> 
 pub(crate) fn print_body(
     term: &console::Term,
     body: &str,
-    content_type: Option<&str>,
+    content_type: &ContentType,
     disable_pretty_printing: bool,
 ) -> Result<(), std::io::Error> {
     if disable_pretty_printing {
         return __print_body(term, body);
     }
 
-    match content_type {
-        Some(content_type) => match ContentType::from(content_type) {
-            ContentType::Unknown => __print_body(term, body),
-            i => {
-                if let Some(formatted) = hitt_formatter::format(body, i) {
-                    __print_body(term, &formatted)
-                } else {
-                    __print_body(term, body)
-                }
-            }
-        },
-        None => __print_body(term, body),
+    if let Some(formatted) = hitt_formatter::format(body, content_type) {
+        return __print_body(term, &formatted);
     }
+
+    __print_body(term, body)
 }

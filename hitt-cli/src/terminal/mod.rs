@@ -1,4 +1,5 @@
 use console::Term;
+use hitt_formatter::ContentType;
 use hitt_request::HittResponse;
 
 use crate::{config::RunCommandArguments, error::HittCliError};
@@ -45,9 +46,11 @@ pub(crate) fn handle_response(
         let content_type = response
             .headers
             .get("content-type")
-            .map(|x| x.to_str().expect("response content-type to be valid"));
+            .map_or(ContentType::Unknown, |value| {
+                ContentType::from(value.to_str().unwrap_or_default())
+            });
 
-        print_body(term, &response.body, content_type, args.disable_formatting)?;
+        print_body(term, &response.body, &content_type, args.disable_formatting)?;
     }
 
     if args.fail_fast
