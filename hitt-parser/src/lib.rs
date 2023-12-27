@@ -10,20 +10,20 @@ fn parse_method_input(
 ) -> Result<http::method::Method, RequestParseError> {
     let mut method = String::new();
 
-    for (_i, c) in chars {
-        if c.is_whitespace() {
+    for (_i, ch) in chars {
+        if ch.is_whitespace() {
             if !method.is_empty() {
                 break;
             }
         } else {
-            method.push(c);
+            method.push(ch);
         }
     }
 
     let uppercase_method = method.to_uppercase();
 
     http::method::Method::from_str(&uppercase_method)
-        .map_err(|_| RequestParseError::InvalidHttpMethod(uppercase_method))
+        .map_err(|_err| RequestParseError::InvalidHttpMethod(uppercase_method))
 }
 
 #[cfg(test)]
@@ -65,17 +65,17 @@ fn parse_uri_input(
 ) -> Result<http::uri::Uri, RequestParseError> {
     let mut uri = String::new();
 
-    for (_i, c) in chars {
-        if c.is_whitespace() {
+    for (_i, ch) in chars {
+        if ch.is_whitespace() {
             if !uri.is_empty() {
                 break;
             }
         } else {
-            uri.push(c);
+            uri.push(ch);
         }
     }
 
-    http::uri::Uri::from_str(&uri).map_err(|_| RequestParseError::InvalidUri(uri))
+    http::uri::Uri::from_str(&uri).map_err(|_err| RequestParseError::InvalidUri(uri))
 }
 
 #[cfg(test)]
@@ -136,25 +136,25 @@ mod test_parse_uri_input {
 fn parse_http_version(
     chars: &mut core::iter::Enumerate<core::str::Chars>,
 ) -> Option<http::version::Version> {
-    let mut s = String::new();
+    let mut version = String::new();
 
     for (_, ch) in chars {
         if ch.is_whitespace() {
-            if !s.is_empty() {
+            if !version.is_empty() {
                 break;
             }
 
             continue;
         }
 
-        s.push(ch);
+        version.push(ch);
     }
 
-    if s.is_empty() {
+    if version.is_empty() {
         return None;
     }
 
-    match s.to_lowercase().as_str() {
+    match version.to_lowercase().as_str() {
         "http/0.9" => Some(http::Version::HTTP_09),
         "http/1.0" | "http/1" => Some(http::Version::HTTP_10),
         "http/1.1" => Some(http::Version::HTTP_11),
@@ -302,31 +302,26 @@ fn parse_header(
     let mut value = String::new();
     let mut is_key = true;
 
-    for (_index, c) in line {
-        match c {
-            ':' => {
-                if is_key {
-                    is_key = false;
-                } else {
-                    value.push(c);
-                }
+    for (_index, ch) in line {
+        if ch == ':' {
+            if is_key {
+                is_key = false;
+            } else {
+                value.push(ch);
             }
-            _ => {
-                if is_key {
-                    key.push(c);
-                } else if !(value.is_empty() && c == ' ') {
-                    value.push(c)
-                }
-            }
+        } else if is_key {
+            key.push(ch);
+        } else if !(value.is_empty() && ch == ' ') {
+            value.push(ch);
         }
     }
 
     if !key.is_empty() {
         return Ok(Some(HeaderToken {
             key: http::HeaderName::from_str(&key)
-                .map_err(|_| RequestParseError::InvalidHeaderName(key.to_string()))?,
+                .map_err(|_err| RequestParseError::InvalidHeaderName(key))?,
             value: http::HeaderValue::from_str(&value)
-                .map_err(|_| RequestParseError::InvalidHeaderValue(value.to_string()))?,
+                .map_err(|_err| RequestParseError::InvalidHeaderValue(value))?,
         }));
     }
     Ok(None)
@@ -429,7 +424,7 @@ fn tokenize(buffer: &str) -> Result<Vec<RequestToken>, RequestParseError> {
             continue;
         }
 
-        match &parser_mode {
+        match parser_mode {
             ParserMode::Request => {
                 if !trimmed_line.is_empty() {
                     let mut chrs = line.chars().enumerate();
@@ -442,7 +437,7 @@ fn tokenize(buffer: &str) -> Result<Vec<RequestToken>, RequestParseError> {
                     tokens.push(RequestToken::Uri(uri));
 
                     if let Some(http_version) = parse_http_version(&mut chrs) {
-                        tokens.push(RequestToken::HttpVersion(http_version))
+                        tokens.push(RequestToken::HttpVersion(http_version));
                     }
 
                     parser_mode = ParserMode::Headers;
@@ -634,44 +629,44 @@ pub fn parse_requests(buffer: &str) -> Result<Vec<HittRequest>, RequestParseErro
 
     let tokens = tokenize(buffer)?;
 
-    let mut p = PartialHittRequest::default();
+    let mut partial_request = PartialHittRequest::default();
 
     for token in tokens {
         match token {
             RequestToken::Method(method) => {
-                if p.method.is_some() {
-                    requests.push(p.build()?);
+                if partial_request.method.is_some() {
+                    requests.push(partial_request.build()?);
 
-                    p = PartialHittRequest::default();
+                    partial_request = PartialHittRequest::default();
                 }
 
-                p.method = Some(method);
+                partial_request.method = Some(method);
             }
 
             RequestToken::Uri(uri) => {
-                p.uri = Some(uri);
+                partial_request.uri = Some(uri);
             }
 
             RequestToken::Header(header) => {
-                p.headers.insert(header.key, header.value);
+                partial_request.headers.insert(header.key, header.value);
             }
 
             RequestToken::Body(body) => {
-                p.body = body;
+                partial_request.body = body;
 
-                requests.push(p.build()?);
+                requests.push(partial_request.build()?);
 
-                p = PartialHittRequest::default();
+                partial_request = PartialHittRequest::default();
             }
 
             RequestToken::HttpVersion(version_token) => {
-                p.http_version = Some(version_token);
+                partial_request.http_version = Some(version_token);
             }
         };
     }
 
-    if p.method.is_some() {
-        requests.push(p.build()?);
+    if partial_request.method.is_some() {
+        requests.push(partial_request.build()?);
     };
 
     Ok(requests)
@@ -691,7 +686,7 @@ mod test_parse_requests {
     fn it_should_parse_http_method_correctly() {
         let url = "https://mhouge.dk";
 
-        HTTP_METHODS.iter().for_each(|method| {
+        for method in HTTP_METHODS.iter() {
             let expected_method = http::Method::from_str(method).expect("m is a valid method");
 
             let parsed_requests =
@@ -710,7 +705,7 @@ mod test_parse_requests {
             assert_eq!(0, first_request.headers.len());
 
             assert_eq!(None, first_request.body);
-        });
+        }
     }
 
     #[test]

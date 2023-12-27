@@ -29,7 +29,7 @@ pub(crate) async fn run_command(
 
         for req in file {
             match send_request(&http_client, &req, &timeout).await {
-                Ok(response) => handle_response(term, response, args),
+                Ok(response) => handle_response(term, &response, args),
                 Err(request_error) => {
                     if request_error.is_timeout() {
                         return Err(HittCliError::RequestTimeout(req.method, req.uri));
