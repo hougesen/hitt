@@ -2,6 +2,7 @@ use hitt_parser::HittRequest;
 
 use crate::error::HittCliError;
 
+#[inline]
 async fn get_file_content(path: &std::path::Path) -> Result<String, std::io::Error> {
     tokio::fs::read(path)
         .await

@@ -132,6 +132,7 @@ mod test_parse_uri_input {
     }
 }
 
+#[inline]
 fn parse_http_version(
     chars: &mut core::iter::Enumerate<core::str::Chars>,
 ) -> Option<http::version::Version> {
@@ -396,6 +397,7 @@ impl From<HeaderToken> for RequestToken {
     }
 }
 
+#[inline]
 fn tokenize(buffer: &str) -> Result<Vec<RequestToken>, RequestParseError> {
     let mut tokens: Vec<RequestToken> = Vec::new();
 
@@ -608,6 +610,7 @@ struct PartialHittRequest {
 }
 
 impl PartialHittRequest {
+    #[inline]
     fn build(self) -> Result<HittRequest, RequestParseError> {
         match self.method {
             Some(method) => match self.uri {

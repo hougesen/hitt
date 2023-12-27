@@ -9,6 +9,7 @@ pub enum RequestParseError {
 }
 
 impl core::fmt::Display for RequestParseError {
+    #[inline]
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         match self {
             Self::InvalidHttpMethod(method) => write!(f, "invalid HTTP method '{method}'"),

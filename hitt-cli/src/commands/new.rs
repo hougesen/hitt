@@ -13,6 +13,7 @@ use crate::{
     },
 };
 
+#[inline]
 fn set_method(term: &Term) -> Result<String, std::io::Error> {
     let http_methods = [
         "GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS", "CONNECT", "TRACE",
@@ -21,6 +22,7 @@ fn set_method(term: &Term) -> Result<String, std::io::Error> {
     select_input(term, "Which HTTP method?", &http_methods)
 }
 
+#[inline]
 fn set_url(term: &Term) -> Result<String, std::io::Error> {
     text_input_prompt(
         term,
@@ -30,6 +32,7 @@ fn set_url(term: &Term) -> Result<String, std::io::Error> {
     )
 }
 
+#[inline]
 fn set_headers(term: &Term) -> Result<Vec<(String, String)>, std::io::Error> {
     let mut headers = Vec::new();
 
@@ -71,6 +74,7 @@ fn set_headers(term: &Term) -> Result<Vec<(String, String)>, std::io::Error> {
     Ok(headers)
 }
 
+#[inline]
 fn try_find_content_type(headers: &[(String, String)]) -> Option<&str> {
     for (key, value) in headers {
         if key.eq_ignore_ascii_case("content-type") {
@@ -81,6 +85,7 @@ fn try_find_content_type(headers: &[(String, String)]) -> Option<&str> {
     None
 }
 
+#[inline]
 fn set_body(term: &Term, content_type: Option<&str>) -> Result<Option<String>, std::io::Error> {
     if !confirm_input(term, "Do you want to add a body? (Y/n)", Key::Char('y'))? {
         return Ok(None);
@@ -116,6 +121,7 @@ fn save_request(
     std::fs::write(path, contents).map_err(|error| HittCliError::IoWrite(path.to_path_buf(), error))
 }
 
+#[inline]
 async fn check_if_exist(term: &Term, path: &std::path::Path) -> Result<(), std::io::Error> {
     if tokio::fs::try_exists(path).await? {
         let should_continue = confirm_input(

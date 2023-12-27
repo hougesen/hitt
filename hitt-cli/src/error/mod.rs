@@ -14,6 +14,7 @@ pub enum HittCliError {
 }
 
 impl fmt::Display for HittCliError {
+    #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let error_message = match self {
             Self::Parse(path, error) => format!("error parsing file {path:?} - {error}"),
@@ -30,12 +31,14 @@ impl fmt::Display for HittCliError {
 }
 
 impl From<tokio::task::JoinError> for HittCliError {
+    #[inline]
     fn from(value: tokio::task::JoinError) -> Self {
         Self::Join(value)
     }
 }
 
 impl From<std::io::Error> for HittCliError {
+    #[inline]
     fn from(value: std::io::Error) -> Self {
         Self::Io(value)
     }
