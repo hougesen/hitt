@@ -41,7 +41,7 @@ pub(crate) struct RunCommandArguments {
     #[arg(long, short, default_value_t = false)]
     pub(crate) recursive: bool,
 
-    #[arg(long, default_value_t = false)]
+    #[arg(long, default_value_t = false, hide = true)]
     pub(crate) vim: bool,
 }
 
