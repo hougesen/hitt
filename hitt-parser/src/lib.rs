@@ -67,20 +67,20 @@ fn tokenize(buffer: &str) -> Result<Vec<RequestToken>, RequestParseError> {
             continue;
         }
 
-        if trimmed_line.starts_with('@') {
-            let mut chrs = to_enum_chars(trimmed_line);
-
-            // move forward once since we don't care about the '@'
-            chrs.next();
-
-            if let Some((name, value)) = parse_variable_declaration(&mut chrs) {
-                vars.insert(name, value);
-                continue;
-            }
-        }
-
         match parser_mode {
             ParserMode::Request => {
+                if trimmed_line.starts_with('@') {
+                    let mut chrs = to_enum_chars(trimmed_line);
+
+                    // move forward once since we don't care about the '@'
+                    chrs.next();
+
+                    if let Some((name, value)) = parse_variable_declaration(&mut chrs) {
+                        vars.insert(name, value);
+                        continue;
+                    }
+                }
+
                 if !trimmed_line.is_empty() {
                     let mut chrs = to_enum_chars(trimmed_line);
                     let method = parse_method_input(&mut chrs, &vars)?;
