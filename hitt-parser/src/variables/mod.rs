@@ -32,7 +32,7 @@ mod test_parse_variable_declarations {
 
     #[test]
     fn it_should_parse_variable_declarations() {
-        for i in 0..10 {
+        for i in 0..1337 {
             let input_declaration = format!("var{i}");
             let input_value = format!("{i}");
 
@@ -54,7 +54,7 @@ mod test_parse_variable_declarations {
     fn it_should_trim_spaces() {
         let mut extra_spaces = String::new();
 
-        for i in 0..10 {
+        for i in 0..1337 {
             extra_spaces.push(' ');
 
             let input_declaration = format!("var{i}");
@@ -83,7 +83,7 @@ pub fn parse_variable(
 ) -> Option<(String, usize)> {
     let mut jumps = 0;
 
-    if let Some((_, '{')) = &chars.next() {
+    if let Some((_, '{')) = chars.next() {
         jumps += 1;
         let mut x = String::new();
 
@@ -97,7 +97,7 @@ pub fn parse_variable(
             }
 
             if ch == '}' {
-                if let Some((_, '}')) = &chars.next() {
+                if let Some((_, '}')) = chars.next() {
                     if x.is_empty() {
                         return None;
                     }
@@ -135,7 +135,7 @@ mod test_maybe_parse_variable {
         let before = "{";
         let after = "}}";
 
-        for i in 0..100 {
+        for i in 0..1337 {
             let input_name = format!("name{i}");
 
             // NOTE: the first '{' was consumed by the caller
@@ -158,7 +158,7 @@ mod test_maybe_parse_variable {
         let before = "{";
         let after = "}}";
 
-        for i in 0..100 {
+        for i in 0..1337 {
             extra_whitespace.push(' ');
 
             let input_name = format!("name{i}");

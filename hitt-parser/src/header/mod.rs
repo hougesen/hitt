@@ -86,7 +86,7 @@ mod test_parse_header {
 
     #[test]
     fn it_should_return_valid_headers() {
-        for i in 0..10 {
+        for i in 0..1337 {
             let line = format!("header{i}: value{i}");
 
             let result = parse_header(&mut to_enum_chars(&line), &EMPTY_VARS)
@@ -120,7 +120,7 @@ mod test_parse_header {
         let close = "}}";
         let mut extra_spaces = String::new();
 
-        for i in 0..1000 {
+        for i in 0..1337 {
             let key = format!("key{i}");
             let value = format!("value{i}");
 

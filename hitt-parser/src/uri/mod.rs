@@ -100,7 +100,7 @@ mod test_parse_uri_input {
     fn it_should_support_query_paramers() {
         let input_uri = "https://mhouge.dk/";
 
-        for i in 0..10 {
+        for i in 0..1337 {
             let input = format!("{input_uri}?key{i}=value{i}");
 
             let result = parse_uri_input(&mut to_enum_chars(&input), &EMPTY_VARS)
@@ -119,7 +119,7 @@ mod test_parse_uri_input {
         let variable_open = "{{";
         let variable_close = "}}";
 
-        for i in 0..10 {
+        for i in 0..1337 {
             vars.insert(format!("i{i}"), i.to_string());
 
             let input = format!("{input_uri}?key={variable_open}i{i}{variable_close}");

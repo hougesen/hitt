@@ -12,6 +12,7 @@ mod uri;
 mod variables;
 mod version;
 
+#[derive(Copy, Clone)]
 enum ParserMode {
     Request,
     Headers,
@@ -377,7 +378,7 @@ mod test_parse_requests {
 
         assert!(result.len() == 1);
 
-        let request = &result[0];
+        let request = result.first().expect("request len to be 1");
 
         assert_eq!(method_input, request.method.as_str());
 
@@ -394,7 +395,10 @@ mod test_parse_requests {
             .get(header1_key)
             .expect("header1_key to exist");
 
-        assert_eq!(header1_value, header1_output.to_str().unwrap());
+        assert_eq!(
+            header1_value,
+            header1_output.to_str().expect("it to be a valid header")
+        );
 
         assert!(request.http_version.is_none());
     }
