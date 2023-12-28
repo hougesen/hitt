@@ -60,7 +60,7 @@ pub async fn send_request(
 
 #[cfg(test)]
 mod test_send_request {
-    use core::str::FromStr;
+    use core::{str::FromStr, time::Duration};
 
     use http::{HeaderMap, StatusCode};
 
@@ -89,5 +89,27 @@ mod test_send_request {
         assert_eq!(result.url, uri.to_string());
 
         assert_eq!(result.status_code, StatusCode::OK);
+    }
+
+    #[tokio::test]
+    async fn timeout_should_work() {
+        let http_client = reqwest::Client::new();
+
+        let timeout = Some(Duration::from_millis(5));
+
+        let uri = http::Uri::from_str("https://dummyjson.com/products/1").unwrap();
+
+        let input = hitt_parser::HittRequest {
+            method: http::Method::GET,
+            uri: uri.clone(),
+            headers: HeaderMap::default(),
+            body: None,
+            http_version: None,
+        };
+
+        match send_request(&http_client, &input, &timeout).await {
+            Ok(_) => panic!("expected request to timeout"),
+            Err(err) => assert!(err.is_timeout()),
+        };
     }
 }
