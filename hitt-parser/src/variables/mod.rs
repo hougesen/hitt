@@ -1,3 +1,4 @@
+#[inline]
 pub fn parse_variable_declaration(
     chars: &mut core::iter::Enumerate<core::str::Chars>,
 ) -> Option<(String, String)> {
