@@ -34,14 +34,17 @@ fn to_enum_chars(input: &str) -> core::iter::Enumerate<core::str::Chars> {
 }
 
 #[inline]
-fn tokenize(buffer: &str) -> Result<Vec<RequestToken>, RequestParseError> {
+fn tokenize(
+    buffer: &str,
+    input_variables: &std::collections::HashMap<String, String>,
+) -> Result<Vec<RequestToken>, RequestParseError> {
     let mut tokens: Vec<RequestToken> = Vec::new();
 
     let mut parser_mode = ParserMode::Request;
 
     let mut body_parts: Vec<String> = Vec::new();
 
-    let mut vars = std::collections::HashMap::new();
+    let mut vars = input_variables.to_owned();
 
     for line in buffer.lines() {
         let trimmed_line = line.trim();
@@ -148,7 +151,12 @@ fn tokenize(buffer: &str) -> Result<Vec<RequestToken>, RequestParseError> {
 
 #[cfg(test)]
 mod test_tokenize {
+    use once_cell::sync::Lazy;
+
     use crate::{tokenize, RequestToken};
+
+    static EMPTY_VARS: Lazy<std::collections::HashMap<String, String>> =
+        Lazy::new(std::collections::HashMap::new);
 
     #[test]
     fn should_return_a_list_of_tokens() {
@@ -162,7 +170,8 @@ mod test_tokenize {
         let input_request =
             format!("{method_input} {uri_input} {http_version}\n{header1_key}: {header1_value}\n\n{body_input}");
 
-        let tokens = tokenize(&input_request).expect("it to return Result<Vec<RequestToken>>");
+        let tokens =
+            tokenize(&input_request, &EMPTY_VARS).expect("it to return Result<Vec<RequestToken>>");
 
         assert_eq!(tokens.len(), 5);
 
@@ -229,7 +238,7 @@ x-test-header: test value
 
 
 ";
-        let tokens = tokenize(input).expect("it to return a list of tokens");
+        let tokens = tokenize(input, &EMPTY_VARS).expect("it to return a list of tokens");
 
         assert_eq!(25, tokens.len());
 
@@ -284,7 +293,7 @@ x-test-header: test value
 
 {{ body_input }}";
 
-        let tokens = tokenize(input).expect("it to tokenize successfully");
+        let tokens = tokenize(input, &EMPTY_VARS).expect("it to tokenize successfully");
 
         assert_eq!(tokens.len(), 3);
 
@@ -306,6 +315,72 @@ x-test-header: test value
             Some(RequestToken::Body(Some(value))) => assert_eq!(value, "{ \"key\": \"value\" }"),
             Some(token) => panic!("expected it to return a body token, but received '{token:?}'"),
             None => panic!("expected it to return a body token, but received None"),
+        }
+    }
+
+    #[test]
+    fn it_should_support_input_variables() {
+        let vars = std::collections::HashMap::from([
+            ("method".to_owned(), "GET".to_owned()),
+            ("host".to_owned(), "https://mhouge.dk".to_owned()),
+            ("path".to_owned(), "/api".to_owned()),
+            ("query_value".to_owned(), "mads@mhouge.dk".to_owned()),
+            ("body_input".to_owned(), "{ \"key\": \"value\" }".to_owned()),
+        ]);
+
+        let input = "
+{{method}} {{host}}{{path}}?email={{query_value}}
+
+{{ body_input }}";
+
+        let tokens = tokenize(input, &vars).expect("it to tokenize successfully");
+
+        assert_eq!(tokens.len(), 3);
+
+        match tokens.first() {
+            Some(RequestToken::Method(method)) => assert_eq!(method, http::method::Method::GET),
+            Some(token) => panic!("expected it to return a method token, but received '{token:?}'"),
+            None => panic!("expected it to return a method token, but received None"),
+        }
+
+        match tokens.get(1) {
+            Some(RequestToken::Uri(uri)) => {
+                assert_eq!(uri, "https://mhouge.dk/api?email=mads@mhouge.dk");
+            }
+            Some(token) => panic!("expected it to return a uri token, but received '{token:?}'"),
+            None => panic!("expected it to return a uri token, but received None"),
+        }
+
+        match tokens.get(2) {
+            Some(RequestToken::Body(Some(value))) => assert_eq!(value, "{ \"key\": \"value\" }"),
+            Some(token) => panic!("expected it to return a body token, but received '{token:?}'"),
+            None => panic!("expected it to return a body token, but received None"),
+        }
+    }
+
+    #[test]
+    fn input_variables_should_be_overwritten_by_local_variables() {
+        let vars = std::collections::HashMap::from([("method".to_owned(), "PUT".to_owned())]);
+
+        let input = "
+@method = POST
+
+{{method}} https://mhouge.dk/";
+
+        let tokens = tokenize(input, &vars).expect("it to parse successfully");
+
+        assert_eq!(tokens.len(), 2);
+
+        match tokens.first() {
+            Some(RequestToken::Method(method)) => assert_eq!(method, http::method::Method::POST),
+            Some(token) => panic!("expected it to return a method token, but received '{token:?}'"),
+            None => panic!("expected it to return a method token, but received None"),
+        }
+
+        match tokens.get(1) {
+            Some(RequestToken::Uri(uri)) => assert_eq!(uri, "https://mhouge.dk/"),
+            Some(token) => panic!("expected it to return a uri token, but received '{token:?}'"),
+            None => panic!("expected it to return a uri token, but received None"),
         }
     }
 }
@@ -348,10 +423,13 @@ impl PartialHittRequest {
 }
 
 #[inline]
-pub fn parse_requests(buffer: &str) -> Result<Vec<HittRequest>, RequestParseError> {
+pub fn parse_requests(
+    buffer: &str,
+    input_variables: &std::collections::HashMap<String, String>,
+) -> Result<Vec<HittRequest>, RequestParseError> {
     let mut requests = Vec::new();
 
-    let tokens = tokenize(buffer)?;
+    let tokens = tokenize(buffer, input_variables)?;
 
     let mut partial_request = PartialHittRequest::default();
 
@@ -400,11 +478,16 @@ pub fn parse_requests(buffer: &str) -> Result<Vec<HittRequest>, RequestParseErro
 mod test_parse_requests {
     use core::str::FromStr;
 
+    use once_cell::sync::Lazy;
+
     use crate::parse_requests;
 
     const HTTP_METHODS: [&str; 9] = [
         "GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS", "CONNECT", "TRACE",
     ];
+
+    static EMPTY_VARS: Lazy<std::collections::HashMap<String, String>> =
+        Lazy::new(std::collections::HashMap::new);
 
     #[test]
     fn it_should_parse_http_method_correctly() {
@@ -413,8 +496,10 @@ mod test_parse_requests {
         for method in &HTTP_METHODS {
             let expected_method = http::Method::from_str(method).expect("m is a valid method");
 
+            let input = format!("{method} {url}");
+
             let parsed_requests =
-                parse_requests(&format!("{method} {url}")).expect("request should be valid");
+                parse_requests(&input, &EMPTY_VARS).expect("request should be valid");
 
             assert!(parsed_requests.len() == 1);
 
@@ -444,7 +529,8 @@ mod test_parse_requests {
         let input_request =
             format!("{method_input} {uri_input}\n{header1_key}: {header1_value}\n\n{body_input}");
 
-        let result = parse_requests(&input_request).expect("it to return a list of requests");
+        let result =
+            parse_requests(&input_request, &EMPTY_VARS).expect("it to return a list of requests");
 
         assert!(result.len() == 1);
 
@@ -497,7 +583,7 @@ GET https://mhouge.dk/ HTTP/3
 ###
 ";
 
-        let requests = parse_requests(input).expect("to get a list of requests");
+        let requests = parse_requests(input, &EMPTY_VARS).expect("to get a list of requests");
 
         assert_eq!(5, requests.len());
 
@@ -536,7 +622,7 @@ GET https://mhouge.dk/ HTTP/3
 
 {{ body_input }}";
 
-        let requests = parse_requests(input).expect("to get a list of requests");
+        let requests = parse_requests(input, &EMPTY_VARS).expect("to get a list of requests");
 
         assert_eq!(requests.len(), 1);
 
@@ -550,5 +636,78 @@ GET https://mhouge.dk/ HTTP/3
             "{ \"key\": \"value\" }",
             request.body.clone().expect("body to be set"),
         );
+    }
+
+    #[test]
+    fn it_should_support_variable_input() {
+        let mut vars = std::collections::HashMap::from([
+            ("method".to_owned(), "GET".to_owned()),
+            ("host".to_owned(), "https://mhouge.dk".to_owned()),
+            ("path".to_owned(), "/api".to_owned()),
+            ("query_value".to_owned(), "mads@mhouge.dk".to_owned()),
+            ("body_input".to_owned(), "{ \"key\": \"value\" }".to_owned()),
+        ]);
+
+        let input = "
+{{method}} {{host}}{{path}}?email={{query_value}}
+{{header_name}}: {{header_value}}
+
+{{ body_input }}";
+
+        for i in u8::MIN..u8::MAX {
+            let header_name = format!("mads-was-here{i}");
+            let header_value = format!("or was i{i}?");
+
+            vars.insert("header_name".to_owned(), header_name.clone());
+            vars.insert("header_value".to_owned(), header_value.clone());
+
+            let requests = parse_requests(input, &vars).expect("to get a list of requests");
+
+            assert_eq!(requests.len(), 1);
+
+            let request = requests.first().expect("it to have 1 request");
+
+            assert_eq!(request.method, http::method::Method::GET);
+
+            assert_eq!(request.uri, "https://mhouge.dk/api?email=mads@mhouge.dk");
+
+            assert_eq!(request.headers.len(), 1);
+
+            let result_header_value = request.headers.get(header_name).expect("it to exist");
+
+            assert_eq!(
+                header_value,
+                result_header_value
+                    .to_str()
+                    .expect("it to be a valid string"),
+            );
+
+            assert_eq!(
+                "{ \"key\": \"value\" }",
+                request.body.clone().expect("body to be set"),
+            );
+        }
+    }
+
+    #[test]
+    fn input_variables_should_be_overwritten_by_local_variables() {
+        let vars = std::collections::HashMap::from([("method".to_owned(), "PUT".to_owned())]);
+
+        let input = "
+@method = POST
+
+{{method}} https://mhouge.dk/";
+
+        let requests = parse_requests(input, &vars).expect("it to parse successfully");
+
+        assert_eq!(requests.len(), 1);
+
+        let request = requests.first().expect("it to exist");
+
+        assert_eq!(request.method, http::method::Method::POST);
+
+        assert_eq!(request.uri, "https://mhouge.dk/");
+
+        assert_eq!(request.headers.len(), 0);
     }
 }

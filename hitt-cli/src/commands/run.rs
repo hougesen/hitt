@@ -21,7 +21,9 @@ pub async fn run_command(
 
     let timeout = args.timeout.map(core::time::Duration::from_millis);
 
-    let parsed_files = parse_requests_threaded(http_file_paths).await?;
+    let vars = std::collections::HashMap::new();
+
+    let parsed_files = parse_requests_threaded(http_file_paths, vars).await?;
 
     for (path, file) in parsed_files {
         if !args.vim {

@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use hitt_parser::HittRequest;
 
 use crate::error::HittCliError;
@@ -11,16 +13,21 @@ async fn get_file_content(path: &std::path::Path) -> Result<String, std::io::Err
 
 pub async fn parse_requests_threaded(
     paths: Vec<std::path::PathBuf>,
+    input_variables: std::collections::HashMap<String, String>,
 ) -> Result<Vec<(std::path::PathBuf, Vec<HittRequest>)>, HittCliError> {
+    let vars = Arc::new(input_variables);
+
     let handles = paths
         .into_iter()
         .map(|path| {
+            let var_clone = Arc::clone(&vars);
+
             tokio::task::spawn(async move {
                 (
                     get_file_content(&path)
                         .await
                         .map(|content| {
-                            hitt_parser::parse_requests(&content)
+                            hitt_parser::parse_requests(&content, &var_clone)
                                 .map_err(|error| HittCliError::Parse(path.clone(), error))
                         })
                         .map_err(|error| HittCliError::IoRead(path.clone(), error)),
@@ -52,18 +59,16 @@ pub fn find_http_files(path: &std::path::Path) -> Vec<std::path::PathBuf> {
         .build()
         .filter_map(|orginal_entry| {
             if let Ok(entry) = orginal_entry {
-                let path = entry.path();
+                let entry_path = entry.path();
 
-                if let Some(ext) = path.extension() {
+                if let Some(ext) = entry_path.extension() {
                     if ext == "http" {
-                        return Some(path.to_path_buf());
+                        return Some(entry_path.to_path_buf());
                     }
                 }
-
-                None
-            } else {
-                None
             }
+
+            None
         })
         .collect()
 }
