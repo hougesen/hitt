@@ -1,4 +1,4 @@
-use std::io::{Read, Write};
+use std::io::Write;
 
 use console::{Key, Term};
 
@@ -106,9 +106,7 @@ pub fn editor_input(
             continue;
         }
 
-        let mut written_file = std::fs::File::open(path)?;
-        let mut file_contents = String::new();
-        written_file.read_to_string(&mut file_contents)?;
+        let file_contents = std::fs::read_to_string(path)?;
 
         return Ok(Some(file_contents));
     }
