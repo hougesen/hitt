@@ -59,19 +59,24 @@ pub fn parse_header(
             }
         } else if is_key {
             key.push(ch);
-        } else if !(value.is_empty() && ch == ' ') {
+        } else {
             value.push(ch);
         }
     }
 
+    let trimmed_key = key.trim();
+
+    let trimmed_value = value.trim();
+
     if !key.is_empty() {
         return Ok(Some(HeaderToken {
-            key: http::HeaderName::from_str(&key)
-                .map_err(|_err| RequestParseError::InvalidHeaderName(key))?,
-            value: http::HeaderValue::from_str(&value)
-                .map_err(|_err| RequestParseError::InvalidHeaderValue(value))?,
+            key: http::HeaderName::from_str(trimmed_key)
+                .map_err(|_err| RequestParseError::InvalidHeaderName(trimmed_key.to_owned()))?,
+            value: http::HeaderValue::from_str(trimmed_value)
+                .map_err(|_err| RequestParseError::InvalidHeaderValue(trimmed_value.to_owned()))?,
         }));
     }
+
     Ok(None)
 }
 
@@ -217,5 +222,18 @@ mod test_parse_header {
             parse_header(&mut to_enum_chars(input), &EMPTY_VARS)
                 .expect_err("it to return an invalid error");
         };
+    }
+
+    #[test]
+    fn it_should_allow_spaces_in_header() {
+        let f = "mads-was-here";
+        let input = format!("     {f}    :     {f}     ");
+        let result = parse_header(&mut to_enum_chars(&input), &EMPTY_VARS)
+            .expect("it to be parseable")
+            .expect("it to exist");
+
+        assert_eq!(f.trim(), result.key);
+
+        assert_eq!(f.trim(), result.value);
     }
 }

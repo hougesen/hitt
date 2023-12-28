@@ -82,7 +82,7 @@ fn tokenize(buffer: &str) -> Result<Vec<RequestToken>, RequestParseError> {
         match parser_mode {
             ParserMode::Request => {
                 if !trimmed_line.is_empty() {
-                    let mut chrs = to_enum_chars(line);
+                    let mut chrs = to_enum_chars(trimmed_line);
                     let method = parse_method_input(&mut chrs, &vars)?;
 
                     tokens.push(RequestToken::Method(method));
@@ -100,9 +100,11 @@ fn tokenize(buffer: &str) -> Result<Vec<RequestToken>, RequestParseError> {
             }
 
             ParserMode::Headers => {
-                if line.trim().is_empty() {
+                if trimmed_line.is_empty() {
                     parser_mode = ParserMode::Body;
-                } else if let Some(header_token) = parse_header(&mut to_enum_chars(line), &vars)? {
+                } else if let Some(header_token) =
+                    parse_header(&mut to_enum_chars(trimmed_line), &vars)?
+                {
                     tokens.push(RequestToken::Header(header_token));
                 }
             }
