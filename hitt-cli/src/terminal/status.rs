@@ -3,7 +3,7 @@ use crate::terminal::{STYLE_BOLD, STYLE_RESET, TEXT_GREEN, TEXT_RED, TEXT_RESET}
 #[inline]
 pub(crate) fn print_status(
     term: &console::Term,
-    http_version: &http::version::Version,
+    http_version: http::version::Version,
     method: &str,
     url: &str,
     status_code: u16,

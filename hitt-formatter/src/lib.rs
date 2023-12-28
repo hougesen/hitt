@@ -2,6 +2,7 @@ use json::format_json;
 
 pub mod json;
 
+#[derive(Copy, Clone)]
 pub enum ContentType {
     Json,
     Unknown,
@@ -19,7 +20,7 @@ impl From<&str> for ContentType {
 }
 
 #[inline]
-pub fn format(input: &str, content_type: &ContentType) -> Option<String> {
+pub fn format(input: &str, content_type: ContentType) -> Option<String> {
     match content_type {
         ContentType::Json => Some(format_json(input)),
         ContentType::Unknown => None,
