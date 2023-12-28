@@ -13,9 +13,10 @@ pub async fn run_command(
 ) -> Result<(), HittCliError> {
     let http_client = reqwest::Client::new();
 
-    let http_file_paths = match std::fs::metadata(&args.path).map(|metadata| metadata.is_dir())? {
-        true => find_http_files(&args.path),
-        false => vec![args.path.clone()],
+    let http_file_paths = if std::fs::metadata(&args.path).map(|metadata| metadata.is_dir())? {
+        find_http_files(&args.path)
+    } else {
+        vec![args.path.clone()]
     };
 
     let timeout = args.timeout.map(core::time::Duration::from_millis);
@@ -24,7 +25,7 @@ pub async fn run_command(
 
     for (path, file) in parsed_files {
         if !args.vim {
-            term.write_line(&format!("hitt: running {:?}", path))?;
+            term.write_line(&format!("hitt: running {path:?}"))?;
         }
 
         for req in file {
