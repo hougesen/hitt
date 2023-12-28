@@ -422,6 +422,47 @@ impl PartialHittRequest {
     }
 }
 
+#[cfg(test)]
+mod test_partial_http_request {
+    use core::str::FromStr;
+
+    use http::{HeaderMap, Uri};
+
+    use crate::{error::RequestParseError, PartialHittRequest};
+
+    #[test]
+    fn build_should_reject_if_no_uri() {
+        let request = PartialHittRequest {
+            uri: None,
+            method: Some(http::Method::GET),
+            http_version: None,
+            headers: HeaderMap::default(),
+            body: None,
+        };
+
+        match request.build() {
+            Err(RequestParseError::MissingUri) => {}
+            result => panic!("Expected RequestParseError::MissingUri but received {result:?}"),
+        };
+    }
+
+    #[test]
+    fn build_should_reject_if_no_method() {
+        let request = PartialHittRequest {
+            uri: Some(Uri::from_str("https://mhouge.dk/").unwrap()),
+            method: None,
+            http_version: None,
+            headers: HeaderMap::default(),
+            body: None,
+        };
+
+        match request.build() {
+            Err(RequestParseError::MissingMethod) => {}
+            result => panic!("Expected RequestParseError::MissingMethod but received {result:?}"),
+        };
+    }
+}
+
 #[inline]
 pub fn parse_requests(
     buffer: &str,
