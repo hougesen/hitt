@@ -74,7 +74,9 @@ pub fn confirm_input(
 
 pub fn select_input(term: &Term, prompt: &str, items: &[&str]) -> Result<String, std::io::Error> {
     if items.len() < 2 {
-        return Ok(items[0].to_owned());
+        let item = *items.first().expect("it to be a valid selected input");
+
+        return Ok(item.to_owned());
     }
 
     let mut selecting = true;
@@ -119,9 +121,11 @@ pub fn select_input(term: &Term, prompt: &str, items: &[&str]) -> Result<String,
         }
     }
 
-    let selected = items[option_index].to_owned();
+    let selected = *items
+        .get(option_index)
+        .expect("it to be a valid selected input");
 
-    write_prompt_answer(term, prompt, &selected)?;
+    write_prompt_answer(term, prompt, selected)?;
 
-    Ok(selected)
+    Ok(selected.to_owned())
 }
