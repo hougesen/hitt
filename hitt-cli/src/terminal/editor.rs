@@ -75,7 +75,7 @@ pub fn editor_input(
     term: &Term,
     content_type: Option<&str>,
 ) -> Result<Option<String>, std::io::Error> {
-    let default_editor = get_default_editor().into_string().unwrap();
+    let default_editor = get_default_editor().to_string_lossy().to_string();
 
     let mut file = create_temp_file(content_type_to_ext(content_type))?;
 
