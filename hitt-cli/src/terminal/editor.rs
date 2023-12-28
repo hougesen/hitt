@@ -66,7 +66,7 @@ fn content_type_to_ext(content_type: Option<&str>) -> &'static str {
         Some("application/x-httpd-php") => ".php",
         Some("application/x-sh") => ".sh",
         Some("image/svg+xml") => ".svg",
-        Some("application/xml") | Some("text/xml") => ".xml",
+        Some("application/xml" | "text/xml") => ".xml",
         _ => ".txt",
     }
 }
