@@ -1,5 +1,7 @@
 use clap::{Args, Parser, Subcommand};
 
+pub mod variables;
+
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 #[command(propagate_version = true)]
@@ -21,6 +23,18 @@ pub struct RunCommandArguments {
     #[arg()]
     pub path: std::path::PathBuf,
 
+    /// Request timeout in milliseconds
+    #[arg(long, value_name = "TIMEOUT_MS")]
+    pub timeout: Option<u64>,
+
+    /// Variables to pass to request
+    #[arg(long, value_name = "KEY>=<VALUE")]
+    pub var: Option<Vec<String>>,
+
+    /// Enable to run directory recursively
+    #[arg(long, short, default_value_t = false)]
+    pub recursive: bool,
+
     /// Exit on error response status code
     #[arg(long, default_value_t = false)]
     pub fail_fast: bool,
@@ -36,14 +50,6 @@ pub struct RunCommandArguments {
     /// Disable pretty printing of response body
     #[arg(long, default_value_t = false)]
     pub disable_formatting: bool,
-
-    /// Enable to run directory recursively
-    #[arg(long, short, default_value_t = false)]
-    pub recursive: bool,
-
-    /// Request timeout in milliseconds
-    #[arg(long)]
-    pub timeout: Option<u64>,
 
     #[arg(long, default_value_t = false, hide = true)]
     pub vim: bool,
