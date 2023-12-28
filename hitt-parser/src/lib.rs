@@ -29,7 +29,7 @@ enum RequestToken {
 }
 
 #[inline]
-pub fn to_enum_chars(input: &str) -> core::iter::Enumerate<core::str::Chars> {
+fn to_enum_chars(input: &str) -> core::iter::Enumerate<core::str::Chars> {
     input.chars().enumerate()
 }
 
