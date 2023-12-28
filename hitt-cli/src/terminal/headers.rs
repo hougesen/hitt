@@ -1,7 +1,7 @@
 use crate::terminal::{TEXT_RED, TEXT_RESET, TEXT_YELLOW};
 
 #[inline]
-pub(crate) fn print_headers(
+pub fn print_headers(
     term: &console::Term,
     headers: &reqwest::header::HeaderMap,
 ) -> Result<(), std::io::Error> {

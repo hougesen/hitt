@@ -7,7 +7,7 @@ use crate::{
     terminal::handle_response,
 };
 
-pub(crate) async fn run_command(
+pub async fn run_command(
     term: &console::Term,
     args: &RunCommandArguments,
 ) -> Result<(), HittCliError> {

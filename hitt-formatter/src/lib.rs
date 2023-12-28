@@ -1,6 +1,6 @@
 use json::format_json;
 
-pub mod json;
+mod json;
 
 #[derive(Copy, Clone)]
 pub enum ContentType {

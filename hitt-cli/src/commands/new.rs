@@ -138,7 +138,7 @@ async fn check_if_exist(term: &Term, path: &std::path::Path) -> Result<(), std::
     Ok(())
 }
 
-pub(crate) async fn new_command(
+pub async fn new_command(
     term: &console::Term,
     args: &NewCommandArguments,
 ) -> Result<(), HittCliError> {
