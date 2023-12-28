@@ -45,13 +45,13 @@ fn create_temp_file(ext: &str) -> Result<tempfile::NamedTempFile, std::io::Error
 
 #[inline]
 fn build_editor_cmd(editor_cmd: String) -> (String, Vec<String>) {
-    match shell_words::split(&editor_cmd) {
-        Ok(mut parts) => {
+    shell_words::split(&editor_cmd).map_or_else(
+        |_| (editor_cmd, Vec::new()),
+        |mut parts| {
             let cmd = parts.remove(0);
             (cmd, parts)
-        }
-        Err(_) => (editor_cmd, vec![]),
-    }
+        },
+    )
 }
 
 #[inline]
