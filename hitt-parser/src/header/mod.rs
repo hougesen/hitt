@@ -76,16 +76,20 @@ pub fn parse_header(
 #[cfg(test)]
 mod test_parse_header {
     use core::str::FromStr;
-    use std::collections::HashMap;
 
-    use crate::parse_header;
+    use once_cell::sync::Lazy;
+
+    use crate::{parse_header, to_enum_chars};
+
+    static EMPTY_VARS: Lazy<std::collections::HashMap<String, String>> =
+        Lazy::new(std::collections::HashMap::new);
 
     #[test]
     fn it_should_return_valid_headers() {
         for i in 0..10 {
             let line = format!("header{i}: value{i}");
 
-            let result = parse_header(&mut line.chars().enumerate(), &HashMap::new())
+            let result = parse_header(&mut to_enum_chars(&line), &EMPTY_VARS)
                 .expect("It should be able to parse valid headers")
                 .expect("headers to be defined");
 
@@ -103,15 +107,14 @@ mod test_parse_header {
 
     #[test]
     fn it_should_ignore_empty_lines() {
-        let result =
-            parse_header(&mut "".chars().enumerate(), &HashMap::new()).expect("it to be parseable");
+        let result = parse_header(&mut to_enum_chars(""), &EMPTY_VARS).expect("it to be parseable");
 
         assert!(result.is_none());
     }
 
     #[test]
     fn it_should_support_variables() {
-        let mut vars = HashMap::new();
+        let mut vars = std::collections::HashMap::new();
 
         let open = "{{";
         let close = "}}";
@@ -127,7 +130,7 @@ mod test_parse_header {
             let dynamic_key =
                 format!("{open}{extra_spaces}{key}{extra_spaces}{close}:{extra_spaces}static");
 
-            let dynamic_key_result = parse_header(&mut dynamic_key.chars().enumerate(), &vars)
+            let dynamic_key_result = parse_header(&mut to_enum_chars(&dynamic_key), &vars)
                 .expect("it to be parseable")
                 .expect("it to return a header field");
 
@@ -137,7 +140,7 @@ mod test_parse_header {
             let dynamic_value =
                 format!("static:{extra_spaces}{open}{extra_spaces}{value}{extra_spaces}{close}");
 
-            let dynamic_value_result = parse_header(&mut dynamic_value.chars().enumerate(), &vars)
+            let dynamic_value_result = parse_header(&mut to_enum_chars(&dynamic_value), &vars)
                 .expect("it to be parseable")
                 .expect("it to return a header field");
 
@@ -148,7 +151,7 @@ mod test_parse_header {
                 format!("{open}{extra_spaces}{key}{extra_spaces}{close}:{extra_spaces}{open}{extra_spaces}{value}{extra_spaces}{close}");
 
             let dynamic_key_value_result =
-                parse_header(&mut dynamic_key_value.chars().enumerate(), &vars)
+                parse_header(&mut to_enum_chars(&dynamic_key_value), &vars)
                     .expect("it to be parseable")
                     .expect("it to return a header field");
 

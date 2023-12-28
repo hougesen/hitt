@@ -28,6 +28,11 @@ enum RequestToken {
 }
 
 #[inline]
+pub fn to_enum_chars(input: &str) -> core::iter::Enumerate<core::str::Chars> {
+    input.chars().enumerate()
+}
+
+#[inline]
 fn tokenize(buffer: &str) -> Result<Vec<RequestToken>, RequestParseError> {
     let mut tokens: Vec<RequestToken> = Vec::new();
 
@@ -62,7 +67,7 @@ fn tokenize(buffer: &str) -> Result<Vec<RequestToken>, RequestParseError> {
         }
 
         if trimmed_line.starts_with('@') {
-            let mut chrs = trimmed_line.chars().enumerate();
+            let mut chrs = to_enum_chars(trimmed_line);
 
             // move forward once since we don't care about the '@'
             chrs.next();
@@ -76,7 +81,7 @@ fn tokenize(buffer: &str) -> Result<Vec<RequestToken>, RequestParseError> {
         match parser_mode {
             ParserMode::Request => {
                 if !trimmed_line.is_empty() {
-                    let mut chrs = line.chars().enumerate();
+                    let mut chrs = to_enum_chars(line);
                     let method = parse_method_input(&mut chrs)?;
 
                     tokens.push(RequestToken::Method(method));
@@ -85,7 +90,7 @@ fn tokenize(buffer: &str) -> Result<Vec<RequestToken>, RequestParseError> {
 
                     tokens.push(RequestToken::Uri(uri));
 
-                    if let Some(http_version) = parse_http_version(&mut chrs) {
+                    if let Some(http_version) = parse_http_version(&mut chrs, &vars) {
                         tokens.push(RequestToken::HttpVersion(http_version));
                     }
 
@@ -96,9 +101,7 @@ fn tokenize(buffer: &str) -> Result<Vec<RequestToken>, RequestParseError> {
             ParserMode::Headers => {
                 if line.trim().is_empty() {
                     parser_mode = ParserMode::Body;
-                } else if let Some(header_token) =
-                    parse_header(&mut line.chars().enumerate(), &vars)?
-                {
+                } else if let Some(header_token) = parse_header(&mut to_enum_chars(line), &vars)? {
                     tokens.push(RequestToken::Header(header_token));
                 }
             }

@@ -33,7 +33,7 @@ pub fn parse_method_input(
 
 #[cfg(test)]
 mod test_parse_method_input {
-    use crate::method::parse_method_input;
+    use crate::{method::parse_method_input, to_enum_chars};
 
     const HTTP_METHODS: [&str; 9] = [
         "GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS", "CONNECT", "TRACE",
@@ -44,7 +44,7 @@ mod test_parse_method_input {
         for method_input in HTTP_METHODS {
             let input = format!("{method_input} https://mhouge.dk HTTP/2");
 
-            let parsed_method = parse_method_input(&mut input.chars().enumerate())
+            let parsed_method = parse_method_input(&mut to_enum_chars(&input))
                 .expect("it should return a valid method");
 
             assert_eq!(method_input, parsed_method.as_str());
@@ -56,7 +56,7 @@ mod test_parse_method_input {
         for method_input in HTTP_METHODS {
             let input = format!("{} https://mhouge.dk HTTP/2", method_input.to_lowercase());
 
-            let parsed_method = parse_method_input(&mut input.chars().enumerate())
+            let parsed_method = parse_method_input(&mut to_enum_chars(&input))
                 .expect("it should return a valid method");
 
             assert_eq!(method_input, parsed_method.as_str());

@@ -46,7 +46,12 @@ pub fn parse_uri_input(
 
 #[cfg(test)]
 mod test_parse_uri_input {
-    use crate::uri::parse_uri_input;
+    use once_cell::sync::Lazy;
+
+    use crate::{to_enum_chars, uri::parse_uri_input};
+
+    static EMPTY_VARS: Lazy<std::collections::HashMap<String, String>> =
+        Lazy::new(std::collections::HashMap::new);
 
     #[test]
     fn it_should_be_able_to_parse_uris() {
@@ -57,10 +62,9 @@ mod test_parse_uri_input {
         ];
 
         for input_uri in input_uris {
-            let result = parse_uri_input(
-                &mut format!("{input_uri} HTTP/2").chars().enumerate(),
-                &std::collections::HashMap::new(),
-            );
+            let input = format!("{input_uri} HTTP/2");
+
+            let result = parse_uri_input(&mut to_enum_chars(&input), &EMPTY_VARS);
 
             let output_uri = result.expect("it to parse uri correctly");
 
@@ -72,11 +76,10 @@ mod test_parse_uri_input {
     fn it_should_ignore_leading_spaces() {
         let input_uri = "https://mhouge.dk/";
 
-        let result = parse_uri_input(
-            &mut format!("         {input_uri} HTTP/2.0").chars().enumerate(),
-            &std::collections::HashMap::new(),
-        )
-        .expect("it should return a valid uri");
+        let input = format!("         {input_uri} HTTP/2.0");
+
+        let result = parse_uri_input(&mut to_enum_chars(&input), &EMPTY_VARS)
+            .expect("it should return a valid uri");
 
         assert_eq!(result.to_string(), input_uri);
     }
@@ -86,11 +89,10 @@ mod test_parse_uri_input {
         let invalid_uris = ["m:a:d:s"];
 
         for invalid_uri in invalid_uris {
-            parse_uri_input(
-                &mut format!("{invalid_uri} HTTP/2").chars().enumerate(),
-                &std::collections::HashMap::new(),
-            )
-            .expect_err("it should return an error");
+            let input = format!("{invalid_uri} HTTP/2");
+
+            parse_uri_input(&mut to_enum_chars(&input), &EMPTY_VARS)
+                .expect_err("it should return an error");
         }
     }
 
@@ -99,11 +101,10 @@ mod test_parse_uri_input {
         let input_uri = "https://mhouge.dk/";
 
         for i in 0..10 {
-            let result = parse_uri_input(
-                &mut format!("{input_uri}?key{i}=value{i}").chars().enumerate(),
-                &std::collections::HashMap::new(),
-            )
-            .expect("it should return a valid uri");
+            let input = format!("{input_uri}?key{i}=value{i}");
+
+            let result = parse_uri_input(&mut to_enum_chars(&input), &EMPTY_VARS)
+                .expect("it should return a valid uri");
 
             assert_eq!(result.to_string(), format!("{input_uri}?key{i}=value{i}"));
         }
@@ -123,7 +124,7 @@ mod test_parse_uri_input {
 
             let input = format!("{input_uri}?key={variable_open}i{i}{variable_close}");
 
-            let result = parse_uri_input(&mut input.chars().enumerate(), &vars)
+            let result = parse_uri_input(&mut to_enum_chars(&input), &vars)
                 .expect("it should return a valid uri");
 
             // with actual variable
@@ -144,11 +145,8 @@ mod test_parse_uri_input {
         for input in bad_variable_input {
             let uri = format!("https://mhouge.dk/?key={input}");
 
-            let result = parse_uri_input(
-                &mut uri.chars().enumerate(),
-                &std::collections::HashMap::new(),
-            )
-            .expect("it to parse as a valid uri");
+            let result = parse_uri_input(&mut to_enum_chars(&uri), &EMPTY_VARS)
+                .expect("it to parse as a valid uri");
 
             assert_eq!(result.to_string(), uri);
         }

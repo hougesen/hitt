@@ -26,6 +26,8 @@ pub fn parse_variable_declaration(
 
 #[cfg(test)]
 mod test_parse_variable_declarations {
+    use crate::to_enum_chars;
+
     use super::parse_variable_declaration;
 
     #[test]
@@ -37,7 +39,7 @@ mod test_parse_variable_declarations {
             // NOTE: we do not start with a '@' here since it is expected to already be removed
             let input = format!("{input_declaration}={input_value}");
 
-            match parse_variable_declaration(&mut input.chars().enumerate()) {
+            match parse_variable_declaration(&mut to_enum_chars(&input)) {
                 Some((key, value)) => {
                     assert_eq!(input_declaration, key);
                     assert_eq!(input_value, value);
@@ -63,7 +65,7 @@ mod test_parse_variable_declarations {
                 "{input_declaration}{extra_spaces}={extra_spaces}{input_value}{extra_spaces}"
             );
 
-            match parse_variable_declaration(&mut input.chars().enumerate()) {
+            match parse_variable_declaration(&mut to_enum_chars(&input)) {
                 Some((key, value)) => {
                     assert_eq!(input_declaration, key);
                     assert_eq!(input_value, value);
@@ -124,6 +126,8 @@ pub fn parse_variable(
 
 #[cfg(test)]
 mod test_maybe_parse_variable {
+    use crate::to_enum_chars;
+
     use super::parse_variable;
 
     #[test]
@@ -137,7 +141,7 @@ mod test_maybe_parse_variable {
             // NOTE: the first '{' was consumed by the caller
             let input = format!("{before}{input_name}{after}");
 
-            match parse_variable(&mut input.chars().enumerate()) {
+            match parse_variable(&mut to_enum_chars(&input)) {
                 Some((output_name, jumps)) => {
                     assert_eq!(input_name, output_name);
                     assert_eq!(input.len(), jumps);
@@ -162,7 +166,7 @@ mod test_maybe_parse_variable {
             // NOTE: the first '{' was consumed by the caller
             let input = format!("{before}{extra_whitespace}{input_name}{extra_whitespace}{after}");
 
-            match parse_variable(&mut input.chars().enumerate()) {
+            match parse_variable(&mut to_enum_chars(&input)) {
                 Some((output_name, jumps)) => {
                     assert_eq!(input_name, output_name);
                     assert_eq!(input.len(), jumps);
@@ -200,7 +204,7 @@ mod test_maybe_parse_variable {
         ];
 
         for input in inputs {
-            if let Some((var, jumps)) = parse_variable(&mut input.chars().enumerate()) {
+            if let Some((var, jumps)) = parse_variable(&mut to_enum_chars(input)) {
                 panic!("expected None but received '{var}' {jumps}' from '{input}''");
             }
         }
