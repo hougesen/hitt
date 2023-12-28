@@ -51,14 +51,14 @@ mod test_parse_variable_declarations {
     }
 
     #[test]
-    fn it_should_trim_spaces() {
+    fn it_should_allow_emails() {
         let mut extra_spaces = String::new();
 
         for i in i8::MIN..i8::MAX {
             extra_spaces.push(' ');
 
             let input_declaration = format!("var{i}");
-            let input_value = format!("{i}");
+            let input_value = format!("mads{i}@mhouge.dk");
 
             // NOTE: we do not start with a '@' here since it is expected to already be removed
             let input = format!(
@@ -71,7 +71,7 @@ mod test_parse_variable_declarations {
                     assert_eq!(input_value, value);
                 }
 
-                None => panic!(""),
+                None => panic!("it should return a variable declaration"),
             }
         }
     }
