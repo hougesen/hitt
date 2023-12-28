@@ -42,4 +42,19 @@ mod test_parse_variable_argument {
             parse_variable_argument(&input).expect_err("it to return a variable");
         }
     }
+
+    #[test]
+    fn it_should_allow_equal_signs_as_value() {
+        for i in u8::MIN..u8::MAX {
+            let key = format!("key{i}");
+            let value = format!("value={i}");
+
+            let input = format!("{key}={value}");
+
+            let result = parse_variable_argument(&input).expect("it to return a variable");
+
+            assert_eq!(result.0, key);
+            assert_eq!(result.1, value);
+        }
+    }
 }
