@@ -1,0 +1,4 @@
+@host = https://api.goout.dk
+@query = 1234
+
+GET {{host}}?q={{query}}

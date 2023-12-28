@@ -3,7 +3,7 @@ use core::str::FromStr;
 use crate::{error::RequestParseError, RequestToken};
 
 #[derive(Debug)]
-pub(super) struct HeaderToken {
+pub struct HeaderToken {
     pub(super) key: http::HeaderName,
     pub(super) value: http::HeaderValue,
 }
@@ -16,7 +16,7 @@ impl From<HeaderToken> for RequestToken {
 }
 
 #[inline]
-pub(super) fn parse_header(
+pub fn parse_header(
     line: core::iter::Enumerate<core::str::Chars>,
 ) -> Result<Option<HeaderToken>, RequestParseError> {
     let mut key = String::new();

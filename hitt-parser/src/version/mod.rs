@@ -1,5 +1,5 @@
 #[inline]
-pub(super) fn parse_http_version(
+pub fn parse_http_version(
     chars: &mut core::iter::Enumerate<core::str::Chars>,
 ) -> Option<http::version::Version> {
     let mut version = String::new();
@@ -48,7 +48,7 @@ mod test_parse_http_version {
                 .expect("it to return a http version");
 
             assert_eq!(http::Version::HTTP_09, lowercase_result);
-        })
+        });
     }
 
     #[test]
@@ -74,7 +74,7 @@ mod test_parse_http_version {
                 .expect("it to return a http version");
 
             assert_eq!(http::Version::HTTP_10, lowercase_result);
-        })
+        });
     }
 
     #[test]
@@ -92,7 +92,7 @@ mod test_parse_http_version {
                 .expect("it to return a http version");
 
             assert_eq!(http::Version::HTTP_11, lowercase_result);
-        })
+        });
     }
 
     #[test]
@@ -118,7 +118,7 @@ mod test_parse_http_version {
                 .expect("it to return a http version");
 
             assert_eq!(http::Version::HTTP_2, lowercase_result);
-        })
+        });
     }
 
     #[test]
@@ -144,6 +144,6 @@ mod test_parse_http_version {
                 .expect("it to return a http version");
 
             assert_eq!(http::Version::HTTP_3, lowercase_result);
-        })
+        });
     }
 }

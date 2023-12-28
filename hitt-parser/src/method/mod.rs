@@ -10,7 +10,7 @@ impl From<http::method::Method> for RequestToken {
 }
 
 #[inline]
-pub(super) fn parse_method_input(
+pub fn parse_method_input(
     chars: &mut core::iter::Enumerate<core::str::Chars>,
 ) -> Result<http::method::Method, RequestParseError> {
     let mut method = String::new();

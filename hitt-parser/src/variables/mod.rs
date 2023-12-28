@@ -75,21 +75,130 @@ mod test_parse_variable_declarations {
     }
 }
 
-pub enum MaybeVariable {
-    Variable(String),
-    Text(String),
-}
-
 #[inline]
-pub fn parse_variable(chars: &mut core::iter::Enumerate<core::str::Chars>) -> MaybeVariable {
-    todo!()
+pub fn parse_variable(
+    char_clone: &mut core::iter::Enumerate<core::str::Chars>,
+) -> Option<(String, usize)> {
+    let mut jumps = 0;
+
+    if let Some((_, '{')) = &char_clone.next() {
+        jumps += 1;
+        let mut x = String::new();
+
+        let mut is_key = true;
+
+        while let Some((_, ch)) = char_clone.next() {
+            jumps += 1;
+
+            if ch == '{' {
+                return None;
+            }
+
+            if ch == '}' {
+                if let Some((_, '}')) = &char_clone.next() {
+                    jumps += 1;
+                    return Some((x, jumps));
+                } else {
+                    return None;
+                }
+            }
+
+            if ch.is_whitespace() {
+                if !x.is_empty() {
+                    is_key = false;
+                }
+            } else if !is_key {
+                return None;
+            } else {
+                x.push(ch);
+            }
+        }
+    };
+
+    None
 }
 
 #[cfg(test)]
 mod test_maybe_parse_variable {
-    #[test]
-    fn it_should_parse_variables() {}
+    use super::parse_variable;
 
     #[test]
-    fn it_should_ignore_non_variables() {}
+    fn it_should_parse_variables() {
+        let before = "{";
+        let after = "}}";
+
+        for i in 0..100 {
+            let input_name = format!("name{i}");
+
+            // NOTE: the first '{' was consumed by the caller
+            let input = format!("{before}{input_name}{after}");
+
+            match parse_variable(&mut input.chars().enumerate()) {
+                Some((output_name, jumps)) => {
+                    assert_eq!(input_name, output_name);
+                    assert_eq!(input.len(), jumps);
+                }
+                None => panic!("it should not return none"),
+            }
+        }
+    }
+
+    #[test]
+    fn should_trim_variable_whitespace() {
+        let mut extra_whitespace = String::new();
+
+        let before = "{";
+        let after = "}}";
+
+        for i in 0..100 {
+            extra_whitespace.push(' ');
+
+            let input_name = format!("name{i}");
+
+            // NOTE: the first '{' was consumed by the caller
+            let input = format!("{before}{extra_whitespace}{input_name}{extra_whitespace}{after}");
+
+            match parse_variable(&mut input.chars().enumerate()) {
+                Some((output_name, jumps)) => {
+                    assert_eq!(input_name, output_name);
+                    assert_eq!(input.len(), jumps);
+                }
+                None => panic!("it should not return text"),
+            }
+        }
+    }
+
+    #[test]
+    fn it_should_ignore_non_variables() {
+        let inputs = [
+            " name ",
+            " { name n }} ",
+            " { name } }",
+            " { name",
+            " { name} }",
+            " { name}",
+            " { name}{",
+            "name   }}  ",
+            "name }}  ",
+            "name",
+            "name} ",
+            "{ name",
+            "{ name} }",
+            "{ {name} }",
+            "{name n}}",
+            "{name",
+            "{name} }",
+            "{name}",
+            "{{name x}",
+            "{{name}",
+            "{{name}}",
+            "{} name }}",
+        ];
+
+        for input in inputs {
+            if let Some((var, jumps)) = parse_variable(&mut input.chars().enumerate()) {
+                panic!("expected None but received '{var}' {jumps}' from '{input}''");
+            }
+        }
+    }
 }

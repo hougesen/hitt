@@ -35,7 +35,7 @@ fn tokenize(buffer: &str) -> Result<Vec<RequestToken>, RequestParseError> {
 
     let mut body_parts: Vec<&str> = Vec::new();
 
-    let mut variables = std::collections::HashMap::new();
+    let mut vars = std::collections::HashMap::new();
 
     for line in buffer.lines() {
         let trimmed_line = line.trim();
@@ -68,7 +68,7 @@ fn tokenize(buffer: &str) -> Result<Vec<RequestToken>, RequestParseError> {
             chrs.next();
 
             if let Some((name, value)) = parse_variable_declaration(&mut chrs) {
-                variables.insert(name, value);
+                vars.insert(name, value);
                 continue;
             }
         }
@@ -81,7 +81,7 @@ fn tokenize(buffer: &str) -> Result<Vec<RequestToken>, RequestParseError> {
 
                     tokens.push(RequestToken::Method(method));
 
-                    let uri = parse_uri_input(&mut chrs)?;
+                    let uri = parse_uri_input(&mut chrs, &vars)?;
 
                     tokens.push(RequestToken::Uri(uri));
 
@@ -136,9 +136,9 @@ mod test_tokenize {
 
         for token in tokens {
             match token {
-                RequestToken::Uri(uri_token) => assert_eq!(uri_input, uri_token.to_string(),),
+                RequestToken::Uri(uri_token) => assert_eq!(uri_input, uri_token.to_string()),
                 RequestToken::Method(method_token) => {
-                    assert_eq!(method_input, method_token.as_str())
+                    assert_eq!(method_input, method_token.as_str());
                 }
                 RequestToken::Header(header_token) => {
                     assert_eq!(header1_key, header_token.key.to_string());
@@ -155,7 +155,7 @@ mod test_tokenize {
                 }
 
                 RequestToken::HttpVersion(version_token) => {
-                    assert_eq!(version_token, http::version::Version::HTTP_2)
+                    assert_eq!(version_token, http::version::Version::HTTP_2);
                 }
             }
         }
@@ -204,7 +204,7 @@ x-test-header: test value
                 }
 
                 RequestToken::Uri(uri_token) => {
-                    assert_eq!("https://mhouge.dk/", uri_token.to_string())
+                    assert_eq!("https://mhouge.dk/", uri_token.to_string());
                 }
 
                 RequestToken::Header(header_token) => {
@@ -334,7 +334,7 @@ mod test_parse_requests {
     fn it_should_parse_http_method_correctly() {
         let url = "https://mhouge.dk";
 
-        for method in HTTP_METHODS.iter() {
+        for method in &HTTP_METHODS {
             let expected_method = http::Method::from_str(method).expect("m is a valid method");
 
             let parsed_requests =
