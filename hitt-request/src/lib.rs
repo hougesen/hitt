@@ -57,3 +57,37 @@ pub async fn send_request(
         body: res.text().await.unwrap_or_default(),
     })
 }
+
+#[cfg(test)]
+mod test_send_request {
+    use core::str::FromStr;
+
+    use http::{HeaderMap, StatusCode};
+
+    use crate::send_request;
+
+    #[tokio::test]
+    async fn it_should_return_a_response() {
+        let http_client = reqwest::Client::new();
+
+        let timeout = None;
+
+        let uri = http::Uri::from_str("https://dummyjson.com/products/1").unwrap();
+
+        let input = hitt_parser::HittRequest {
+            method: http::Method::GET,
+            uri: uri.clone(),
+            headers: HeaderMap::default(),
+            body: None,
+            http_version: None,
+        };
+
+        let result = send_request(&http_client, &input, &timeout)
+            .await
+            .expect("it to be successfull");
+
+        assert_eq!(result.url, uri.to_string());
+
+        assert_eq!(result.status_code, StatusCode::OK);
+    }
+}
