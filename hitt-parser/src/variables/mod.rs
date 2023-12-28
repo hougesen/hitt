@@ -32,7 +32,7 @@ mod test_parse_variable_declarations {
 
     #[test]
     fn it_should_parse_variable_declarations() {
-        for i in 0..1337 {
+        for i in i8::MIN..i8::MAX {
             let input_declaration = format!("var{i}");
             let input_value = format!("{i}");
 
@@ -45,7 +45,7 @@ mod test_parse_variable_declarations {
                     assert_eq!(input_value, value);
                 }
 
-                None => panic!(""),
+                None => panic!("it should return a valid string"),
             }
         }
     }
@@ -54,7 +54,7 @@ mod test_parse_variable_declarations {
     fn it_should_trim_spaces() {
         let mut extra_spaces = String::new();
 
-        for i in 0..1337 {
+        for i in i8::MIN..i8::MAX {
             extra_spaces.push(' ');
 
             let input_declaration = format!("var{i}");
@@ -104,9 +104,9 @@ pub fn parse_variable(
 
                     jumps += 1;
                     return Some((x, jumps));
-                } else {
-                    return None;
                 }
+
+                return None;
             }
 
             if ch.is_whitespace() {
@@ -135,7 +135,7 @@ mod test_maybe_parse_variable {
         let before = "{";
         let after = "}}";
 
-        for i in 0..1337 {
+        for i in i8::MIN..i8::MAX {
             let input_name = format!("name{i}");
 
             // NOTE: the first '{' was consumed by the caller
@@ -158,7 +158,7 @@ mod test_maybe_parse_variable {
         let before = "{";
         let after = "}}";
 
-        for i in 0..1337 {
+        for i in i8::MIN..i8::MAX {
             extra_whitespace.push(' ');
 
             let input_name = format!("name{i}");

@@ -83,7 +83,7 @@ fn tokenize(buffer: &str) -> Result<Vec<RequestToken>, RequestParseError> {
             ParserMode::Request => {
                 if !trimmed_line.is_empty() {
                     let mut chrs = to_enum_chars(line);
-                    let method = parse_method_input(&mut chrs)?;
+                    let method = parse_method_input(&mut chrs, &vars)?;
 
                     tokens.push(RequestToken::Method(method));
 
@@ -149,7 +149,13 @@ mod test_tokenize {
                 RequestToken::Header(header_token) => {
                     assert_eq!(header1_key, header_token.key.to_string());
 
-                    assert_eq!(header1_value, header_token.value.to_str().unwrap());
+                    assert_eq!(
+                        header1_value,
+                        header_token
+                            .value
+                            .to_str()
+                            .expect("value to be a valid str")
+                    );
                 }
 
                 RequestToken::Body(body_token) => {
@@ -348,7 +354,7 @@ mod test_parse_requests {
 
             assert!(parsed_requests.len() == 1);
 
-            let first_request = &parsed_requests[0];
+            let first_request = parsed_requests.first().expect("it to be a request");
 
             assert_eq!(expected_method, first_request.method);
 

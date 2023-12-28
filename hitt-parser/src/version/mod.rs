@@ -25,9 +25,9 @@ pub fn parse_http_version(
                     }
 
                     continue;
-                } else {
-                    // NOTE: should this raise?
                 }
+
+                // NOTE: should variable not existing raise an error?
             }
         }
 
