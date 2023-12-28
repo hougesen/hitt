@@ -2,14 +2,17 @@ use error::RequestParseError;
 use header::{parse_header, HeaderToken};
 use method::parse_method_input;
 use uri::parse_uri_input;
+use variables::{parse_variable, parse_variable_declaration};
 use version::parse_http_version;
 
 pub mod error;
 mod header;
 mod method;
 mod uri;
+mod variables;
 mod version;
 
+#[derive(Copy, Clone)]
 enum ParserMode {
     Request,
     Headers,
@@ -26,12 +29,19 @@ enum RequestToken {
 }
 
 #[inline]
+fn to_enum_chars(input: &str) -> core::iter::Enumerate<core::str::Chars> {
+    input.chars().enumerate()
+}
+
+#[inline]
 fn tokenize(buffer: &str) -> Result<Vec<RequestToken>, RequestParseError> {
     let mut tokens: Vec<RequestToken> = Vec::new();
 
     let mut parser_mode = ParserMode::Request;
 
-    let mut body_parts: Vec<&str> = Vec::new();
+    let mut body_parts: Vec<String> = Vec::new();
+
+    let mut vars = std::collections::HashMap::new();
 
     for line in buffer.lines() {
         let trimmed_line = line.trim();
@@ -59,17 +69,29 @@ fn tokenize(buffer: &str) -> Result<Vec<RequestToken>, RequestParseError> {
 
         match parser_mode {
             ParserMode::Request => {
+                if trimmed_line.starts_with('@') {
+                    let mut chrs = to_enum_chars(trimmed_line);
+
+                    // move forward once since we don't care about the '@'
+                    chrs.next();
+
+                    if let Some((name, value)) = parse_variable_declaration(&mut chrs) {
+                        vars.insert(name, value);
+                        continue;
+                    }
+                }
+
                 if !trimmed_line.is_empty() {
-                    let mut chrs = line.chars().enumerate();
-                    let method = parse_method_input(&mut chrs)?;
+                    let mut chrs = to_enum_chars(trimmed_line);
+                    let method = parse_method_input(&mut chrs, &vars)?;
 
                     tokens.push(RequestToken::Method(method));
 
-                    let uri = parse_uri_input(&mut chrs)?;
+                    let uri = parse_uri_input(&mut chrs, &vars)?;
 
                     tokens.push(RequestToken::Uri(uri));
 
-                    if let Some(http_version) = parse_http_version(&mut chrs) {
+                    if let Some(http_version) = parse_http_version(&mut chrs, &vars) {
                         tokens.push(RequestToken::HttpVersion(http_version));
                     }
 
@@ -78,15 +100,41 @@ fn tokenize(buffer: &str) -> Result<Vec<RequestToken>, RequestParseError> {
             }
 
             ParserMode::Headers => {
-                if line.trim().is_empty() {
+                if trimmed_line.is_empty() {
                     parser_mode = ParserMode::Body;
-                } else if let Some(header_token) = parse_header(line.chars().enumerate())? {
+                } else if let Some(header_token) =
+                    parse_header(&mut to_enum_chars(trimmed_line), &vars)?
+                {
                     tokens.push(RequestToken::Header(header_token));
                 }
             }
 
             ParserMode::Body => {
-                body_parts.push(line);
+                let mut current_line = String::new();
+                let mut chars = to_enum_chars(line);
+
+                while let Some((_, ch)) = chars.next() {
+                    if ch == '{' {
+                        // FIXME: remove cloning of enumerator
+                        if let Some((var, jumps)) = parse_variable(&mut chars.clone()) {
+                            if let Some(variable_value) = vars.get(&var) {
+                                current_line.push_str(variable_value);
+
+                                for _ in 0..jumps {
+                                    chars.next();
+                                }
+
+                                continue;
+                            }
+
+                            return Err(RequestParseError::VariableNotFound(var));
+                        }
+                    }
+
+                    current_line.push(ch);
+                }
+
+                body_parts.push(current_line);
             }
         };
     }
@@ -120,14 +168,20 @@ mod test_tokenize {
 
         for token in tokens {
             match token {
-                RequestToken::Uri(uri_token) => assert_eq!(uri_input, uri_token.to_string(),),
+                RequestToken::Uri(uri_token) => assert_eq!(uri_input, uri_token.to_string()),
                 RequestToken::Method(method_token) => {
-                    assert_eq!(method_input, method_token.as_str())
+                    assert_eq!(method_input, method_token.as_str());
                 }
                 RequestToken::Header(header_token) => {
                     assert_eq!(header1_key, header_token.key.to_string());
 
-                    assert_eq!(header1_value, header_token.value.to_str().unwrap());
+                    assert_eq!(
+                        header1_value,
+                        header_token
+                            .value
+                            .to_str()
+                            .expect("value to be a valid str")
+                    );
                 }
 
                 RequestToken::Body(body_token) => {
@@ -139,7 +193,7 @@ mod test_tokenize {
                 }
 
                 RequestToken::HttpVersion(version_token) => {
-                    assert_eq!(version_token, http::version::Version::HTTP_2)
+                    assert_eq!(version_token, http::version::Version::HTTP_2);
                 }
             }
         }
@@ -147,7 +201,7 @@ mod test_tokenize {
 
     #[test]
     fn it_should_be_able_to_parse_multiple_requests() {
-        let input = r"
+        let input = "
 GET https://mhouge.dk/ HTTP/0.9
 x-test-header: test value
 
@@ -188,7 +242,7 @@ x-test-header: test value
                 }
 
                 RequestToken::Uri(uri_token) => {
-                    assert_eq!("https://mhouge.dk/", uri_token.to_string())
+                    assert_eq!("https://mhouge.dk/", uri_token.to_string());
                 }
 
                 RequestToken::Header(header_token) => {
@@ -214,6 +268,44 @@ x-test-header: test value
                     _ => panic!("this case should never hit"),
                 },
             }
+        }
+    }
+
+    #[test]
+    fn it_should_support_variables() {
+        let input = "
+@method = GET
+@host = https://mhouge.dk
+@path = /api
+@query_value = mads@mhouge.dk
+@body_input  = { \"key\": \"value\" }
+
+{{method}} {{host}}{{path}}?email={{query_value}}
+
+{{ body_input }}";
+
+        let tokens = tokenize(input).expect("it to tokenize successfully");
+
+        assert_eq!(tokens.len(), 3);
+
+        match tokens.first() {
+            Some(RequestToken::Method(method)) => assert_eq!(method, http::method::Method::GET),
+            Some(token) => panic!("expected it to return a method token, but received '{token:?}'"),
+            None => panic!("expected it to return a method token, but received None"),
+        }
+
+        match tokens.get(1) {
+            Some(RequestToken::Uri(uri)) => {
+                assert_eq!(uri, "https://mhouge.dk/api?email=mads@mhouge.dk");
+            }
+            Some(token) => panic!("expected it to return a uri token, but received '{token:?}'"),
+            None => panic!("expected it to return a uri token, but received None"),
+        }
+
+        match tokens.get(2) {
+            Some(RequestToken::Body(Some(value))) => assert_eq!(value, "{ \"key\": \"value\" }"),
+            Some(token) => panic!("expected it to return a body token, but received '{token:?}'"),
+            None => panic!("expected it to return a body token, but received None"),
         }
     }
 }
@@ -318,7 +410,7 @@ mod test_parse_requests {
     fn it_should_parse_http_method_correctly() {
         let url = "https://mhouge.dk";
 
-        for method in HTTP_METHODS.iter() {
+        for method in &HTTP_METHODS {
             let expected_method = http::Method::from_str(method).expect("m is a valid method");
 
             let parsed_requests =
@@ -326,7 +418,7 @@ mod test_parse_requests {
 
             assert!(parsed_requests.len() == 1);
 
-            let first_request = &parsed_requests[0];
+            let first_request = parsed_requests.first().expect("it to be a request");
 
             assert_eq!(expected_method, first_request.method);
 
@@ -356,7 +448,7 @@ mod test_parse_requests {
 
         assert!(result.len() == 1);
 
-        let request = &result[0];
+        let request = result.first().expect("request len to be 1");
 
         assert_eq!(method_input, request.method.as_str());
 
@@ -373,14 +465,17 @@ mod test_parse_requests {
             .get(header1_key)
             .expect("header1_key to exist");
 
-        assert_eq!(header1_value, header1_output.to_str().unwrap());
+        assert_eq!(
+            header1_value,
+            header1_output.to_str().expect("it to be a valid header")
+        );
 
         assert!(request.http_version.is_none());
     }
 
     #[test]
     fn it_should_be_able_to_parse_multiple_requests() {
-        let input = r"
+        let input = "
 GET https://mhouge.dk/ HTTP/0.9
 
 ###
@@ -426,5 +521,34 @@ GET https://mhouge.dk/ HTTP/3
                 _ => panic!("this case should never hit"),
             }
         }
+    }
+
+    #[test]
+    fn it_should_support_variables() {
+        let input = "
+@method = GET
+@host = https://mhouge.dk
+@path = /api
+@query_value = mads@mhouge.dk
+@body_input  = { \"key\": \"value\" }
+
+{{method}} {{host}}{{path}}?email={{query_value}}
+
+{{ body_input }}";
+
+        let requests = parse_requests(input).expect("to get a list of requests");
+
+        assert_eq!(requests.len(), 1);
+
+        let request = requests.first().expect("it to have 1 request");
+
+        assert_eq!(request.method, http::method::Method::GET);
+
+        assert_eq!(request.uri, "https://mhouge.dk/api?email=mads@mhouge.dk");
+
+        assert_eq!(
+            "{ \"key\": \"value\" }",
+            request.body.clone().expect("body to be set"),
+        );
     }
 }
