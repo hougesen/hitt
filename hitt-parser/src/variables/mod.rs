@@ -126,7 +126,7 @@ pub fn parse_variable(
 }
 
 #[cfg(test)]
-mod test_maybe_parse_variable {
+mod test_parse_variable {
     use crate::to_enum_chars;
 
     use super::parse_variable;
