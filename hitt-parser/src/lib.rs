@@ -2,7 +2,7 @@ use error::RequestParseError;
 use header::{parse_header, HeaderToken};
 use method::parse_method_input;
 use uri::parse_uri_input;
-use variables::parse_variable_declaration;
+use variables::{parse_variable, parse_variable_declaration};
 use version::parse_http_version;
 
 pub mod error;
@@ -39,7 +39,7 @@ fn tokenize(buffer: &str) -> Result<Vec<RequestToken>, RequestParseError> {
 
     let mut parser_mode = ParserMode::Request;
 
-    let mut body_parts: Vec<&str> = Vec::new();
+    let mut body_parts: Vec<String> = Vec::new();
 
     let mut vars = std::collections::HashMap::new();
 
@@ -110,7 +110,31 @@ fn tokenize(buffer: &str) -> Result<Vec<RequestToken>, RequestParseError> {
             }
 
             ParserMode::Body => {
-                body_parts.push(line);
+                let mut current_line = String::new();
+                let mut chars = to_enum_chars(line);
+
+                while let Some((_, ch)) = chars.next() {
+                    if ch == '{' {
+                        // FIXME: remove cloning of enumerator
+                        if let Some((var, jumps)) = parse_variable(&mut chars.clone()) {
+                            if let Some(variable_value) = vars.get(&var) {
+                                current_line.push_str(variable_value);
+
+                                for _ in 0..jumps {
+                                    chars.next();
+                                }
+
+                                continue;
+                            }
+
+                            return Err(RequestParseError::VariableNotFound(var));
+                        }
+                    }
+
+                    current_line.push(ch);
+                }
+
+                body_parts.push(current_line);
             }
         };
     }
@@ -244,6 +268,44 @@ x-test-header: test value
                     _ => panic!("this case should never hit"),
                 },
             }
+        }
+    }
+
+    #[test]
+    fn it_should_support_variables() {
+        let input = "
+@method = GET
+@host = https://mhouge.dk
+@path = /api
+@query_value = mads@mhouge.dk
+@body_input  = { \"key\": \"value\" }
+
+{{method}} {{host}}{{path}}?email={{query_value}}
+
+{{ body_input }}";
+
+        let tokens = tokenize(input).expect("it to tokenize successfully");
+
+        assert_eq!(tokens.len(), 3);
+
+        match tokens.first() {
+            Some(RequestToken::Method(method)) => assert_eq!(method, http::method::Method::GET),
+            Some(token) => panic!("expected it to return a method token, but received '{token:?}'"),
+            None => panic!("expected it to return a method token, but received None"),
+        }
+
+        match tokens.get(1) {
+            Some(RequestToken::Uri(uri)) => {
+                assert_eq!(uri, "https://mhouge.dk/api?email=mads@mhouge.dk");
+            }
+            Some(token) => panic!("expected it to return a uri token, but received '{token:?}'"),
+            None => panic!("expected it to return a uri token, but received None"),
+        }
+
+        match tokens.get(2) {
+            Some(RequestToken::Body(Some(value))) => assert_eq!(value, "{ \"key\": \"value\" }"),
+            Some(token) => panic!("expected it to return a body token, but received '{token:?}'"),
+            None => panic!("expected it to return a body token, but received None"),
         }
     }
 }
@@ -459,5 +521,34 @@ GET https://mhouge.dk/ HTTP/3
                 _ => panic!("this case should never hit"),
             }
         }
+    }
+
+    #[test]
+    fn it_should_support_variables() {
+        let input = "
+@method = GET
+@host = https://mhouge.dk
+@path = /api
+@query_value = mads@mhouge.dk
+@body_input  = { \"key\": \"value\" }
+
+{{method}} {{host}}{{path}}?email={{query_value}}
+
+{{ body_input }}";
+
+        let requests = parse_requests(input).expect("to get a list of requests");
+
+        assert_eq!(requests.len(), 1);
+
+        let request = requests.first().expect("it to have 1 request");
+
+        assert_eq!(request.method, http::method::Method::GET);
+
+        assert_eq!(request.uri, "https://mhouge.dk/api?email=mads@mhouge.dk");
+
+        assert_eq!(
+            "{ \"key\": \"value\" }",
+            request.body.clone().expect("body to be set"),
+        );
     }
 }
