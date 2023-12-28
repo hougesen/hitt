@@ -31,7 +31,7 @@ pub(crate) fn handle_response(
 ) -> Result<(), HittCliError> {
     print_status(
         term,
-        &response.http_version,
+        response.http_version,
         &response.method,
         &response.url,
         response.status_code.as_u16(),
@@ -50,7 +50,7 @@ pub(crate) fn handle_response(
                 ContentType::from(value.to_str().unwrap_or_default())
             });
 
-        print_body(term, &response.body, &content_type, args.disable_formatting)?;
+        print_body(term, &response.body, content_type, args.disable_formatting)?;
     }
 
     if args.fail_fast

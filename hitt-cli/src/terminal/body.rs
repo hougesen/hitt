@@ -11,7 +11,7 @@ fn __print_body(term: &console::Term, body: &str) -> Result<(), std::io::Error> 
 pub(crate) fn print_body(
     term: &console::Term,
     body: &str,
-    content_type: &ContentType,
+    content_type: ContentType,
     disable_pretty_printing: bool,
 ) -> Result<(), std::io::Error> {
     if disable_pretty_printing {

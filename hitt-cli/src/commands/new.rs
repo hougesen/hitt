@@ -111,9 +111,9 @@ fn save_request(
         }
     }
 
-    if let Some(body) = body {
+    if let Some(content) = body {
         contents.push('\n');
-        contents.push_str(&body);
+        contents.push_str(&content);
         contents.push('\n');
     }
 
