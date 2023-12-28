@@ -31,6 +31,7 @@ pub fn parse_header(
             } else {
                 value.push(ch);
             }
+            continue;
         } else if ch == '{' {
             // FIXME: remove cloning of enumerator
             if let Some((var, jumps)) = parse_variable(&mut line.clone()) {
@@ -44,16 +45,17 @@ pub fn parse_header(
                     for _ in 0..jumps {
                         line.next();
                     }
-                } else {
-                    return Err(RequestParseError::VariableNotFound(var));
+
+                    continue;
                 }
+
+                return Err(RequestParseError::VariableNotFound(var));
+            }
+
+            if is_key {
+                key.push(ch);
             } else {
-                if is_key {
-                    key.push(ch);
-                }
-                {
-                    value.push(ch);
-                }
+                value.push(ch);
             }
         } else if is_key {
             key.push(ch);
@@ -127,38 +129,93 @@ mod test_parse_header {
             vars.insert(key.clone(), i.to_string());
             vars.insert(value.clone(), i.to_string());
 
-            let dynamic_key =
-                format!("{open}{extra_spaces}{key}{extra_spaces}{close}:{extra_spaces}static");
+            {
+                let input =
+                    format!("{open}{extra_spaces}{key}{extra_spaces}{close}:{extra_spaces}static");
 
-            let dynamic_key_result = parse_header(&mut to_enum_chars(&dynamic_key), &vars)
-                .expect("it to be parseable")
-                .expect("it to return a header field");
-
-            assert_eq!(dynamic_key_result.key.as_str(), i.to_string());
-            assert_eq!(dynamic_key_result.value, "static",);
-
-            let dynamic_value =
-                format!("static:{extra_spaces}{open}{extra_spaces}{value}{extra_spaces}{close}");
-
-            let dynamic_value_result = parse_header(&mut to_enum_chars(&dynamic_value), &vars)
-                .expect("it to be parseable")
-                .expect("it to return a header field");
-
-            assert_eq!(dynamic_value_result.key.as_str(), "static");
-            assert_eq!(dynamic_value_result.value, i.to_string());
-
-            let dynamic_key_value =
-                format!("{open}{extra_spaces}{key}{extra_spaces}{close}:{extra_spaces}{open}{extra_spaces}{value}{extra_spaces}{close}");
-
-            let dynamic_key_value_result =
-                parse_header(&mut to_enum_chars(&dynamic_key_value), &vars)
+                let result = parse_header(&mut to_enum_chars(&input), &vars)
                     .expect("it to be parseable")
                     .expect("it to return a header field");
 
-            assert_eq!(dynamic_key_value_result.key.as_str(), i.to_string());
-            assert_eq!(dynamic_key_value_result.value, i.to_string());
+                assert_eq!(result.key.as_str(), i.to_string());
+                assert_eq!(result.value, "static");
+            };
+
+            {
+                let input = format!(
+                    "static:{extra_spaces}{open}{extra_spaces}{value}{extra_spaces}{close}"
+                );
+
+                let result = parse_header(&mut to_enum_chars(&input), &vars)
+                    .expect("it to be parseable")
+                    .expect("it to return a header field");
+
+                assert_eq!(result.key.as_str(), "static");
+                assert_eq!(result.value, i.to_string());
+            };
+
+            {
+                let input =
+                format!("{open}{extra_spaces}{key}{extra_spaces}{close}:{extra_spaces}{open}{extra_spaces}{value}{extra_spaces}{close}");
+
+                let result = parse_header(&mut to_enum_chars(&input), &vars)
+                    .expect("it to be parseable")
+                    .expect("it to return a header field");
+
+                assert_eq!(result.key.as_str(), i.to_string());
+                assert_eq!(result.value, i.to_string());
+            };
 
             extra_spaces.push(' ');
         }
+    }
+
+    #[test]
+    fn it_should_handle_bad_variables() {
+        {
+            let input = "{key:value";
+
+            parse_header(&mut to_enum_chars(input), &EMPTY_VARS)
+                .expect_err("it to return an invalid error");
+        };
+
+        {
+            let input = "{key }:value";
+
+            parse_header(&mut to_enum_chars(input), &EMPTY_VARS)
+                .expect_err("it to return an invalid error");
+        };
+
+        {
+            let input = "{key:value }}";
+
+            parse_header(&mut to_enum_chars(input), &EMPTY_VARS)
+                .expect_err("it to return an invalid error");
+        };
+
+        {
+            let input = "key:{value";
+
+            let result = parse_header(&mut to_enum_chars(input), &EMPTY_VARS)
+                .expect("it to be parseable")
+                .expect("it to return a header field");
+
+            assert_eq!(result.key.as_str(), "key");
+            assert_eq!(result.value, "{value");
+        };
+
+        {
+            let input = "key{:value";
+
+            parse_header(&mut to_enum_chars(input), &EMPTY_VARS)
+                .expect_err("it to return an invalid error");
+        };
+
+        {
+            let input = "key{:value}}";
+
+            parse_header(&mut to_enum_chars(input), &EMPTY_VARS)
+                .expect_err("it to return an invalid error");
+        };
     }
 }

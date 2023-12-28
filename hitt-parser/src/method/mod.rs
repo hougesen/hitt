@@ -32,12 +32,13 @@ pub fn parse_method_input(
                     }
 
                     continue;
-                } else {
-                    return Err(RequestParseError::VariableNotFound(var));
                 }
+
+                return Err(RequestParseError::VariableNotFound(var));
             }
-        }
-        {
+
+            method.push(ch);
+        } else {
             method.push(ch);
         }
     }
@@ -90,6 +91,11 @@ mod test_parse_method_input {
     #[test]
     fn it_should_support_variables() {
         let mut vars = std::collections::HashMap::new();
+
+        parse_method_input(&mut to_enum_chars("{method"), &EMPTY_VARS).expect_err("invalid method");
+
+        parse_method_input(&mut to_enum_chars("{method}"), &EMPTY_VARS)
+            .expect_err("invalid method");
 
         for method in HTTP_METHODS {
             vars.insert("method".to_owned(), method.to_owned());
