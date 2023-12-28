@@ -96,7 +96,9 @@ fn tokenize(buffer: &str) -> Result<Vec<RequestToken>, RequestParseError> {
             ParserMode::Headers => {
                 if line.trim().is_empty() {
                     parser_mode = ParserMode::Body;
-                } else if let Some(header_token) = parse_header(line.chars().enumerate())? {
+                } else if let Some(header_token) =
+                    parse_header(&mut line.chars().enumerate(), &vars)?
+                {
                     tokens.push(RequestToken::Header(header_token));
                 }
             }
@@ -163,7 +165,7 @@ mod test_tokenize {
 
     #[test]
     fn it_should_be_able_to_parse_multiple_requests() {
-        let input = r"
+        let input = "
 GET https://mhouge.dk/ HTTP/0.9
 x-test-header: test value
 
@@ -396,7 +398,7 @@ mod test_parse_requests {
 
     #[test]
     fn it_should_be_able_to_parse_multiple_requests() {
-        let input = r"
+        let input = "
 GET https://mhouge.dk/ HTTP/0.9
 
 ###

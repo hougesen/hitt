@@ -15,12 +15,14 @@ pub fn parse_uri_input(
     vars: &std::collections::HashMap<String, String>,
 ) -> Result<http::uri::Uri, RequestParseError> {
     let mut uri = String::new();
+
     while let Some((_, ch)) = chars.next() {
         if ch.is_whitespace() {
             if !uri.is_empty() {
                 break;
             }
         } else if ch == '{' {
+            // FIXME: remove clone
             if let Some((var, jumps)) = parse_variable(&mut chars.clone()) {
                 if let Some(var_value) = vars.get(&var) {
                     uri.push_str(var_value);
@@ -29,8 +31,7 @@ pub fn parse_uri_input(
                         chars.next();
                     }
                 } else {
-                    panic!("unable to find variable {var}");
-                    // TODO: raise error
+                    return Err(RequestParseError::VariableNotFound(var));
                 }
             } else {
                 uri.push(ch);
@@ -45,7 +46,6 @@ pub fn parse_uri_input(
 
 #[cfg(test)]
 mod test_parse_uri_input {
-
     use crate::uri::parse_uri_input;
 
     #[test]
@@ -150,7 +150,7 @@ mod test_parse_uri_input {
             )
             .expect("it to parse as a valid uri");
 
-            assert_eq!(result.to_string(), uri)
+            assert_eq!(result.to_string(), uri);
         }
     }
 }

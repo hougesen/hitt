@@ -6,6 +6,7 @@ pub enum RequestParseError {
     MissingUri,
     InvalidHeaderName(String),
     InvalidHeaderValue(String),
+    VariableNotFound(String),
 }
 
 impl core::fmt::Display for RequestParseError {
@@ -18,6 +19,7 @@ impl core::fmt::Display for RequestParseError {
             Self::MissingUri => write!(f, "missing uri"),
             Self::InvalidHeaderName(name) => write!(f, "invalid header name '{name}'"),
             Self::InvalidHeaderValue(value) => write!(f, "invalid header value '{value}'"),
+            Self::VariableNotFound(value) => write!(f, "variable '{value}' was used, but not set"),
         }
     }
 }

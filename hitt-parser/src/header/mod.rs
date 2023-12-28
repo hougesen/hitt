@@ -1,6 +1,6 @@
 use core::str::FromStr;
 
-use crate::{error::RequestParseError, RequestToken};
+use crate::{error::RequestParseError, variables::parse_variable, RequestToken};
 
 #[derive(Debug)]
 pub struct HeaderToken {
@@ -17,18 +17,43 @@ impl From<HeaderToken> for RequestToken {
 
 #[inline]
 pub fn parse_header(
-    line: core::iter::Enumerate<core::str::Chars>,
+    line: &mut core::iter::Enumerate<core::str::Chars>,
+    vars: &std::collections::HashMap<String, String>,
 ) -> Result<Option<HeaderToken>, RequestParseError> {
     let mut key = String::new();
     let mut value = String::new();
     let mut is_key = true;
 
-    for (_index, ch) in line {
+    while let Some((_index, ch)) = line.next() {
         if ch == ':' {
             if is_key {
                 is_key = false;
             } else {
                 value.push(ch);
+            }
+        } else if ch == '{' {
+            // FIXME: remove cloning of enumerator
+            if let Some((var, jumps)) = parse_variable(&mut line.clone()) {
+                if let Some(variable_value) = vars.get(&var) {
+                    if is_key {
+                        key.push_str(variable_value);
+                    } else {
+                        value.push_str(variable_value);
+                    }
+
+                    for _ in 0..jumps {
+                        line.next();
+                    }
+                } else {
+                    panic!("unable to find value for variable '{var}'");
+                }
+            } else {
+                if is_key {
+                    key.push(ch);
+                }
+                {
+                    value.push(ch);
+                }
             }
         } else if is_key {
             key.push(ch);
@@ -51,6 +76,7 @@ pub fn parse_header(
 #[cfg(test)]
 mod test_parse_header {
     use core::str::FromStr;
+    use std::collections::HashMap;
 
     use crate::parse_header;
 
@@ -59,7 +85,7 @@ mod test_parse_header {
         for i in 0..10 {
             let line = format!("header{i}: value{i}");
 
-            let result = parse_header(line.chars().enumerate())
+            let result = parse_header(&mut line.chars().enumerate(), &HashMap::new())
                 .expect("It should be able to parse valid headers")
                 .expect("headers to be defined");
 
@@ -77,8 +103,59 @@ mod test_parse_header {
 
     #[test]
     fn it_should_ignore_empty_lines() {
-        let result = parse_header("".chars().enumerate()).expect("it to be parseable");
+        let result =
+            parse_header(&mut "".chars().enumerate(), &HashMap::new()).expect("it to be parseable");
 
         assert!(result.is_none());
+    }
+
+    #[test]
+    fn it_should_support_variables() {
+        let mut vars = HashMap::new();
+
+        let open = "{{";
+        let close = "}}";
+        let mut extra_spaces = String::new();
+
+        for i in 0..1000 {
+            let key = format!("key{i}");
+            let value = format!("value{i}");
+
+            vars.insert(key.clone(), i.to_string());
+            vars.insert(value.clone(), i.to_string());
+
+            let dynamic_key =
+                format!("{open}{extra_spaces}{key}{extra_spaces}{close}:{extra_spaces}static");
+
+            let dynamic_key_result = parse_header(&mut dynamic_key.chars().enumerate(), &vars)
+                .expect("it to be parseable")
+                .expect("it to return a header field");
+
+            assert_eq!(dynamic_key_result.key.as_str(), i.to_string());
+            assert_eq!(dynamic_key_result.value, "static",);
+
+            let dynamic_value =
+                format!("static:{extra_spaces}{open}{extra_spaces}{value}{extra_spaces}{close}");
+
+            let dynamic_value_result = parse_header(&mut dynamic_value.chars().enumerate(), &vars)
+                .expect("it to be parseable")
+                .expect("it to return a header field");
+
+            assert_eq!(dynamic_value_result.key.as_str(), "static");
+            assert_eq!(dynamic_value_result.value, i.to_string());
+
+            let dynamic_key_value =
+                format!("{open}{extra_spaces}{key}{extra_spaces}{close}:{extra_spaces}{open}{extra_spaces}{value}{extra_spaces}{close}");
+
+            let dynamic_key_value_result =
+                parse_header(&mut dynamic_key_value.chars().enumerate(), &vars)
+                    .expect("it to be parseable")
+                    .expect("it to return a header field");
+
+            assert_eq!(dynamic_key_value_result.key.as_str(), i.to_string());
+            assert_eq!(dynamic_key_value_result.value, i.to_string());
+
+            extra_spaces.push(' ');
+        }
     }
 }

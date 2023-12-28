@@ -77,17 +77,17 @@ mod test_parse_variable_declarations {
 
 #[inline]
 pub fn parse_variable(
-    char_clone: &mut core::iter::Enumerate<core::str::Chars>,
+    chars: &mut core::iter::Enumerate<core::str::Chars>,
 ) -> Option<(String, usize)> {
     let mut jumps = 0;
 
-    if let Some((_, '{')) = &char_clone.next() {
+    if let Some((_, '{')) = &chars.next() {
         jumps += 1;
         let mut x = String::new();
 
         let mut is_key = true;
 
-        while let Some((_, ch)) = char_clone.next() {
+        while let Some((_, ch)) = chars.next() {
             jumps += 1;
 
             if ch == '{' {
@@ -95,7 +95,11 @@ pub fn parse_variable(
             }
 
             if ch == '}' {
-                if let Some((_, '}')) = &char_clone.next() {
+                if let Some((_, '}')) = &chars.next() {
+                    if x.is_empty() {
+                        return None;
+                    }
+
                     jumps += 1;
                     return Some((x, jumps));
                 } else {

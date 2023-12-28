@@ -38,7 +38,7 @@ mod test_parse_http_version {
     fn it_should_parse_http_0_9() {
         let input = ["HTTP/0.9", "   HTTP/0.9", "HTTP/0.9   ", "   HTTP/0.9   "];
 
-        input.iter().for_each(|s| {
+        for s in input {
             let uppercase_result = parse_http_version(&mut s.chars().enumerate())
                 .expect("it to return a http version");
 
@@ -48,7 +48,7 @@ mod test_parse_http_version {
                 .expect("it to return a http version");
 
             assert_eq!(http::Version::HTTP_09, lowercase_result);
-        });
+        }
     }
 
     #[test]
@@ -64,7 +64,7 @@ mod test_parse_http_version {
             "   HTTP/1.0   ",
         ];
 
-        input.iter().for_each(|s| {
+        for s in input {
             let uppercase_result = parse_http_version(&mut s.chars().enumerate())
                 .expect("it to return a http version");
 
@@ -74,7 +74,7 @@ mod test_parse_http_version {
                 .expect("it to return a http version");
 
             assert_eq!(http::Version::HTTP_10, lowercase_result);
-        });
+        }
     }
 
     #[test]
@@ -82,7 +82,7 @@ mod test_parse_http_version {
         // NOTE: should HTTP/1 mean the same as HTTP/1.1?
         let input = ["HTTP/1.1", "   HTTP/1.1", "HTTP/1.1   ", "   HTTP/1.1   "];
 
-        input.iter().for_each(|s| {
+        for s in input {
             let uppercase_result = parse_http_version(&mut s.chars().enumerate())
                 .expect("it to return a http version");
 
@@ -92,7 +92,7 @@ mod test_parse_http_version {
                 .expect("it to return a http version");
 
             assert_eq!(http::Version::HTTP_11, lowercase_result);
-        });
+        }
     }
 
     #[test]
@@ -108,7 +108,7 @@ mod test_parse_http_version {
             "   HTTP/2.0   ",
         ];
 
-        input.iter().for_each(|s| {
+        for s in input {
             let uppercase_result = parse_http_version(&mut s.chars().enumerate())
                 .expect("it to return a http version");
 
@@ -118,7 +118,7 @@ mod test_parse_http_version {
                 .expect("it to return a http version");
 
             assert_eq!(http::Version::HTTP_2, lowercase_result);
-        });
+        }
     }
 
     #[test]
@@ -134,7 +134,7 @@ mod test_parse_http_version {
             "   HTTP/3.0   ",
         ];
 
-        input.iter().for_each(|s| {
+        for s in input {
             let uppercase_result = parse_http_version(&mut s.chars().enumerate())
                 .expect("it to return a http version");
 
@@ -144,6 +144,6 @@ mod test_parse_http_version {
                 .expect("it to return a http version");
 
             assert_eq!(http::Version::HTTP_3, lowercase_result);
-        });
+        }
     }
 }
