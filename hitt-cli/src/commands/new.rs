@@ -84,6 +84,54 @@ fn try_find_content_type(headers: &[(String, String)]) -> Option<&str> {
     None
 }
 
+#[cfg(test)]
+mod test_try_find_content_type {
+    use crate::commands::new::try_find_content_type;
+
+    #[test]
+    fn it_should_return_none_if_not_exist() {
+        let headers = vec![("a".to_owned(), "b".to_owned())];
+
+        assert!(try_find_content_type(&headers).is_none());
+    }
+
+    #[test]
+    fn it_should_return_type_if_exists() {
+        let content_type = "application/json";
+
+        let headers = vec![("content-type".to_owned(), content_type.to_owned())];
+
+        assert_eq!(Some(content_type), try_find_content_type(&headers));
+    }
+
+    #[test]
+    fn it_should_ignore_case() {
+        {
+            let content_type = "application/JSON";
+
+            let headers = vec![("content-type".to_owned(), content_type.to_owned())];
+
+            assert_eq!(Some(content_type), try_find_content_type(&headers));
+        }
+
+        {
+            let content_type = "application/JSON".to_lowercase();
+
+            let headers = vec![("content-type".to_owned(), content_type.to_owned())];
+
+            assert_eq!(Some(content_type.as_str()), try_find_content_type(&headers));
+        }
+
+        {
+            let content_type = "application/JSON".to_uppercase();
+
+            let headers = vec![("content-type".to_owned(), content_type.to_owned())];
+
+            assert_eq!(Some(content_type.as_str()), try_find_content_type(&headers));
+        }
+    }
+}
+
 #[inline]
 fn set_body(term: &Term, content_type: Option<&str>) -> Result<Option<String>, std::io::Error> {
     if !confirm_input(term, "Do you want to add a body? (Y/n)", &Key::Char('y'))? {
