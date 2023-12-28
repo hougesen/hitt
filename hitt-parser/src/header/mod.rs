@@ -1,9 +1,9 @@
 use core::str::FromStr;
 
-use crate::{error::RequestParseError, RequestToken};
+use crate::{error::RequestParseError, variables::parse_variable, RequestToken};
 
 #[derive(Debug)]
-pub(super) struct HeaderToken {
+pub struct HeaderToken {
     pub(super) key: http::HeaderName,
     pub(super) value: http::HeaderValue,
 }
@@ -16,35 +16,67 @@ impl From<HeaderToken> for RequestToken {
 }
 
 #[inline]
-pub(super) fn parse_header(
-    line: core::iter::Enumerate<core::str::Chars>,
+pub fn parse_header(
+    line: &mut core::iter::Enumerate<core::str::Chars>,
+    vars: &std::collections::HashMap<String, String>,
 ) -> Result<Option<HeaderToken>, RequestParseError> {
     let mut key = String::new();
     let mut value = String::new();
     let mut is_key = true;
 
-    for (_index, ch) in line {
+    while let Some((_index, ch)) = line.next() {
         if ch == ':' {
             if is_key {
                 is_key = false;
             } else {
                 value.push(ch);
             }
+            continue;
+        } else if ch == '{' {
+            // FIXME: remove cloning of enumerator
+            if let Some((var, jumps)) = parse_variable(&mut line.clone()) {
+                if let Some(variable_value) = vars.get(&var) {
+                    if is_key {
+                        key.push_str(variable_value);
+                    } else {
+                        value.push_str(variable_value);
+                    }
+
+                    for _ in 0..jumps {
+                        line.next();
+                    }
+
+                    continue;
+                }
+
+                return Err(RequestParseError::VariableNotFound(var));
+            }
+
+            if is_key {
+                key.push(ch);
+            } else {
+                value.push(ch);
+            }
         } else if is_key {
             key.push(ch);
-        } else if !(value.is_empty() && ch == ' ') {
+        } else {
             value.push(ch);
         }
     }
 
+    let trimmed_key = key.trim();
+
+    let trimmed_value = value.trim();
+
     if !key.is_empty() {
         return Ok(Some(HeaderToken {
-            key: http::HeaderName::from_str(&key)
-                .map_err(|_err| RequestParseError::InvalidHeaderName(key))?,
-            value: http::HeaderValue::from_str(&value)
-                .map_err(|_err| RequestParseError::InvalidHeaderValue(value))?,
+            key: http::HeaderName::from_str(trimmed_key)
+                .map_err(|_err| RequestParseError::InvalidHeaderName(trimmed_key.to_owned()))?,
+            value: http::HeaderValue::from_str(trimmed_value)
+                .map_err(|_err| RequestParseError::InvalidHeaderValue(trimmed_value.to_owned()))?,
         }));
     }
+
     Ok(None)
 }
 
@@ -52,14 +84,19 @@ pub(super) fn parse_header(
 mod test_parse_header {
     use core::str::FromStr;
 
-    use crate::parse_header;
+    use once_cell::sync::Lazy;
+
+    use crate::{parse_header, to_enum_chars};
+
+    static EMPTY_VARS: Lazy<std::collections::HashMap<String, String>> =
+        Lazy::new(std::collections::HashMap::new);
 
     #[test]
     fn it_should_return_valid_headers() {
-        for i in 0..10 {
+        for i in i8::MIN..i8::MAX {
             let line = format!("header{i}: value{i}");
 
-            let result = parse_header(line.chars().enumerate())
+            let result = parse_header(&mut to_enum_chars(&line), &EMPTY_VARS)
                 .expect("It should be able to parse valid headers")
                 .expect("headers to be defined");
 
@@ -77,8 +114,126 @@ mod test_parse_header {
 
     #[test]
     fn it_should_ignore_empty_lines() {
-        let result = parse_header("".chars().enumerate()).expect("it to be parseable");
+        let result = parse_header(&mut to_enum_chars(""), &EMPTY_VARS).expect("it to be parseable");
 
         assert!(result.is_none());
+    }
+
+    #[test]
+    fn it_should_support_variables() {
+        let mut vars = std::collections::HashMap::new();
+
+        let open = "{{";
+        let close = "}}";
+        let mut extra_spaces = String::new();
+
+        for i in i8::MIN..i8::MAX {
+            let key = format!("key{i}");
+            let value = format!("value{i}");
+
+            vars.insert(key.clone(), i.to_string());
+            vars.insert(value.clone(), i.to_string());
+
+            {
+                let input =
+                    format!("{open}{extra_spaces}{key}{extra_spaces}{close}:{extra_spaces}static");
+
+                let result = parse_header(&mut to_enum_chars(&input), &vars)
+                    .expect("it to be parseable")
+                    .expect("it to return a header field");
+
+                assert_eq!(result.key.as_str(), i.to_string());
+                assert_eq!(result.value, "static");
+            };
+
+            {
+                let input = format!(
+                    "static:{extra_spaces}{open}{extra_spaces}{value}{extra_spaces}{close}"
+                );
+
+                let result = parse_header(&mut to_enum_chars(&input), &vars)
+                    .expect("it to be parseable")
+                    .expect("it to return a header field");
+
+                assert_eq!(result.key.as_str(), "static");
+                assert_eq!(result.value, i.to_string());
+            };
+
+            {
+                let input =
+                format!("{open}{extra_spaces}{key}{extra_spaces}{close}:{extra_spaces}{open}{extra_spaces}{value}{extra_spaces}{close}");
+
+                let result = parse_header(&mut to_enum_chars(&input), &vars)
+                    .expect("it to be parseable")
+                    .expect("it to return a header field");
+
+                assert_eq!(result.key.as_str(), i.to_string());
+                assert_eq!(result.value, i.to_string());
+            };
+
+            extra_spaces.push(' ');
+        }
+    }
+
+    #[test]
+    fn it_should_handle_bad_variables() {
+        {
+            let input = "{key:value";
+
+            parse_header(&mut to_enum_chars(input), &EMPTY_VARS)
+                .expect_err("it to return an invalid error");
+        };
+
+        {
+            let input = "{key }:value";
+
+            parse_header(&mut to_enum_chars(input), &EMPTY_VARS)
+                .expect_err("it to return an invalid error");
+        };
+
+        {
+            let input = "{key:value }}";
+
+            parse_header(&mut to_enum_chars(input), &EMPTY_VARS)
+                .expect_err("it to return an invalid error");
+        };
+
+        {
+            let input = "key:{value";
+
+            let result = parse_header(&mut to_enum_chars(input), &EMPTY_VARS)
+                .expect("it to be parseable")
+                .expect("it to return a header field");
+
+            assert_eq!(result.key.as_str(), "key");
+            assert_eq!(result.value, "{value");
+        };
+
+        {
+            let input = "key{:value";
+
+            parse_header(&mut to_enum_chars(input), &EMPTY_VARS)
+                .expect_err("it to return an invalid error");
+        };
+
+        {
+            let input = "key{:value}}";
+
+            parse_header(&mut to_enum_chars(input), &EMPTY_VARS)
+                .expect_err("it to return an invalid error");
+        };
+    }
+
+    #[test]
+    fn it_should_allow_spaces_in_header() {
+        let f = "mads-was-here";
+        let input = format!("     {f}    :     {f}     ");
+        let result = parse_header(&mut to_enum_chars(&input), &EMPTY_VARS)
+            .expect("it to be parseable")
+            .expect("it to exist");
+
+        assert_eq!(f.trim(), result.key);
+
+        assert_eq!(f.trim(), result.value);
     }
 }
