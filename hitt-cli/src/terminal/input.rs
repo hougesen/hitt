@@ -2,7 +2,7 @@ use console::{Key, Term};
 
 use super::{write_prompt, write_prompt_answer, TEXT_GREEN, TEXT_RESET};
 
-pub(crate) fn text_input_prompt(
+pub fn text_input_prompt(
     term: &Term,
     prompt: &str,
     validator: fn(&str) -> bool,
@@ -33,7 +33,7 @@ pub(crate) fn text_input_prompt(
     Ok(input)
 }
 
-pub(crate) fn confirm_input(
+pub fn confirm_input(
     term: &Term,
     prompt: &str,
     default_value: &Key,
@@ -72,11 +72,7 @@ pub(crate) fn confirm_input(
     }
 }
 
-pub(crate) fn select_input(
-    term: &Term,
-    prompt: &str,
-    items: &[&str],
-) -> Result<String, std::io::Error> {
+pub fn select_input(term: &Term, prompt: &str, items: &[&str]) -> Result<String, std::io::Error> {
     if items.len() < 2 {
         return Ok(items[0].to_owned());
     }

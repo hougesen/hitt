@@ -4,8 +4,8 @@ use crate::{error::RequestParseError, variables::parse_variable, RequestToken};
 
 #[derive(Debug)]
 pub struct HeaderToken {
-    pub(super) key: http::HeaderName,
-    pub(super) value: http::HeaderValue,
+    pub key: http::HeaderName,
+    pub value: http::HeaderValue,
 }
 
 impl From<HeaderToken> for RequestToken {

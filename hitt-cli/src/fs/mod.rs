@@ -47,7 +47,7 @@ pub async fn parse_requests_threaded(
         .collect())
 }
 
-pub(crate) fn find_http_files(path: &std::path::Path) -> Vec<std::path::PathBuf> {
+pub fn find_http_files(path: &std::path::Path) -> Vec<std::path::PathBuf> {
     ignore::WalkBuilder::new(path)
         .build()
         .filter_map(|orginal_entry| {

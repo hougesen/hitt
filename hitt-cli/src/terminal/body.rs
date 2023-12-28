@@ -8,7 +8,7 @@ fn __print_body(term: &console::Term, body: &str) -> Result<(), std::io::Error> 
 }
 
 #[inline]
-pub(crate) fn print_body(
+pub fn print_body(
     term: &console::Term,
     body: &str,
     content_type: ContentType,

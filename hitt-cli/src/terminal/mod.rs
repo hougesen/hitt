@@ -6,11 +6,11 @@ use crate::{config::RunCommandArguments, error::HittCliError};
 
 use self::{body::print_body, headers::print_headers, status::print_status};
 
-pub(crate) mod body;
-pub(crate) mod editor;
-pub(crate) mod headers;
-pub(crate) mod input;
-pub(crate) mod status;
+pub mod body;
+pub mod editor;
+pub mod headers;
+pub mod input;
+pub mod status;
 
 pub const STYLE_RESET: &str = "\x1B[0m";
 
@@ -24,7 +24,7 @@ pub const TEXT_YELLOW: &str = "\x1B[33m";
 
 pub const TEXT_RESET: &str = "\x1B[39m";
 
-pub(crate) fn handle_response(
+pub fn handle_response(
     term: &console::Term,
     response: &HittResponse,
     args: &RunCommandArguments,
@@ -65,15 +65,11 @@ pub(crate) fn handle_response(
 }
 
 #[inline]
-pub(crate) fn write_prompt(term: &Term, prompt: &str) -> Result<(), std::io::Error> {
+pub fn write_prompt(term: &Term, prompt: &str) -> Result<(), std::io::Error> {
     term.write_line(prompt)
 }
 
 #[inline]
-pub(crate) fn write_prompt_answer(
-    term: &Term,
-    prompt: &str,
-    answer: &str,
-) -> Result<(), std::io::Error> {
+pub fn write_prompt_answer(term: &Term, prompt: &str, answer: &str) -> Result<(), std::io::Error> {
     term.write_line(&format!("{prompt} {TEXT_GREEN}[{answer}]{TEXT_RESET}"))
 }
