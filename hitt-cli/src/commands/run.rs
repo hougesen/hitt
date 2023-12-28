@@ -1,7 +1,7 @@
 use hitt_request::send_request;
 
 use crate::{
-    config::RunCommandArguments,
+    config::{variables::parse_variable_argument, RunCommandArguments},
     error::HittCliError,
     fs::{find_http_files, parse_requests_threaded},
     terminal::handle_response,
@@ -21,7 +21,15 @@ pub async fn run_command(
 
     let timeout = args.timeout.map(core::time::Duration::from_millis);
 
-    let vars = std::collections::HashMap::new();
+    let mut vars = std::collections::HashMap::new();
+
+    if let Some(arg_variables) = args.var.clone() {
+        for var in arg_variables {
+            let (key, value) = parse_variable_argument(&var)?;
+
+            vars.insert(key, value);
+        }
+    }
 
     let parsed_files = parse_requests_threaded(http_file_paths, vars).await?;
 
