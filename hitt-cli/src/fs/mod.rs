@@ -91,6 +91,9 @@ mod test_find_http_files {
 
         std::fs::create_dir_all(dir.path().join("nested")).expect("it to create dir");
 
+        std::fs::File::create(dir.path().join("not-a-http-file.js"))
+            .expect("it to create the file");
+
         std::fs::File::create(dir.path().join("nested/file1.http")).expect("it to create a file");
 
         std::fs::File::create(dir.path().join("nested/file2.http")).expect("it to create a file");
@@ -110,6 +113,9 @@ mod test_find_http_files {
 
         std::fs::create_dir_all(dir.path().join("ignored_folder"))
             .expect("it to create directories");
+
+        std::fs::File::create(dir.path().join("not-a-http-file.js"))
+            .expect("it to create the file");
 
         std::fs::File::create(dir.path().join("not-ignored-file.http"))
             .expect("it to create the file");
