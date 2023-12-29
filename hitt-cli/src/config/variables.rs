@@ -5,11 +5,15 @@ pub fn parse_variable_argument(argument: &str) -> Result<(String, String), HittC
         .find('=')
         .ok_or_else(|| HittCliError::InvalidVariableArgument(argument.to_owned()))?;
 
-    let key = argument.get(..pos).unwrap().to_owned();
+    let key = argument
+        .get(..pos)
+        .ok_or_else(|| HittCliError::VariableArgumentKeyIndexing(argument.to_owned()))?;
 
-    let val = argument.get(pos + 1..).unwrap().to_owned();
+    let val = argument
+        .get(pos + 1..)
+        .ok_or_else(|| HittCliError::VariableArgumentValueIndexing(argument.to_owned()))?;
 
-    Ok((key, val))
+    Ok((key.to_owned(), val.to_owned()))
 }
 
 #[cfg(test)]
