@@ -72,7 +72,8 @@ mod test_send_request {
 
         let timeout = None;
 
-        let uri = http::Uri::from_str("https://dummyjson.com/products/1").unwrap();
+        let uri =
+            http::Uri::from_str("https://dummyjson.com/products/1").expect("it to be a valid uri");
 
         let input = hitt_parser::HittRequest {
             method: http::Method::GET,
@@ -97,7 +98,8 @@ mod test_send_request {
 
         let timeout = Some(Duration::from_millis(5));
 
-        let uri = http::Uri::from_str("https://dummyjson.com/products/1").unwrap();
+        let uri =
+            http::Uri::from_str("https://dummyjson.com/products/1").expect("it to be a valid uri");
 
         let input = hitt_parser::HittRequest {
             method: http::Method::GET,

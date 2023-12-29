@@ -448,8 +448,10 @@ mod test_partial_http_request {
 
     #[test]
     fn build_should_reject_if_no_method() {
+        let uri = Uri::from_str("https://mhouge.dk/").expect("it to be a valid url");
+
         let request = PartialHittRequest {
-            uri: Some(Uri::from_str("https://mhouge.dk/").unwrap()),
+            uri: Some(uri),
             method: None,
             http_version: None,
             headers: HeaderMap::default(),

@@ -112,20 +112,20 @@ mod test_try_find_content_type {
             let headers = vec![("content-type".to_owned(), content_type.to_owned())];
 
             assert_eq!(Some(content_type), try_find_content_type(&headers));
-        }
+        };
 
         {
             let content_type = "application/JSON".to_lowercase();
 
-            let headers = vec![("content-type".to_owned(), content_type.to_owned())];
+            let headers = vec![("content-type".to_owned(), content_type.clone())];
 
             assert_eq!(Some(content_type.as_str()), try_find_content_type(&headers));
-        }
+        };
 
         {
             let content_type = "application/JSON".to_uppercase();
 
-            let headers = vec![("content-type".to_owned(), content_type.to_owned())];
+            let headers = vec![("content-type".to_owned(), content_type.clone())];
 
             assert_eq!(Some(content_type.as_str()), try_find_content_type(&headers));
         }
@@ -166,6 +166,48 @@ fn save_request(
     }
 
     std::fs::write(path, contents).map_err(|error| HittCliError::IoWrite(path.to_path_buf(), error))
+}
+
+#[cfg(test)]
+mod test_save_request {
+    use super::save_request;
+
+    #[test]
+    fn it_should_save_request_input() {
+        let file = tempfile::Builder::new()
+            .prefix("test-hitt-")
+            .suffix(".http")
+            .rand_bytes(12)
+            .tempfile()
+            .expect("it to return a file path");
+
+        let method = "GET";
+        let url = "https://mhouge.dk/";
+        let headers = vec![
+            ("x-key1".to_owned(), "x-value1".to_owned()),
+            ("x-key2".to_owned(), "x-value2".to_owned()),
+        ];
+
+        let body = "{
+  \"key\": \"value\"
+}";
+
+        let expected_result = format!(
+            "{method} {url}
+x-key1: x-value1
+x-key2: x-value2
+
+{body}
+"
+        );
+
+        save_request(file.path(), method, url, &headers, Some(body.to_owned()))
+            .expect("it to save succesfully");
+
+        let result = std::fs::read_to_string(file.path()).expect("it to read the string");
+
+        assert_eq!(result, expected_result);
+    }
 }
 
 #[inline]
