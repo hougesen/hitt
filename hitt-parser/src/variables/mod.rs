@@ -40,14 +40,11 @@ mod test_parse_variable_declarations {
             // NOTE: we do not start with a '@' here since it is expected to already be removed
             let input = format!("{input_declaration}={input_value}");
 
-            match parse_variable_declaration(&mut to_enum_chars(&input)) {
-                Some((key, value)) => {
-                    assert_eq!(input_declaration, key);
-                    assert_eq!(input_value, value);
-                }
+            let (key, value) = parse_variable_declaration(&mut to_enum_chars(&input))
+                .expect("it to return a variable declaration");
 
-                None => panic!("it should return a valid string"),
-            }
+            assert_eq!(input_declaration, key);
+            assert_eq!(input_value, value);
         }
     }
 
@@ -66,15 +63,19 @@ mod test_parse_variable_declarations {
                 "{input_declaration}{extra_spaces}={extra_spaces}{input_value}{extra_spaces}"
             );
 
-            match parse_variable_declaration(&mut to_enum_chars(&input)) {
-                Some((key, value)) => {
-                    assert_eq!(input_declaration, key);
-                    assert_eq!(input_value, value);
-                }
+            let (key, value) = parse_variable_declaration(&mut to_enum_chars(&input))
+                .expect("it to return a variable declaration");
 
-                None => panic!("it should return a variable declaration"),
-            }
+            assert_eq!(input_declaration, key);
+            assert_eq!(input_value, value);
         }
+    }
+
+    #[test]
+    fn it_should_include_an_equal_sign() {
+        let input = "mads hougesen";
+
+        assert_eq!(None, parse_variable_declaration(&mut to_enum_chars(input)));
     }
 }
 
@@ -142,13 +143,10 @@ mod test_parse_variable {
             // NOTE: the first '{' was consumed by the caller
             let input = format!("{before}{input_name}{after}");
 
-            match parse_variable(&mut to_enum_chars(&input)) {
-                Some((output_name, jumps)) => {
-                    assert_eq!(input_name, output_name);
-                    assert_eq!(input.len(), jumps);
-                }
-                None => panic!("it should not return none"),
-            }
+            let (output_name, jumps) =
+                parse_variable(&mut to_enum_chars(&input)).expect("it to parse as variable");
+            assert_eq!(input_name, output_name);
+            assert_eq!(input.len(), jumps);
         }
     }
 
@@ -167,13 +165,11 @@ mod test_parse_variable {
             // NOTE: the first '{' was consumed by the caller
             let input = format!("{before}{extra_whitespace}{input_name}{extra_whitespace}{after}");
 
-            match parse_variable(&mut to_enum_chars(&input)) {
-                Some((output_name, jumps)) => {
-                    assert_eq!(input_name, output_name);
-                    assert_eq!(input.len(), jumps);
-                }
-                None => panic!("it should not return text"),
-            }
+            let (output_name, jumps) =
+                parse_variable(&mut to_enum_chars(&input)).expect("it to parse as variable");
+
+            assert_eq!(input_name, output_name);
+            assert_eq!(input.len(), jumps);
         }
     }
 
@@ -205,9 +201,23 @@ mod test_parse_variable {
         ];
 
         for input in inputs {
-            if let Some((var, jumps)) = parse_variable(&mut to_enum_chars(input)) {
-                panic!("expected None but received '{var}' {jumps}' from '{input}''");
-            }
+            assert_eq!(None, parse_variable(&mut to_enum_chars(input)));
         }
+    }
+
+    #[test]
+    fn it_should_not_parse_nested() {
+        let input = "{{data}}";
+
+        assert_eq!(None, parse_variable(&mut to_enum_chars(input)));
+    }
+
+    #[test]
+    fn it_should_ignore_empty_variables() {
+        // NOTE: should this be an error?
+
+        let input = "{}}";
+
+        assert_eq!(None, parse_variable(&mut to_enum_chars(input)));
     }
 }
