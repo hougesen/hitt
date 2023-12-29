@@ -57,7 +57,13 @@ mod test_parse_http_version {
     static EMPTY_VARS: Lazy<std::collections::HashMap<String, String>> =
         Lazy::new(std::collections::HashMap::new);
 
-    const HTTP_0_9_INPUTS: [&str; 4] = ["HTTP/0.9", "   HTTP/0.9", "HTTP/0.9   ", "   HTTP/0.9   "];
+    const HTTP_0_9_INPUTS: [&str; 5] = [
+        "http/0.9",
+        "HTTP/0.9",
+        "   HTTP/0.9",
+        "HTTP/0.9   ",
+        "   HTTP/0.9   ",
+    ];
 
     #[test]
     fn it_should_parse_http_0_9() {
@@ -75,7 +81,9 @@ mod test_parse_http_version {
         }
     }
 
-    const HTTP_1_0_INPUTS: [&str; 8] = [
+    const HTTP_1_0_INPUTS: [&str; 10] = [
+        "http/1",
+        "http/1.0",
         "HTTP/1",
         "   HTTP/1",
         "HTTP/1   ",
@@ -103,7 +111,13 @@ mod test_parse_http_version {
     }
 
     // NOTE: should HTTP/1 mean the same as HTTP/1.1?
-    const HTTP_1_1_INPUTS: [&str; 4] = ["HTTP/1.1", "   HTTP/1.1", "HTTP/1.1   ", "   HTTP/1.1   "];
+    const HTTP_1_1_INPUTS: [&str; 5] = [
+        "http/1.1",
+        "HTTP/1.1",
+        "   HTTP/1.1",
+        "HTTP/1.1   ",
+        "   HTTP/1.1   ",
+    ];
 
     #[test]
     fn it_should_parse_http_1_1() {
@@ -121,7 +135,9 @@ mod test_parse_http_version {
         }
     }
 
-    const HTTP_2_0_INPUTS: [&str; 8] = [
+    const HTTP_2_0_INPUTS: [&str; 10] = [
+        "http/2",
+        "http/2.0",
         "HTTP/2",
         "   HTTP/2",
         "HTTP/2   ",
@@ -148,7 +164,9 @@ mod test_parse_http_version {
         }
     }
 
-    const HTTP_3_0_INPUTS: [&str; 8] = [
+    const HTTP_3_0_INPUTS: [&str; 10] = [
+        "http/3.0",
+        "http/3",
         "HTTP/3",
         "   HTTP/3",
         "HTTP/3   ",
@@ -248,5 +266,43 @@ mod test_parse_http_version {
                 parse_http_version(&mut to_enum_chars("{{  version  }}"), &vars)
             );
         }
+    }
+
+    #[test]
+    fn it_should_ignore_unknown_http_versions() {
+        assert_eq!(
+            None,
+            parse_http_version(&mut to_enum_chars("unknown"), &EMPTY_VARS)
+        );
+
+        assert_eq!(
+            None,
+            parse_http_version(&mut to_enum_chars("{unknown"), &EMPTY_VARS)
+        );
+
+        assert_eq!(
+            None,
+            parse_http_version(&mut to_enum_chars("{{unknown"), &EMPTY_VARS)
+        );
+
+        assert_eq!(
+            None,
+            parse_http_version(&mut to_enum_chars("{{unknown}"), &EMPTY_VARS)
+        );
+
+        assert_eq!(
+            None,
+            parse_http_version(&mut to_enum_chars("{{unknown} }"), &EMPTY_VARS)
+        );
+    }
+
+    #[test]
+    fn it_should_return_none_if_var_isnt_found() {
+        // NOTE: should it raise an error instead?
+
+        assert_eq!(
+            None,
+            parse_http_version(&mut to_enum_chars("{{unknown}}"), &EMPTY_VARS)
+        );
     }
 }
