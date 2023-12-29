@@ -15,6 +15,30 @@ impl From<HeaderToken> for RequestToken {
     }
 }
 
+#[cfg(test)]
+mod test_from_header_token_for_request_token {
+    use crate::RequestToken;
+
+    use super::HeaderToken;
+
+    #[test]
+    fn it_should_wrap() {
+        let input_key = http::HeaderName::from_static("mads");
+        let input_value = http::HeaderValue::from_static("mads");
+
+        let output = RequestToken::from(HeaderToken {
+            key: input_key.clone(),
+            value: input_value.clone(),
+        });
+
+        assert!(matches!(
+            output,
+            RequestToken::Header(HeaderToken { key, value })
+            if key == input_key && value == input_value
+        ));
+    }
+}
+
 #[inline]
 pub fn parse_header(
     line: &mut core::iter::Enumerate<core::str::Chars>,
@@ -24,13 +48,14 @@ pub fn parse_header(
     let mut value = String::new();
     let mut is_key = true;
 
-    while let Some((_index, ch)) = line.next() {
+    while let Some((_, ch)) = line.next() {
         if ch == ':' {
             if is_key {
                 is_key = false;
             } else {
                 value.push(ch);
             }
+
             continue;
         } else if ch == '{' {
             // FIXME: remove cloning of enumerator
@@ -86,7 +111,7 @@ mod test_parse_header {
 
     use once_cell::sync::Lazy;
 
-    use crate::{parse_header, to_enum_chars};
+    use crate::{error::RequestParseError, parse_header, to_enum_chars};
 
     static EMPTY_VARS: Lazy<std::collections::HashMap<String, String>> =
         Lazy::new(std::collections::HashMap::new);
@@ -110,6 +135,39 @@ mod test_parse_header {
 
             assert_eq!(result.value, expected_value);
         }
+
+        {
+            let input = "key===::value";
+
+            let output = parse_header(&mut to_enum_chars(input), &EMPTY_VARS)
+                .expect_err("it to fail to parse");
+
+            assert!(
+                matches!(output, RequestParseError::InvalidHeaderName(name) if name == "key===")
+            );
+        };
+
+        {
+            let input = "key::v!###  `al\nue";
+
+            let output = parse_header(&mut to_enum_chars(input), &EMPTY_VARS)
+                .expect_err("it to fail to parse");
+
+            assert!(
+                matches!(output, RequestParseError::InvalidHeaderValue(val) if val == ":v!###  `al\nue")
+            );
+        };
+
+        {
+            let input = "key::value";
+
+            let output = parse_header(&mut to_enum_chars(input), &EMPTY_VARS)
+                .expect("it to parse")
+                .expect("it to be some");
+
+            assert_eq!(output.key, "key");
+            assert_eq!(output.value, ":value");
+        };
     }
 
     #[test]
@@ -235,5 +293,28 @@ mod test_parse_header {
         assert_eq!(f.trim(), result.key);
 
         assert_eq!(f.trim(), result.value);
+    }
+
+    #[test]
+    fn it_should_reject_if_variable_is_missing() {
+        {
+            let input = "{{key_var}}: value";
+
+            let output = parse_header(&mut to_enum_chars(input), &EMPTY_VARS)
+                .expect_err("it to return missing variable 'key_var'");
+
+            assert!(matches!(output, RequestParseError::VariableNotFound(var) if var == "key_var"));
+        };
+
+        {
+            let input = "key: {{value_var}}";
+
+            let output = parse_header(&mut to_enum_chars(input), &EMPTY_VARS)
+                .expect_err("it to return missing variable 'value_var'");
+
+            assert!(
+                matches!(output, RequestParseError::VariableNotFound(var) if var == "value_var")
+            );
+        };
     }
 }
