@@ -9,6 +9,30 @@ impl From<http::method::Method> for RequestToken {
     }
 }
 
+#[cfg(test)]
+mod test_from_method_from_request_token {
+    #[test]
+    fn it_should_wrap_method() {
+        let methods = [
+            http::method::Method::GET,
+            http::method::Method::OPTIONS,
+            http::method::Method::POST,
+            http::method::Method::PUT,
+            http::method::Method::PATCH,
+            http::method::Method::DELETE,
+            http::method::Method::TRACE,
+            http::method::Method::HEAD,
+            http::method::Method::CONNECT,
+        ];
+
+        for method in methods {
+            let token = crate::RequestToken::from(method.clone());
+
+            assert!(matches!(token, crate::RequestToken::Method(m) if m == method));
+        }
+    }
+}
+
 #[inline]
 pub fn parse_method_input(
     chars: &mut core::iter::Enumerate<core::str::Chars>,
@@ -55,7 +79,7 @@ mod test_parse_method_input {
 
     use once_cell::sync::Lazy;
 
-    use crate::{method::parse_method_input, to_enum_chars};
+    use crate::{error::RequestParseError, method::parse_method_input, to_enum_chars};
 
     static EMPTY_VARS: Lazy<std::collections::HashMap<String, String>> =
         Lazy::new(std::collections::HashMap::new);
@@ -113,6 +137,36 @@ mod test_parse_method_input {
                 expected_method,
                 parse_method_input(&mut to_enum_chars("{{  method  }}"), &vars)
                     .expect("it should return a valid method")
+            );
+        }
+    }
+
+    #[test]
+    fn it_should_require_method() {
+        let input = "   ";
+
+        let output = parse_method_input(&mut to_enum_chars(input), &EMPTY_VARS);
+
+        assert!(matches!(output, Err(RequestParseError::InvalidHttpMethod(m)) if m.is_empty()));
+    }
+
+    #[test]
+    fn it_should_raise_if_variable_not_found() {
+        {
+            let input = "{{}}";
+
+            let output = parse_method_input(&mut to_enum_chars(input), &EMPTY_VARS);
+
+            assert!(matches!(output, Err(RequestParseError::InvalidHttpMethod(m)) if m == input));
+        };
+
+        {
+            let input = "{{method}}";
+
+            let output = parse_method_input(&mut to_enum_chars(input), &EMPTY_VARS);
+
+            assert!(
+                matches!(output, Err(RequestParseError::VariableNotFound(var)) if var == "method")
             );
         }
     }
