@@ -9,6 +9,22 @@ impl From<http::uri::Uri> for RequestToken {
     }
 }
 
+#[cfg(test)]
+mod test_from_uri_for_request_token {
+    use core::str::FromStr;
+
+    use crate::RequestToken;
+
+    #[test]
+    fn it_should_wrap_uri() {
+        let uri = http::Uri::from_str("https://mhouge.dk/").expect("it to be a valid url");
+
+        let token = RequestToken::from(uri.clone());
+
+        assert!(matches!(token, RequestToken::Uri(inner_uri) if inner_uri == uri));
+    }
+}
+
 #[inline]
 pub fn parse_uri_input(
     chars: &mut core::iter::Enumerate<core::str::Chars>,
@@ -48,7 +64,7 @@ pub fn parse_uri_input(
 mod test_parse_uri_input {
     use once_cell::sync::Lazy;
 
-    use crate::{to_enum_chars, uri::parse_uri_input};
+    use crate::{error::RequestParseError, to_enum_chars, uri::parse_uri_input};
 
     static EMPTY_VARS: Lazy<std::collections::HashMap<String, String>> =
         Lazy::new(std::collections::HashMap::new);
@@ -149,6 +165,57 @@ mod test_parse_uri_input {
                 .expect("it to parse as a valid uri");
 
             assert_eq!(result.to_string(), uri);
+        }
+    }
+
+    #[test]
+    fn it_should_raise_if_variabe_isnt_found() {
+        {
+            let input = "{{host}}";
+
+            let output = parse_uri_input(&mut to_enum_chars(input), &EMPTY_VARS);
+
+            assert!(matches!(
+                output,
+                Err(RequestParseError::VariableNotFound(var))
+                if var == "host"
+            ));
+        };
+
+        {
+            let input = "{{  host}}";
+
+            let output = parse_uri_input(&mut to_enum_chars(input), &EMPTY_VARS);
+
+            assert!(matches!(
+                output,
+                Err(RequestParseError::VariableNotFound(var))
+                if var == "host"
+            ));
+        };
+
+        {
+            let input = "{{host  }}";
+
+            let output = parse_uri_input(&mut to_enum_chars(input), &EMPTY_VARS);
+
+            assert!(matches!(
+                output,
+                Err(RequestParseError::VariableNotFound(var))
+                if var == "host"
+            ));
+        };
+
+        {
+            let input = "{{  host  }}";
+
+            let output = parse_uri_input(&mut to_enum_chars(input), &EMPTY_VARS);
+
+            assert!(matches!(
+                output,
+                Err(RequestParseError::VariableNotFound(var))
+                if var == "host"
+            ));
         }
     }
 }
