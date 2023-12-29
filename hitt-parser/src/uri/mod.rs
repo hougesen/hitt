@@ -11,13 +11,11 @@ impl From<http::uri::Uri> for RequestToken {
 
 #[cfg(test)]
 mod test_from_uri_for_request_token {
-    use core::str::FromStr;
-
     use crate::RequestToken;
 
     #[test]
     fn it_should_wrap_uri() {
-        let uri = http::Uri::from_str("https://mhouge.dk/").expect("it to be a valid url");
+        let uri = http::Uri::from_static("https://mhouge.dk/");
 
         let token = RequestToken::from(uri.clone());
 

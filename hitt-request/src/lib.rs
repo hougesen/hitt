@@ -73,8 +73,7 @@ mod test_send_request {
 
         let timeout = None;
 
-        let uri =
-            http::Uri::from_str("https://dummyjson.com/products/1").expect("it to be a valid uri");
+        let uri = http::Uri::from_static("https://dummyjson.com/products/1");
 
         let method = http::Method::GET;
 
@@ -106,8 +105,7 @@ mod test_send_request {
 
         let timeout = None;
 
-        let uri =
-            http::Uri::from_str("https://dummyjson.com/products/1").expect("it to be a valid uri");
+        let uri = http::Uri::from_static("https://dummyjson.com/products/1");
 
         let method = http::Method::GET;
 
@@ -139,15 +137,13 @@ mod test_send_request {
 
         let timeout = None;
 
-        let uri =
-            http::Uri::from_str("https://dummyjson.com/products/1").expect("it to be a valid uri");
+        let uri = http::Uri::from_static("https://dummyjson.com/products/1");
 
         let mut headers = HeaderMap::new();
 
-        let header_key = http::HeaderName::from_str("mads").expect("it to be a valid header name");
+        let header_key = http::HeaderName::from_static("mads");
 
-        let header_value =
-            http::HeaderValue::from_str("hougesen").expect("it to be a valid header value");
+        let header_value = http::HeaderValue::from_static("hougesen");
 
         headers.insert(header_key, header_value);
 
@@ -181,8 +177,7 @@ mod test_send_request {
 
         let timeout = None;
 
-        let uri =
-            http::Uri::from_str("https://dummyjson.com/products/1").expect("it to be a valid uri");
+        let uri = http::Uri::from_static("https://dummyjson.com/products/1");
 
         let input = hitt_parser::HittRequest {
             method: http::Method::GET,
@@ -207,8 +202,7 @@ mod test_send_request {
 
         let timeout = Some(Duration::from_millis(5));
 
-        let uri =
-            http::Uri::from_str("https://dummyjson.com/products/1").expect("it to be a valid uri");
+        let uri = http::Uri::from_static("https://dummyjson.com/products/1");
 
         let input = hitt_parser::HittRequest {
             method: http::Method::GET,

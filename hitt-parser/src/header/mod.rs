@@ -17,16 +17,14 @@ impl From<HeaderToken> for RequestToken {
 
 #[cfg(test)]
 mod test_from_header_token_for_request_token {
-    use core::str::FromStr;
-
     use crate::RequestToken;
 
     use super::HeaderToken;
 
     #[test]
     fn it_should_wrap() {
-        let input_key = http::HeaderName::from_str("mads").expect("it to be valid HeaderName");
-        let input_value = http::HeaderValue::from_str("mads").expect("it to be valid HeaderValue");
+        let input_key = http::HeaderName::from_static("mads");
+        let input_value = http::HeaderValue::from_static("mads");
 
         let output = RequestToken::from(HeaderToken {
             key: input_key.clone(),

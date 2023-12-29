@@ -636,7 +636,6 @@ impl PartialHittRequest {
 
 #[cfg(test)]
 mod test_partial_http_request {
-    use core::str::FromStr;
 
     use http::{HeaderMap, Uri};
 
@@ -659,7 +658,7 @@ mod test_partial_http_request {
 
     #[test]
     fn build_should_reject_if_no_method() {
-        let uri = Uri::from_str("https://mhouge.dk/").expect("it to be a valid url");
+        let uri = Uri::from_static("https://mhouge.dk/");
 
         let request = PartialHittRequest {
             uri: Some(uri),
@@ -837,7 +836,7 @@ GET https://mhouge.dk/ HTTP/3
         {
             let request = requests.first().expect("it to be exist");
 
-            assert_eq!("GET", request.method.as_str());
+            assert_eq!(http::Method::GET, request.method);
 
             assert_eq!("https://mhouge.dk/", request.uri.to_string());
 
@@ -845,14 +844,16 @@ GET https://mhouge.dk/ HTTP/3
 
             assert!(request.body.is_none());
 
-            let http_version = request.http_version.expect("http_version to be defined");
-            assert_eq!(http_version, http::Version::HTTP_09);
+            assert_eq!(
+                http::Version::HTTP_09,
+                request.http_version.expect("http_version to be defined")
+            );
         };
 
         {
             let request = requests.get(1).expect("it to be exist");
 
-            assert_eq!("GET", request.method.as_str());
+            assert_eq!(http::Method::GET, request.method);
 
             assert_eq!("https://mhouge.dk/", request.uri.to_string());
 
@@ -860,14 +861,16 @@ GET https://mhouge.dk/ HTTP/3
 
             assert!(request.body.is_none());
 
-            let http_version = request.http_version.expect("http_version to be defined");
-            assert_eq!(http_version, http::Version::HTTP_10);
+            assert_eq!(
+                http::Version::HTTP_10,
+                request.http_version.expect("http_version to be defined")
+            );
         };
 
         {
             let request = requests.get(2).expect("it to be exist");
 
-            assert_eq!("GET", request.method.as_str());
+            assert_eq!(http::Method::GET, request.method);
 
             assert_eq!("https://mhouge.dk/", request.uri.to_string());
 
@@ -875,14 +878,16 @@ GET https://mhouge.dk/ HTTP/3
 
             assert!(request.body.is_none());
 
-            let http_version = request.http_version.expect("http_version to be defined");
-            assert_eq!(http_version, http::Version::HTTP_11);
+            assert_eq!(
+                http::Version::HTTP_11,
+                request.http_version.expect("http_version to be defined")
+            );
         };
 
         {
             let request = requests.get(3).expect("it to be exist");
 
-            assert_eq!("GET", request.method.as_str());
+            assert_eq!(http::Method::GET, request.method);
 
             assert_eq!("https://mhouge.dk/", request.uri.to_string());
 
@@ -890,14 +895,16 @@ GET https://mhouge.dk/ HTTP/3
 
             assert!(request.body.is_none());
 
-            let http_version = request.http_version.expect("http_version to be defined");
-            assert_eq!(http_version, http::Version::HTTP_2);
+            assert_eq!(
+                http::Version::HTTP_2,
+                request.http_version.expect("http_version to be defined")
+            );
         };
 
         {
             let request = requests.get(4).expect("it to be exist");
 
-            assert_eq!("GET", request.method.as_str());
+            assert_eq!(http::Method::GET, request.method);
 
             assert_eq!("https://mhouge.dk/", request.uri.to_string());
 
@@ -905,8 +912,10 @@ GET https://mhouge.dk/ HTTP/3
 
             assert!(request.body.is_none());
 
-            let http_version = request.http_version.expect("http_version to be defined");
-            assert_eq!(http_version, http::Version::HTTP_3);
+            assert_eq!(
+                http::Version::HTTP_3,
+                request.http_version.expect("http_version to be defined")
+            );
         };
     }
 
