@@ -56,6 +56,8 @@ pub async fn parse_requests_threaded(
 
 pub fn find_http_files(path: &std::path::Path) -> Vec<std::path::PathBuf> {
     ignore::WalkBuilder::new(path)
+        .git_ignore(true)
+        .require_git(false)
         .build()
         .filter_map(|orginal_entry| {
             if let Ok(entry) = orginal_entry {
@@ -71,4 +73,60 @@ pub fn find_http_files(path: &std::path::Path) -> Vec<std::path::PathBuf> {
             None
         })
         .collect()
+}
+
+#[cfg(test)]
+mod test_find_http_files {
+    use std::io::Write;
+
+    use super::find_http_files;
+
+    #[test]
+    fn it_should_return_a_list_of_files() {
+        let dir = tempfile::Builder::new()
+            .prefix("hitt-")
+            .rand_bytes(12)
+            .tempdir()
+            .expect("it to return a valid dir");
+
+        std::fs::create_dir_all(dir.path().join("nested")).unwrap();
+
+        std::fs::File::create(dir.path().join("nested/file1.http")).unwrap();
+
+        std::fs::File::create(dir.path().join("nested/file2.http")).unwrap();
+
+        let result = find_http_files(dir.path());
+
+        assert_eq!(2, result.len());
+    }
+
+    #[test]
+    fn it_should_respect_gitignore() {
+        let dir = tempfile::Builder::new()
+            .prefix("hitt-")
+            .rand_bytes(12)
+            .tempdir()
+            .expect("it to return a valid dir");
+
+        std::fs::create_dir_all(dir.path().join("ignored_folder")).unwrap();
+
+        std::fs::File::create(dir.path().join("not-ignored-file.http")).unwrap();
+
+        std::fs::File::create(dir.path().join("ignored_folder/file1.http")).unwrap();
+
+        std::fs::File::create(dir.path().join("ignored_folder/file2.http")).unwrap();
+
+        let gitignore = "
+ignored_folder
+";
+
+        std::fs::File::create(dir.path().join(".gitignore"))
+            .unwrap()
+            .write(gitignore.as_bytes())
+            .unwrap();
+
+        let result = find_http_files(dir.path());
+
+        assert_eq!(1, result.len());
+    }
 }
