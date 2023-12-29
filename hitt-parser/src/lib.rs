@@ -812,19 +812,19 @@ GET https://mhouge.dk/ HTTP/0.9
 
 ###
 
-GET https://mhouge.dk/ HTTP/1.0
+PUT https://mhouge.dk/ HTTP/1.0
 
 ###
 
-GET https://mhouge.dk/ HTTP/1.1
+POST https://mhouge.dk/ HTTP/1.1
 
 ###
 
-GET https://mhouge.dk/ HTTP/2
+PATCH https://mhouge.dk/ HTTP/2
 
 ###
 
-GET https://mhouge.dk/ HTTP/3
+DELETE https://mhouge.dk/ HTTP/3
 
 ###
 ";
@@ -853,7 +853,7 @@ GET https://mhouge.dk/ HTTP/3
         {
             let request = requests.get(1).expect("it to be exist");
 
-            assert_eq!(http::Method::GET, request.method);
+            assert_eq!(http::Method::PUT, request.method);
 
             assert_eq!("https://mhouge.dk/", request.uri.to_string());
 
@@ -870,7 +870,7 @@ GET https://mhouge.dk/ HTTP/3
         {
             let request = requests.get(2).expect("it to be exist");
 
-            assert_eq!(http::Method::GET, request.method);
+            assert_eq!(http::Method::POST, request.method);
 
             assert_eq!("https://mhouge.dk/", request.uri.to_string());
 
@@ -887,7 +887,7 @@ GET https://mhouge.dk/ HTTP/3
         {
             let request = requests.get(3).expect("it to be exist");
 
-            assert_eq!(http::Method::GET, request.method);
+            assert_eq!(http::Method::PATCH, request.method);
 
             assert_eq!("https://mhouge.dk/", request.uri.to_string());
 
@@ -904,7 +904,7 @@ GET https://mhouge.dk/ HTTP/3
         {
             let request = requests.get(4).expect("it to be exist");
 
-            assert_eq!(http::Method::GET, request.method);
+            assert_eq!(http::Method::DELETE, request.method);
 
             assert_eq!("https://mhouge.dk/", request.uri.to_string());
 

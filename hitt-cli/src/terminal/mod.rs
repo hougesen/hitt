@@ -69,7 +69,35 @@ pub fn write_prompt(term: &Term, prompt: &str) -> Result<(), std::io::Error> {
     term.write_line(prompt)
 }
 
+#[cfg(test)]
+mod test_write_prompt {
+    use super::write_prompt;
+
+    #[test]
+    fn it_should_not_error() {
+        let term = console::Term::stdout();
+
+        // TODO: actually validate stdout
+        write_prompt(&term, "What is your prefered http testing tool?")
+            .expect("it not to raise an error");
+    }
+}
+
 #[inline]
 pub fn write_prompt_answer(term: &Term, prompt: &str, answer: &str) -> Result<(), std::io::Error> {
     term.write_line(&format!("{prompt} {TEXT_GREEN}[{answer}]{TEXT_RESET}"))
+}
+
+#[cfg(test)]
+mod test_write_prompt_answer {
+    use super::write_prompt_answer;
+
+    #[test]
+    fn it_should_not_error() {
+        let term = console::Term::stdout();
+
+        // TODO: actually validate stdout
+        write_prompt_answer(&term, "What is your prefered http testing tool?", "hitt")
+            .expect("it not to raise an error");
+    }
 }

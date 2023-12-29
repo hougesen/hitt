@@ -19,3 +19,40 @@ pub fn print_status(
 
     term.write_line(&line)
 }
+
+#[cfg(test)]
+mod test_print_status {
+    use super::print_status;
+
+    #[test]
+    fn should_print_green_if_success_code() {
+        let term = console::Term::stdout();
+
+        let url = "https://mhouge.dk";
+        let http_version = http::version::Version::HTTP_11;
+        let duration = core::time::Duration::from_millis(123);
+        let method = "GET";
+
+        for i in 0..=399 {
+            // TODO: actually validate what is written to stdout
+            print_status(&term, http_version, method, url, i, &duration)
+                .expect("it to not raise an error");
+        }
+    }
+
+    #[test]
+    fn should_print_red_if_error_code() {
+        let term = console::Term::stdout();
+
+        let url = "https://mhouge.dk";
+        let http_version = http::version::Version::HTTP_11;
+        let duration = core::time::Duration::from_millis(123);
+        let method = "GET";
+
+        for i in 400..600 {
+            // TODO: actually validate what is written to stdout
+            print_status(&term, http_version, method, url, i, &duration)
+                .expect("it to not raise an error");
+        }
+    }
+}
