@@ -1,4 +1,4 @@
-use std::io::Write;
+use std::{ffi::OsString, io::Write};
 
 use console::{Key, Term};
 
@@ -6,12 +6,12 @@ use super::input::confirm_input;
 
 #[inline]
 fn get_default_editor() -> std::ffi::OsString {
-    if let Some(prog) = std::env::var_os("VISUAL") {
-        return prog;
+    if let Ok(prog) = std::env::var("VISUAL") {
+        return OsString::from(prog);
     }
 
-    if let Some(prog) = std::env::var_os("EDITOR") {
-        return prog;
+    if let Ok(prog) = std::env::var("EDITOR") {
+        return OsString::from(prog);
     }
 
     #[cfg(windows)]
