@@ -27,5 +27,5 @@ http = { workspace = true }
 ignore = { version = "0.4.21" }
 reqwest = { workspace = true }
 shell-words = { version = "1.1.0" }
-tempfile = { version = "3.8.1" }
+tempfile = { version = "3.9.0" }
 tokio = { workspace = true }
