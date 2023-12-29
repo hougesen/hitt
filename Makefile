@@ -11,6 +11,11 @@ test:
 	make lint
 	RUST_BACKTRACE=full cargo test --release
 
+test-coverage:
+	cargo llvm-cov clean --workspace
+	cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info
+	cargo llvm-cov --open
+
 publish-crates:
 	make build
 	make test
