@@ -12,6 +12,8 @@ pub enum HittCliError {
     Reqwest(http::Method, http::Uri, reqwest::Error),
     RequestTimeout(http::Method, http::Uri),
     InvalidVariableArgument(String),
+    VariableArgumentKeyIndexing(String),
+    VariableArgumentValueIndexing(String),
 }
 
 impl fmt::Display for HittCliError {
@@ -25,7 +27,15 @@ impl fmt::Display for HittCliError {
             Self::Io(error) => format!("io error {error:#?}"),
             Self::Reqwest(method, uri, error) => format!("{method} {uri} - {error}"),
             Self::RequestTimeout(method, uri) => format!("{method} {uri} - request timed out"),
-            Self::InvalidVariableArgument(input)=> format!("'{input}' is not a valid variable argument - variable input should be '--var <KEY>=<VALUE>'")
+            Self::InvalidVariableArgument(input) => {
+                format!("'{input}' is not a valid variable argument - variable input should be '--var <KEY>=<VALUE>'")
+            }
+            Self::VariableArgumentKeyIndexing(variable) => {
+                format!("unable to index key of --var '{variable}'")
+            }
+            Self::VariableArgumentValueIndexing(variable) => {
+                format!("unable to index value of --var '{variable}'")
+            }
         };
 
         write!(f, "{TEXT_RED}hitt: {error_message}{TEXT_RESET}")
