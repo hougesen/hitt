@@ -1,5 +1,6 @@
 use hitt_parser::HittRequest;
 
+#[derive(Debug)]
 pub struct HittResponse {
     pub url: String,
     pub method: String,
@@ -75,11 +76,119 @@ mod test_send_request {
         let uri =
             http::Uri::from_str("https://dummyjson.com/products/1").expect("it to be a valid uri");
 
+        let method = http::Method::GET;
+
+        let input = hitt_parser::HittRequest {
+            method: method.clone(),
+            uri: uri.clone(),
+            headers: HeaderMap::default(),
+            body: None,
+            http_version: None,
+        };
+
+        let result = send_request(&http_client, &input, &timeout)
+            .await
+            .expect("it to be successfull");
+
+        assert_eq!(result.url, uri.to_string());
+
+        assert_eq!(result.status_code, StatusCode::OK);
+
+        assert_eq!(
+            http::Method::from_str(&result.method).expect("it to be a valid method"),
+            method
+        );
+    }
+
+    #[tokio::test]
+    async fn it_should_set_http_version() {
+        let http_client = reqwest::Client::new();
+
+        let timeout = None;
+
+        let uri =
+            http::Uri::from_str("https://dummyjson.com/products/1").expect("it to be a valid uri");
+
+        let method = http::Method::GET;
+
+        let input = hitt_parser::HittRequest {
+            method: method.clone(),
+            uri: uri.clone(),
+            headers: HeaderMap::default(),
+            body: Some("hello world".to_owned()),
+            http_version: Some(http::Version::HTTP_11),
+        };
+
+        let result = send_request(&http_client, &input, &timeout)
+            .await
+            .expect("it to be successfull");
+
+        assert_eq!(result.url, uri.to_string());
+
+        assert_eq!(result.status_code, StatusCode::OK);
+
+        assert_eq!(
+            http::Method::from_str(&result.method).expect("it to be a valid method"),
+            method
+        );
+    }
+
+    #[tokio::test]
+    async fn it_should_set_headers() {
+        let http_client = reqwest::Client::new();
+
+        let timeout = None;
+
+        let uri =
+            http::Uri::from_str("https://dummyjson.com/products/1").expect("it to be a valid uri");
+
+        let mut headers = HeaderMap::new();
+
+        let header_key = http::HeaderName::from_str("mads").expect("it to be a valid header name");
+
+        let header_value =
+            http::HeaderValue::from_str("hougesen").expect("it to be a valid header value");
+
+        headers.insert(header_key, header_value);
+
+        let method = http::Method::DELETE;
+
+        let input = hitt_parser::HittRequest {
+            method: method.clone(),
+            uri: uri.clone(),
+            headers,
+            body: Some("hello world".to_owned()),
+            http_version: None,
+        };
+
+        let result = send_request(&http_client, &input, &timeout)
+            .await
+            .expect("it to be successfull");
+
+        assert_eq!(result.url, uri.to_string());
+
+        assert_eq!(result.status_code, StatusCode::OK);
+
+        assert_eq!(
+            http::Method::from_str(&result.method).expect("it to be a valid method"),
+            method
+        );
+    }
+
+    #[tokio::test]
+    async fn it_should_set_body() {
+        let http_client = reqwest::Client::new();
+
+        let timeout = None;
+
+        let uri =
+            http::Uri::from_str("https://dummyjson.com/products/1").expect("it to be a valid uri");
+
         let input = hitt_parser::HittRequest {
             method: http::Method::GET,
             uri: uri.clone(),
             headers: HeaderMap::default(),
-            body: None,
+            body: Some("hello world".to_owned()),
             http_version: None,
         };
 
@@ -109,9 +218,10 @@ mod test_send_request {
             http_version: None,
         };
 
-        match send_request(&http_client, &input, &timeout).await {
-            Ok(_) => panic!("expected request to timeout"),
-            Err(err) => assert!(err.is_timeout()),
-        };
+        let response = send_request(&http_client, &input, &timeout)
+            .await
+            .expect_err("it to throw an error");
+
+        assert!(response.is_timeout());
     }
 }
