@@ -3,6 +3,8 @@ name: validate-docs
 on:
   push:
     paths:
+      - '**/*.md'
+      - '**/*.json'
       - 'docs/**'
 
 concurrency:
@@ -11,7 +13,30 @@ concurrency:
 
 jobs:
   prettier:
-    - uses: actions/checkout@v4
-    - uses: actionsx/prettier@v3
-      with:
-        args: --check .
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node: [20]
+
+    steps:
+      - name: Checkout 🛎
+        uses: actions/checkout@master
+
+      - name: Setup node env 🏗
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          check-latest: true
+
+      - name: Cache node_modules 📦
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Run format 💎
+        run: npx prettier --check --cache .
