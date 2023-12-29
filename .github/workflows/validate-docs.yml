@@ -5,6 +5,8 @@ on:
     paths:
       - '**/*.md'
       - '**/*.json'
+      - '**/*.yml'
+      - '**/*.yaml'
       - 'docs/**'
 
 concurrency:
