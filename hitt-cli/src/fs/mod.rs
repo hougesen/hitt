@@ -89,11 +89,11 @@ mod test_find_http_files {
             .tempdir()
             .expect("it to return a valid dir");
 
-        std::fs::create_dir_all(dir.path().join("nested")).unwrap();
+        std::fs::create_dir_all(dir.path().join("nested")).expect("it to create dir");
 
-        std::fs::File::create(dir.path().join("nested/file1.http")).unwrap();
+        std::fs::File::create(dir.path().join("nested/file1.http")).expect("it to create a file");
 
-        std::fs::File::create(dir.path().join("nested/file2.http")).unwrap();
+        std::fs::File::create(dir.path().join("nested/file2.http")).expect("it to create a file");
 
         let result = find_http_files(dir.path());
 
@@ -108,22 +108,26 @@ mod test_find_http_files {
             .tempdir()
             .expect("it to return a valid dir");
 
-        std::fs::create_dir_all(dir.path().join("ignored_folder")).unwrap();
+        std::fs::create_dir_all(dir.path().join("ignored_folder"))
+            .expect("it to create directories");
 
-        std::fs::File::create(dir.path().join("not-ignored-file.http")).unwrap();
+        std::fs::File::create(dir.path().join("not-ignored-file.http"))
+            .expect("it to create the file");
 
-        std::fs::File::create(dir.path().join("ignored_folder/file1.http")).unwrap();
+        std::fs::File::create(dir.path().join("ignored_folder/file1.http"))
+            .expect("it to create the file");
 
-        std::fs::File::create(dir.path().join("ignored_folder/file2.http")).unwrap();
+        std::fs::File::create(dir.path().join("ignored_folder/file2.http"))
+            .expect("it to create a file");
 
         let gitignore = "
 ignored_folder
 ";
 
         std::fs::File::create(dir.path().join(".gitignore"))
-            .unwrap()
-            .write(gitignore.as_bytes())
-            .unwrap();
+            .expect("it to create .gitignore")
+            .write_all(gitignore.as_bytes())
+            .expect("it to write to .gitignore");
 
         let result = find_http_files(dir.path());
 
