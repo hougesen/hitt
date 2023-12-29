@@ -10,7 +10,7 @@ keywords.workspace = true
 rust-version.workspace = true
 homepage.workspace = true
 readme = "README.md"
-categories = []
+categories = ["parser-implementations"]
 
 [dependencies]
 http = { workspace = true }
