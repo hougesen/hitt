@@ -1,0 +1,17 @@
+name: validate-docs
+
+on:
+  push:
+    paths:
+      - 'docs/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  prettier:
+    - uses: actions/checkout@v4
+    - uses: actionsx/prettier@v3
+      with:
+        args: --check .
