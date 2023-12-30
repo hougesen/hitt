@@ -89,20 +89,26 @@ pub fn parse_header(
         }
     }
 
-    let trimmed_key = key.trim();
-
-    let trimmed_value = value.trim();
-
-    if !key.is_empty() {
-        return Ok(Some(HeaderToken {
-            key: http::HeaderName::from_str(trimmed_key)
-                .map_err(|_err| RequestParseError::InvalidHeaderName(trimmed_key.to_owned()))?,
-            value: http::HeaderValue::from_str(trimmed_value)
-                .map_err(|_err| RequestParseError::InvalidHeaderValue(trimmed_value.to_owned()))?,
-        }));
+    if key.is_empty() {
+        return Ok(None);
     }
 
-    Ok(None)
+    // NOTE: should key be trimmed?
+    let trimmed_key = key.trim();
+
+    // NOTE: should value be trimmed?
+    let trimmed_value = value.trim();
+
+    let header_key = http::HeaderName::from_str(trimmed_key)
+        .map_err(|_err| RequestParseError::InvalidHeaderName(trimmed_key.to_owned()))?;
+
+    let header_value = http::HeaderValue::from_str(trimmed_value)
+        .map_err(|_err| RequestParseError::InvalidHeaderValue(trimmed_value.to_owned()))?;
+
+    Ok(Some(HeaderToken {
+        key: header_key,
+        value: header_value,
+    }))
 }
 
 #[cfg(test)]
