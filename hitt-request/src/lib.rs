@@ -55,7 +55,7 @@ pub async fn send_request(
         headers: res.headers().to_owned(),
         http_version: res.version(),
         duration,
-        body: res.text().await.unwrap_or_default(),
+        body: res.text().await?,
     })
 }
 
@@ -97,6 +97,8 @@ mod test_send_request {
             http::Method::from_str(&result.method).expect("it to be a valid method"),
             method
         );
+
+        assert!(!result.body.is_empty());
     }
 
     #[tokio::test]
@@ -129,6 +131,8 @@ mod test_send_request {
             http::Method::from_str(&result.method).expect("it to be a valid method"),
             method
         );
+
+        assert!(!result.body.is_empty());
     }
 
     #[tokio::test]
@@ -169,6 +173,8 @@ mod test_send_request {
             http::Method::from_str(&result.method).expect("it to be a valid method"),
             method
         );
+
+        assert!(!result.body.is_empty());
     }
 
     #[tokio::test]
@@ -194,6 +200,8 @@ mod test_send_request {
         assert_eq!(result.url, uri.to_string());
 
         assert_eq!(result.status_code, StatusCode::OK);
+
+        assert!(!result.body.is_empty());
     }
 
     #[tokio::test]
