@@ -83,45 +83,48 @@ mod test_parse_variable_declarations {
 pub fn parse_variable(
     chars: &mut core::iter::Enumerate<core::str::Chars>,
 ) -> Option<(String, usize)> {
-    let mut jumps = 0;
-
-    if let Some((_, '{')) = chars.next() {
-        jumps += 1;
-        let mut x = String::new();
-
-        let mut is_key = true;
-
-        while let Some((_, ch)) = chars.next() {
-            jumps += 1;
-
-            if ch == '{' {
-                return None;
-            }
-
-            if ch == '}' {
-                if let Some((_, '}')) = chars.next() {
-                    if x.is_empty() {
-                        return None;
-                    }
-
-                    jumps += 1;
-                    return Some((x, jumps));
-                }
-
-                return None;
-            }
-
-            if ch.is_whitespace() {
-                if !x.is_empty() {
-                    is_key = false;
-                }
-            } else if !is_key {
-                return None;
-            } else {
-                x.push(ch);
-            }
-        }
+    if chars.next().is_some_and(|(_, ch)| ch != '{') {
+        return None;
     };
+
+    let mut jumps = 1;
+
+    let mut name = String::new();
+
+    let mut is_key = true;
+
+    while let Some((_, ch)) = chars.next() {
+        jumps += 1;
+
+        if ch == '{' {
+            return None;
+        }
+
+        if ch == '}' {
+            if let Some((_, '}')) = chars.next() {
+                if name.is_empty() {
+                    // NOTE: should this raise?
+                    return None;
+                }
+
+                jumps += 1;
+
+                return Some((name, jumps));
+            }
+
+            return None;
+        }
+
+        if ch.is_whitespace() {
+            if !name.is_empty() {
+                is_key = false;
+            }
+        } else if !is_key {
+            return None;
+        } else {
+            name.push(ch);
+        }
+    }
 
     None
 }
