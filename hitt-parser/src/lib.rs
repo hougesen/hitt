@@ -62,12 +62,14 @@ fn tokenize(
                 parser_mode = ParserMode::Request;
             }
 
-            continue;
-        }
-
-        // check if line is comment (//)
-        if trimmed_line.starts_with("//") {
-            continue;
+            if parser_mode == ParserMode::Request {
+                continue;
+            }
+        } else if trimmed_line.starts_with("//") {
+            // check if line is comment (//)
+            if parser_mode == ParserMode::Request {
+                continue;
+            }
         }
 
         match parser_mode {
