@@ -1,6 +1,6 @@
 use core::fmt;
 
-use crate::terminal::{TEXT_RED, TEXT_RESET};
+use console::style;
 
 #[derive(Debug)]
 pub enum HittCliError {
@@ -38,7 +38,7 @@ impl fmt::Display for HittCliError {
             }
         };
 
-        write!(f, "{TEXT_RED}hitt: {error_message}{TEXT_RESET}")
+        write!(f, "{}", style(format!("hitt: {error_message}")).red())
     }
 }
 

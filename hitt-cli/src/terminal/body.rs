@@ -1,10 +1,8 @@
 use hitt_formatter::ContentType;
 
-use crate::terminal::{TEXT_RESET, TEXT_YELLOW};
-
 #[inline]
 fn __print_body(term: &console::Term, body: &str) -> Result<(), std::io::Error> {
-    term.write_line(&format!("\n{TEXT_YELLOW}{body}{TEXT_RESET}"))
+    term.write_line(&format!("\n{}", console::style(body).yellow()))
 }
 
 #[cfg(test)]
