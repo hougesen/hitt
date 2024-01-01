@@ -9,7 +9,6 @@ use crate::{
     terminal::{
         editor::editor_input,
         input::{confirm_input, select_input, text_input_prompt},
-        TEXT_RED, TEXT_RESET,
     },
 };
 
@@ -28,7 +27,11 @@ fn set_url(term: &Term) -> Result<String, std::io::Error> {
         term,
         "What should the url be?",
         |input| !input.is_empty() && Uri::from_str(input).is_ok(),
-        |input| format!("{TEXT_RED}'{input}' is not a valid url{TEXT_RESET}"),
+        |input| {
+            console::style(format!("'{input}' is not a valid url"))
+                .red()
+                .to_string()
+        },
     )
 }
 
@@ -42,12 +45,18 @@ fn set_headers(term: &Term) -> Result<Vec<(String, String)>, std::io::Error> {
         confirm_input(term, "Do you want to add headers? (Y/n)", &lower_y_key)?;
 
     let key_validator = |input: &str| !input.is_empty() && HeaderName::from_str(input).is_ok();
-    let format_key_error =
-        |input: &str| format!("{TEXT_RED}'{input}' is not a valid header key{TEXT_RESET}");
+    let format_key_error = |input: &str| {
+        console::style(format!("'{input}' is not a valid header key"))
+            .red()
+            .to_string()
+    };
 
     let value_validator = |input: &str| !input.is_empty() && HeaderValue::from_str(input).is_ok();
-    let format_value_error =
-        |input: &str| format!("{TEXT_RED}'{input}' is not a valid header value{TEXT_RESET}");
+    let format_value_error = |input: &str| {
+        console::style(format!("'{input}' is not a valid header value"))
+            .red()
+            .to_string()
+    };
 
     while writing_headers {
         let key = text_input_prompt(

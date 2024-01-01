@@ -1,6 +1,6 @@
-use console::{Key, Term};
+use console::{style, Key, Term};
 
-use super::{write_prompt, write_prompt_answer, TEXT_GREEN, TEXT_RESET};
+use super::{write_prompt, write_prompt_answer};
 
 pub fn text_input_prompt(
     term: &Term,
@@ -90,10 +90,11 @@ pub fn select_input(term: &Term, prompt: &str, items: &[&str]) -> Result<String,
 
         for (item_index, item) in items.iter().enumerate() {
             if item_index == option_index {
-                term.write_line(&format!("{TEXT_GREEN}> {item }{TEXT_RESET}"))?;
+                term.write_line(&style(format!("> {item}")).green().to_string())?;
             } else {
-                term.write_line(&format!("  {item }"))?;
+                term.write_line(&format!("  {item}"))?;
             }
+
             line_count += 1;
         }
 

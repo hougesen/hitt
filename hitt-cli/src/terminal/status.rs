@@ -1,5 +1,3 @@
-use crate::terminal::{STYLE_BOLD, STYLE_RESET, TEXT_GREEN, TEXT_RED, TEXT_RESET};
-
 #[inline]
 pub fn print_status(
     term: &console::Term,
@@ -10,14 +8,17 @@ pub fn print_status(
     duration: &core::time::Duration,
 ) -> Result<(), std::io::Error> {
     let text_color = if status_code < 400 {
-        TEXT_GREEN
+        console::Style::new().green()
     } else {
-        TEXT_RED
+        console::Style::new().red()
     };
 
-    let line = format!("{STYLE_BOLD}{text_color}{http_version:?} {method} {url} {status_code} {}ms{TEXT_RESET}{STYLE_RESET}", duration.as_millis());
+    let line = text_color.bold().apply_to(format!(
+        "{http_version:?} {method} {url} {status_code} {}ms",
+        duration.as_millis()
+    ));
 
-    term.write_line(&line)
+    term.write_line(&line.to_string())
 }
 
 #[cfg(test)]
