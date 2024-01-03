@@ -16,10 +16,12 @@ fn get_default_editor() -> std::ffi::OsString {
 
     #[cfg(windows)]
     {
-        return "notepad.exe".into();
+        "notepad.exe".into()
     }
-
-    "vi".into()
+    #[cfg(not(windows))]
+    {
+        "vi".into()
+    }
 }
 
 #[cfg(test)]
