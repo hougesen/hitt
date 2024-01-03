@@ -1,35 +1,63 @@
+use crate::error::RequestParseError;
+
 #[inline]
 pub fn parse_variable_declaration(
     chars: &mut core::iter::Enumerate<core::str::Chars>,
-) -> Option<(String, String)> {
+    vars: &std::collections::HashMap<String, String>,
+) -> Result<Option<(String, String)>, RequestParseError> {
     let mut declaration = String::new();
 
     let mut value = String::new();
 
     let mut is_declaration = true;
 
-    for (_, ch) in chars {
+    while let Some((_, ch)) = chars.next() {
         if ch == '=' && is_declaration {
             is_declaration = false;
         } else if is_declaration {
             declaration.push(ch);
         } else {
+            if ch == '{' {
+                // FIXME: remove cloning of enumerator
+                if let Some((var, jumps)) = parse_variable(&mut chars.clone()) {
+                    if let Some(variable_value) = vars.get(&var) {
+                        value.push_str(variable_value);
+
+                        for _ in 0..jumps {
+                            chars.next();
+                        }
+
+                        continue;
+                    }
+
+                    return Err(RequestParseError::VariableNotFound(var));
+                }
+            }
+
             value.push(ch);
         }
     }
 
     if is_declaration {
-        return None;
+        return Ok(None);
     }
 
-    Some((declaration.trim().to_owned(), value.trim().to_owned()))
+    Ok(Some((
+        declaration.trim().to_owned(),
+        value.trim().to_owned(),
+    )))
 }
 
 #[cfg(test)]
 mod test_parse_variable_declarations {
-    use crate::to_enum_chars;
+    use once_cell::sync::Lazy;
+
+    use crate::{error::RequestParseError, to_enum_chars};
 
     use super::parse_variable_declaration;
+
+    static EMPTY_VARS: Lazy<std::collections::HashMap<String, String>> =
+        Lazy::new(std::collections::HashMap::new);
 
     #[test]
     fn it_should_parse_variable_declarations() {
@@ -40,7 +68,8 @@ mod test_parse_variable_declarations {
             // NOTE: we do not start with a '@' here since it is expected to already be removed
             let input = format!("{input_declaration}={input_value}");
 
-            let (key, value) = parse_variable_declaration(&mut to_enum_chars(&input))
+            let (key, value) = parse_variable_declaration(&mut to_enum_chars(&input), &EMPTY_VARS)
+                .expect("it to not return an error")
                 .expect("it to return a variable declaration");
 
             assert_eq!(input_declaration, key);
@@ -63,7 +92,8 @@ mod test_parse_variable_declarations {
                 "{input_declaration}{extra_spaces}={extra_spaces}{input_value}{extra_spaces}"
             );
 
-            let (key, value) = parse_variable_declaration(&mut to_enum_chars(&input))
+            let (key, value) = parse_variable_declaration(&mut to_enum_chars(&input), &EMPTY_VARS)
+                .expect("it to not return an error")
                 .expect("it to return a variable declaration");
 
             assert_eq!(input_declaration, key);
@@ -72,10 +102,51 @@ mod test_parse_variable_declarations {
     }
 
     #[test]
-    fn it_should_include_an_equal_sign() {
+    fn it_must_include_an_equal_sign() {
         let input = "mads hougesen";
 
-        assert_eq!(None, parse_variable_declaration(&mut to_enum_chars(input)));
+        let result = parse_variable_declaration(&mut to_enum_chars(input), &EMPTY_VARS)
+            .expect("it to not return an error");
+
+        assert_eq!(None, result);
+    }
+
+    #[test]
+    fn it_should_support_variables() {
+        let input = "host={{ hostname }}:{{ port }}";
+
+        {
+            let vars = std::collections::HashMap::from([
+                ("hostname".to_owned(), "localhost".to_owned()),
+                ("port".to_owned(), "5000".to_owned()),
+            ]);
+
+            let (name, value) = parse_variable_declaration(&mut to_enum_chars(input), &vars)
+                .expect("it to not return an error")
+                .expect("it to be some");
+
+            assert_eq!(name, "host");
+            assert_eq!(value, "localhost:5000");
+        };
+
+        {
+            let result = parse_variable_declaration(&mut to_enum_chars(input), &EMPTY_VARS)
+                .expect_err("it should return RequestParseError::VariableNotFound");
+
+            assert!(
+                matches!(result, RequestParseError::VariableNotFound(var) if var == "hostname")
+            );
+        };
+
+        {
+            let vars =
+                std::collections::HashMap::from([("hostname".to_owned(), "localhost".to_owned())]);
+
+            let result = parse_variable_declaration(&mut to_enum_chars(input), &vars)
+                .expect_err("it should return RequestParseError::VariableNotFound");
+
+            assert!(matches!(result, RequestParseError::VariableNotFound(var) if var == "port"));
+        };
     }
 }
 
