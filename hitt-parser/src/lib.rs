@@ -80,7 +80,7 @@ fn tokenize(
                     // move forward once since we don't care about the '@'
                     chrs.next();
 
-                    if let Some((name, value)) = parse_variable_declaration(&mut chrs) {
+                    if let Some((name, value)) = parse_variable_declaration(&mut chrs, &vars)? {
                         vars.insert(name, value);
                         continue;
                     }
