@@ -5,6 +5,21 @@ export default defineNuxtConfig({
 
   image: {
     domains: ['mhouge.dk', 'hitt.mhouge.dk'],
+    provider: 'ipx',
+    presets: {
+      default: {
+        modifiers: {
+          format: 'webp',
+          quality: '80',
+        },
+      },
+      svg: {
+        modifiers: {
+          format: 'svg',
+          quality: '100',
+        },
+      },
+    },
   },
 
   postcss: {
@@ -21,9 +36,12 @@ export default defineNuxtConfig({
 
     highlight: {
       theme: {
-        default: 'github-dark',
+        default: 'one-dark-pro',
       },
       preload: ['sh', 'lua'],
+    },
+    experimental: {
+      cacheContents: true,
     },
   },
 });

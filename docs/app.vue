@@ -1,7 +1,9 @@
 <template>
-  <div class="min-h-screen h-full flex gap-8 p-8 w-full">
-    <NuxtLayout>
+  <div class="flex h-full min-h-screen w-full flex-col gap-8 p-8">
+    <div class="container flex flex-col gap-12 md:flex-row">
+      <SideNavigation />
+
       <NuxtPage />
-    </NuxtLayout>
+    </div>
   </div>
 </template>
