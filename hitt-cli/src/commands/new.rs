@@ -211,7 +211,7 @@ x-key2: x-value2
         );
 
         save_request(file.path(), method, url, &headers, Some(body.to_owned()))
-            .expect("it to save succesfully");
+            .expect("it to save successfully");
 
         let result = std::fs::read_to_string(file.path()).expect("it to read the string");
 

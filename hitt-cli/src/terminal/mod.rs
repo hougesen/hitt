@@ -66,7 +66,7 @@ mod test_write_prompt {
         let term = console::Term::stdout();
 
         // TODO: actually validate stdout
-        write_prompt(&term, "What is your prefered http testing tool?")
+        write_prompt(&term, "What is your preferred http testing tool?")
             .expect("it not to raise an error");
     }
 }
@@ -85,7 +85,7 @@ mod test_write_prompt_answer {
         let term = console::Term::stdout();
 
         // TODO: actually validate stdout
-        write_prompt_answer(&term, "What is your prefered http testing tool?", "hitt")
+        write_prompt_answer(&term, "What is your preferred http testing tool?", "hitt")
             .expect("it not to raise an error");
     }
 }
