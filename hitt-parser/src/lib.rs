@@ -360,7 +360,7 @@ x-test-header: test value
 
 DELETE https://mhouge.dk/";
 
-        let tokens = tokenize(input, &EMPTY_VARS).expect("it to parse succesfully");
+        let tokens = tokenize(input, &EMPTY_VARS).expect("it to parse successfully");
 
         assert_eq!(tokens.len(), 2);
 
@@ -519,7 +519,7 @@ here
 
 ";
 
-        let output = tokenize(input, &EMPTY_VARS).expect("it to parse succesfully");
+        let output = tokenize(input, &EMPTY_VARS).expect("it to parse successfully");
 
         assert_eq!(output.len(), 10);
 
@@ -1048,7 +1048,7 @@ GET https://mhouge.dk/
 
 DELETE https://mhouge.dk/";
 
-        let requests = parse_requests(input, &EMPTY_VARS).expect("it to parse succesfully");
+        let requests = parse_requests(input, &EMPTY_VARS).expect("it to parse successfully");
 
         assert_eq!(requests.len(), 1);
 

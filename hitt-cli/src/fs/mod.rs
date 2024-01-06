@@ -59,8 +59,8 @@ pub fn find_http_files(path: &std::path::Path) -> Vec<std::path::PathBuf> {
         .git_ignore(true)
         .require_git(false)
         .build()
-        .filter_map(|orginal_entry| {
-            if let Ok(entry) = orginal_entry {
+        .filter_map(|original_entry| {
+            if let Ok(entry) = original_entry {
                 let entry_path = entry.path();
 
                 if let Some(ext) = entry_path.extension() {

@@ -167,7 +167,7 @@ mod test_parse_uri_input {
     }
 
     #[test]
-    fn it_should_raise_if_variabe_isnt_found() {
+    fn it_should_raise_if_variable_isnt_found() {
         {
             let input = "{{host}}";
 

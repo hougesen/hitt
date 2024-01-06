@@ -87,7 +87,7 @@ mod test_send_request {
 
         let result = send_request(&http_client, &input, &timeout)
             .await
-            .expect("it to be successfull");
+            .expect("it to be successful");
 
         assert_eq!(result.url, uri.to_string());
 
@@ -121,7 +121,7 @@ mod test_send_request {
 
         let result = send_request(&http_client, &input, &timeout)
             .await
-            .expect("it to be successfull");
+            .expect("it to be successful");
 
         assert_eq!(result.url, uri.to_string());
 
@@ -163,7 +163,7 @@ mod test_send_request {
 
         let result = send_request(&http_client, &input, &timeout)
             .await
-            .expect("it to be successfull");
+            .expect("it to be successful");
 
         assert_eq!(result.url, uri.to_string());
 
@@ -195,7 +195,7 @@ mod test_send_request {
 
         let result = send_request(&http_client, &input, &timeout)
             .await
-            .expect("it to be successfull");
+            .expect("it to be successful");
 
         assert_eq!(result.url, uri.to_string());
 
