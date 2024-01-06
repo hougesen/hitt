@@ -12,10 +12,12 @@ pub fn parse_variable_declaration(
     let mut is_declaration = true;
 
     while let Some((_, ch)) = chars.next() {
-        if ch == '=' && is_declaration {
-            is_declaration = false;
-        } else if is_declaration {
-            declaration.push(ch);
+        if is_declaration {
+            if ch == '=' {
+                is_declaration = false;
+            } else {
+                declaration.push(ch);
+            }
         } else {
             if ch == '{' {
                 // FIXME: remove cloning of enumerator
