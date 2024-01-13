@@ -10,11 +10,16 @@ license = "MIT"
 rust-version = "1.70.0"
 repository = "https://github.com/hougesen/hitt"
 documentation = "https://github.com/hougesen/hitt#readme"
-keywords = ["http", "cli"]
+keywords = ["http", "cli", "testing", "api-testing", "vim"]
 description = "command line HTTP testing tool focused on speed and simplicity"
 homepage = "https://hitt.mhouge.dk"
 readme = "README.md"
-categories = ["command-line-utilities", "development-tools"]
+categories = [
+  "command-line-utilities",
+  "development-tools",
+  "web-programming",
+  "web-programming::http-client",
+]
 
 [workspace.dependencies]
 hitt-formatter = { path = "hitt-formatter", version = "0.0.3" }
