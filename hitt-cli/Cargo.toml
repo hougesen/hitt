@@ -19,7 +19,7 @@ path = "src/main.rs"
 
 [dependencies]
 clap = { version = "4.4.13", features = ["derive"] }
-console = { version = "0.15.7" }
+console = { version = "0.15.8" }
 hitt-formatter = { workspace = true }
 hitt-parser = { workspace = true }
 hitt-request = { workspace = true }
