@@ -8,6 +8,38 @@ updates:
       - 'hougesen'
     open-pull-requests-limit: 25
 
+  - package-ecosystem: 'cargo'
+    directory: '/hitt-cli'
+    schedule:
+      interval: 'weekly'
+    assignees:
+      - 'hougesen'
+    open-pull-requests-limit: 25
+
+  - package-ecosystem: 'cargo'
+    directory: '/hitt-formatter'
+    schedule:
+      interval: 'weekly'
+    assignees:
+      - 'hougesen'
+    open-pull-requests-limit: 25
+
+  - package-ecosystem: 'cargo'
+    directory: '/hitt-parser'
+    schedule:
+      interval: 'weekly'
+    assignees:
+      - 'hougesen'
+    open-pull-requests-limit: 25
+
+  - package-ecosystem: 'cargo'
+    directory: '/hitt-request'
+    schedule:
+      interval: 'weekly'
+    assignees:
+      - 'hougesen'
+    open-pull-requests-limit: 25
+
   - package-ecosystem: 'npm'
     directory: '/docs'
     schedule:
