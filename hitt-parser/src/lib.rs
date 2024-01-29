@@ -52,13 +52,14 @@ fn tokenize(
         // check if line is comment (#) OR requests break (###)
         if trimmed_line.starts_with('#') {
             if trimmed_line.starts_with("###") && parser_mode != ParserMode::Request {
-                tokens.push(if body_parts.is_empty() {
-                    RequestToken::Body(None)
+                if body_parts.is_empty() {
+                    tokens.push(RequestToken::Body(None));
                 } else {
-                    RequestToken::Body(Some(body_parts.join("\n")))
-                });
+                    tokens.push(RequestToken::Body(Some(body_parts.join("\n"))));
 
-                body_parts.clear();
+                    body_parts.clear();
+                };
+
                 parser_mode = ParserMode::Request;
             }
 
