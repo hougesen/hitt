@@ -26,7 +26,7 @@ hitt-formatter = { path = "hitt-formatter", version = "0.0.3" }
 hitt-parser = { path = "hitt-parser", version = "0.0.3" }
 hitt-request = { path = "hitt-request", version = "0.0.3" }
 http = { version = "0.2.11" }
-reqwest = { version = "0.11.23" }
+reqwest = { version = "0.11.24" }
 tokio = { version = "1.35.1", features = ["fs", "macros", "rt-multi-thread"] }
 
 [profile.release]
