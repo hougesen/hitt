@@ -12,7 +12,7 @@ useContentHead(page);
 
     <TableOfContents />
 
-    <ContentRenderer :key="page._id" :value="page" />
+    <ContentRenderer :key="page._id" :value="page" class="flex-col" />
 
     <div class="flex w-full gap-4">
       <NuxtLink v-if="prev?._path" :to="prev._path"
