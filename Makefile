@@ -3,6 +3,11 @@ build:
 	cargo build
 	cargo build --release
 
+
+build-local:
+	make build
+	sudo cp target/release/hitt /usr/local/bin/hitt-local
+
 lint:
 	cargo fmt -- --check --color always
 	cargo clippy --all-targets --all-features -- -D warnings

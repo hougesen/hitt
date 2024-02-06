@@ -1,3 +1,4 @@
+use crossterm::{style::Print, style::Stylize, QueueableCommand};
 use hitt_request::send_request;
 
 use crate::{
@@ -7,8 +8,8 @@ use crate::{
     terminal::handle_response,
 };
 
-pub async fn run_command(
-    term: &console::Term,
+pub async fn run_command<W: std::io::Write + Send>(
+    term: &mut W,
     args: &RunCommandArguments,
 ) -> Result<(), HittCliError> {
     let http_client = reqwest::Client::new();
@@ -33,12 +34,19 @@ pub async fn run_command(
 
     let parsed_files = parse_requests_threaded(http_file_paths, vars).await?;
 
+    let mut request_count: u16 = 0;
+
     for (path, file) in parsed_files {
         if !args.vim {
-            term.write_line(&format!("hitt: running {path:?}"))?;
+            term.queue(Print(format!("hitt: running {path:?}\n\n").cyan()))?;
+            term.flush()?;
         }
 
         for req in file {
+            if request_count > 0 {
+                term.queue(Print("\n"))?;
+            }
+
             match send_request(&http_client, &req, &timeout).await {
                 Ok(response) => handle_response(term, &response, args),
                 Err(request_error) => {
@@ -49,10 +57,9 @@ pub async fn run_command(
                     Err(HittCliError::Reqwest(req.method, req.uri, request_error))
                 }
             }?;
+            request_count += 1;
         }
     }
-
-    term.flush()?;
 
     Ok(())
 }

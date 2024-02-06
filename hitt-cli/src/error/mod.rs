@@ -1,7 +1,5 @@
 use core::fmt;
 
-use console::style;
-
 #[derive(Debug)]
 pub enum HittCliError {
     Parse(std::path::PathBuf, hitt_parser::error::RequestParseError),
@@ -38,7 +36,7 @@ impl fmt::Display for HittCliError {
             }
         };
 
-        write!(f, "{}", style(format!("hitt: {error_message}")).red())
+        write!(f, "hitt: {error_message}")
     }
 }
 

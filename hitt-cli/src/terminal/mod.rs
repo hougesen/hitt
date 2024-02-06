@@ -12,8 +12,8 @@ pub mod headers;
 pub mod input;
 pub mod status;
 
-pub fn handle_response(
-    term: &console::Term,
+pub fn handle_response<W: std::io::Write>(
+    term: &mut W,
     response: &HittResponse,
     args: &RunCommandArguments,
 ) -> Result<(), HittCliError> {

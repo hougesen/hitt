@@ -1,4 +1,10 @@
+use std::io::{stdout, Write};
+
 use clap::Parser;
+use crossterm::{
+    queue,
+    style::{Print, Stylize},
+};
 
 use self::{
     commands::{new::new_command, run::run_command},
@@ -16,15 +22,15 @@ mod terminal;
 async fn main() -> Result<(), HittCliError> {
     let cli = Cli::parse();
 
-    let term = console::Term::stdout();
+    let mut term = stdout();
 
     let command_result = match &cli.command {
-        Commands::Run(args) => run_command(&term, args).await,
-        Commands::New(args) => new_command(&term, args).await,
+        Commands::Run(args) => run_command(&mut term, args).await,
+        Commands::New(args) => new_command(&console::Term::stdout(), args).await,
     };
 
     if let Err(err) = command_result {
-        term.write_line(&err.to_string())?;
+        queue!(term, Print(err.to_string().red().bold()), Print("\n"))?;
     }
 
     term.flush()?;
