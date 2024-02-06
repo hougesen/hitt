@@ -4,3 +4,5 @@
 .trunk
 .vscode
 .idea
+
+mutants.out*

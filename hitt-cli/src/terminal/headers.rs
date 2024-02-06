@@ -1,20 +1,23 @@
+use crossterm::{
+    queue,
+    style::{Print, Stylize},
+};
+
 #[inline]
-pub fn print_headers(
-    term: &console::Term,
+pub fn print_headers<W: std::io::Write>(
+    term: &mut W,
     headers: &reqwest::header::HeaderMap,
 ) -> Result<(), std::io::Error> {
-    let header_name_style = console::Style::new().yellow();
-
     for (key, value) in headers {
         if let Ok(value_str) = value.to_str() {
-            term.write_line(&format!("{}: {value_str}", header_name_style.apply_to(key)))?;
+            queue!(
+                term,
+                Print(format!("{}: {value_str}\n", key.to_string().dark_yellow()))
+            )?;
         } else {
-            term.write_line(
-                &console::style(format!(
-                    "hitt: error printing value for header - {key} '{value:?}'"
-                ))
-                .red()
-                .to_string(),
+            queue!(
+                term,
+                Print(format!("hitt: error printing value for header - {key} '{value:?}\n'").red())
             )?;
         }
     }
@@ -24,22 +27,32 @@ pub fn print_headers(
 
 #[cfg(test)]
 mod test_print_headers {
+    use std::io::Write;
+
     use reqwest::header::{HeaderMap, HeaderName, HeaderValue};
 
     use super::print_headers;
 
     #[test]
     fn it_should_print_without_errors() {
-        let term = console::Term::stdout();
+        let mut term = Vec::new();
 
         let mut headers = HeaderMap::new();
 
-        headers.insert(
-            HeaderName::from_static("mads"),
-            HeaderValue::from_static("hougesen"),
+        let n = "mads";
+        let v = "hougesen";
+
+        headers.insert(HeaderName::from_static(n), HeaderValue::from_static(v));
+
+        print_headers(&mut term, &headers).expect("it to not error");
+
+        term.flush().expect("it to flush");
+
+        assert_eq!(
+            format!("\x1B[38;5;3m{n}\x1B[39m: {v}\n"),
+            String::from_utf8_lossy(&term)
         );
 
-        // TODO: validate what is written to stdout
-        print_headers(&term, &headers).expect("it to not error");
+        term.clear();
     }
 }
