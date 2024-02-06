@@ -1,12 +1,9 @@
-use core::fmt;
-
 #[derive(Debug)]
 pub enum HittCliError {
     Parse(std::path::PathBuf, hitt_parser::error::RequestParseError),
     Join(tokio::task::JoinError),
     Io(std::io::Error),
     IoRead(std::path::PathBuf, std::io::Error),
-    IoWrite(std::path::PathBuf, std::io::Error),
     Reqwest(http::Method, http::Uri, reqwest::Error),
     RequestTimeout(http::Method, http::Uri),
     InvalidVariableArgument(String),
@@ -14,13 +11,12 @@ pub enum HittCliError {
     VariableArgumentValueIndexing(String),
 }
 
-impl fmt::Display for HittCliError {
+impl core::fmt::Display for HittCliError {
     #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         let error_message = match self {
             Self::Parse(path, error) => format!("error parsing file {path:?} - {error}"),
             Self::IoRead(path, error) => format!("error reading {path:?} - {error:#?}"),
-            Self::IoWrite(path, error) => format!("error writing {path:?} - {error:#?}"),
             Self::Join(error) => format!("error joining handles - {error:#?}"),
             Self::Io(error) => format!("io error {error:#?}"),
             Self::Reqwest(method, uri, error) => format!("{method} {uri} - {error}"),

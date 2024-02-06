@@ -13,7 +13,6 @@ pub struct Cli {
 #[derive(Subcommand, Debug)]
 pub enum Commands {
     Run(RunCommandArguments),
-    New(NewCommandArguments),
 }
 
 /// Send request
@@ -53,11 +52,4 @@ pub struct RunCommandArguments {
 
     #[arg(long, default_value_t = false, hide = true)]
     pub vim: bool,
-}
-
-/// Create new http request
-#[derive(Args, Debug)]
-pub struct NewCommandArguments {
-    #[arg()]
-    pub path: std::path::PathBuf,
 }
