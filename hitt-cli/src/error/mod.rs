@@ -9,6 +9,7 @@ pub enum HittCliError {
     InvalidVariableArgument(String),
     VariableArgumentKeyIndexing(String),
     VariableArgumentValueIndexing(String),
+    RecursiveNotEnabled,
 }
 
 impl core::fmt::Display for HittCliError {
@@ -29,6 +30,9 @@ impl core::fmt::Display for HittCliError {
             }
             Self::VariableArgumentValueIndexing(variable) => {
                 format!("unable to index value of --var '{variable}'")
+            }
+            Self::RecursiveNotEnabled => {
+                format!("received directory path but --recursive is not enabled")
             }
         };
 
