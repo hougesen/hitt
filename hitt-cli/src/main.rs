@@ -7,7 +7,7 @@ use crossterm::{
 };
 
 use self::{
-    commands::{new::new_command, run::run_command},
+    commands::run::run_command,
     config::{Cli, Commands},
     error::HittCliError,
 };
@@ -26,7 +26,6 @@ async fn main() -> Result<(), HittCliError> {
 
     let command_result = match &cli.command {
         Commands::Run(args) => run_command(&mut term, args).await,
-        Commands::New(args) => new_command(&console::Term::stdout(), args).await,
     };
 
     if let Err(err) = command_result {
