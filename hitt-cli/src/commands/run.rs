@@ -14,7 +14,13 @@ pub async fn run_command<W: std::io::Write + Send>(
 ) -> Result<(), HittCliError> {
     let http_client = reqwest::Client::new();
 
-    let http_file_paths = if std::fs::metadata(&args.path).map(|metadata| metadata.is_dir())? {
+    let is_dir_path = std::fs::metadata(&args.path).map(|metadata| metadata.is_dir())?;
+
+    if is_dir_path && !args.recursive {
+        return Err(HittCliError::RecursiveNotEnabled);
+    }
+
+    let http_file_paths = if is_dir_path {
         find_http_files(&args.path)
     } else {
         vec![args.path.clone()]
