@@ -15,28 +15,26 @@ pub enum HittCliError {
 impl core::fmt::Display for HittCliError {
     #[inline]
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        let error_message = match self {
-            Self::Parse(path, error) => format!("error parsing file {path:?} - {error}"),
-            Self::IoRead(path, error) => format!("error reading {path:?} - {error:#?}"),
-            Self::Join(error) => format!("error joining handles - {error:#?}"),
-            Self::Io(error) => format!("io error {error:#?}"),
-            Self::Reqwest(method, uri, error) => format!("{method} {uri} - {error}"),
-            Self::RequestTimeout(method, uri) => format!("{method} {uri} - request timed out"),
+        match self {
+            Self::Parse(path, error) => write!(f, "error parsing file {path:?} - {error}"),
+            Self::IoRead(path, error) => write!(f, "error reading {path:?} - {error:#?}"),
+            Self::Join(error) => write!(f, "error joining handles - {error:#?}"),
+            Self::Io(error) => write!(f, "io error {error:#?}"),
+            Self::Reqwest(method, uri, error) => write!(f, "{method} {uri} - {error}"),
+            Self::RequestTimeout(method, uri) => write!(f, "{method} {uri} - request timed out"),
             Self::InvalidVariableArgument(input) => {
-                format!("'{input}' is not a valid variable argument - variable input should be '--var <KEY>=<VALUE>'")
+                write!(f,"'{input}' is not a valid variable argument - variable input should be '--var <KEY>=<VALUE>'")
             }
             Self::VariableArgumentKeyIndexing(variable) => {
-                format!("unable to index key of --var '{variable}'")
+                write!(f, "unable to index key of --var '{variable}'")
             }
             Self::VariableArgumentValueIndexing(variable) => {
-                format!("unable to index value of --var '{variable}'")
+                write!(f, "unable to index value of --var '{variable}'")
             }
             Self::RecursiveNotEnabled => {
-                format!("received directory path but --recursive is not enabled")
+                write!(f, "received directory path but --recursive is not enabled")
             }
-        };
-
-        write!(f, "hitt: {error_message}")
+        }
     }
 }
 
