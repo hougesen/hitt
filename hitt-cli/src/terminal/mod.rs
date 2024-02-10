@@ -64,7 +64,7 @@ mod test_handle_response {
             url: "https://mhouge.dk/".to_owned(),
             method: "GET".to_owned(),
             status_code: StatusCode::OK,
-            duration: std::time::Duration::from_millis(123),
+            duration: core::time::Duration::from_millis(123),
             headers: HeaderMap::from_iter([
                 (HeaderName::from_static(n), HeaderValue::from_static(v)),
                 (HeaderName::from_static(n), HeaderValue::from_static(n)),
@@ -72,7 +72,7 @@ mod test_handle_response {
                 (HeaderName::from_static(v), HeaderValue::from_static(n)),
             ]),
             http_version: http::Version::HTTP_11,
-            body: "mads was here".to_string(),
+            body: "mads was here".to_owned(),
         };
 
         let args = RunCommandArguments {
@@ -118,13 +118,13 @@ mod test_handle_response {
             url: "https://mhouge.dk/".to_owned(),
             method: "GET".to_owned(),
             status_code: StatusCode::OK,
-            duration: std::time::Duration::from_millis(123),
+            duration: core::time::Duration::from_millis(123),
             headers: HeaderMap::from_iter([(
                 HeaderName::from_static("mads"),
                 HeaderValue::from_static("hougesen"),
             )]),
             http_version: http::Version::HTTP_11,
-            body: "mads was here".to_string(),
+            body: "mads was here".to_owned(),
         };
 
         let args = RunCommandArguments {
@@ -168,7 +168,7 @@ mod test_handle_response {
             url: "https://mhouge.dk/".to_owned(),
             method: "GET".to_owned(),
             status_code: StatusCode::OK,
-            duration: std::time::Duration::from_millis(123),
+            duration: core::time::Duration::from_millis(123),
             headers: HeaderMap::from_iter([
                 (HeaderName::from_static(n), HeaderValue::from_static(v)),
                 (HeaderName::from_static(n), HeaderValue::from_static(n)),
@@ -223,7 +223,7 @@ mod test_handle_response {
             url: "https://mhouge.dk/".to_owned(),
             method: "GET".to_owned(),
             status_code: StatusCode::OK,
-            duration: std::time::Duration::from_millis(123),
+            duration: core::time::Duration::from_millis(123),
             headers: HeaderMap::from_iter([
                 (HeaderName::from_static(n), HeaderValue::from_static(v)),
                 (HeaderName::from_static(n), HeaderValue::from_static(n)),
@@ -231,7 +231,7 @@ mod test_handle_response {
                 (HeaderName::from_static(v), HeaderValue::from_static(n)),
             ]),
             http_version: http::Version::HTTP_11,
-            body: "mads was here".to_string(),
+            body: "mads was here".to_owned(),
         };
 
         let args = RunCommandArguments {
@@ -278,13 +278,13 @@ mod test_handle_response {
             url: "https://mhouge.dk/".to_owned(),
             method: "GET".to_owned(),
             status_code: StatusCode::SERVICE_UNAVAILABLE,
-            duration: std::time::Duration::from_millis(123),
+            duration: core::time::Duration::from_millis(123),
             headers: HeaderMap::from_iter([(
                 HeaderName::from_static(n),
                 HeaderValue::from_static(v),
             )]),
             http_version: http::Version::HTTP_11,
-            body: "mads was here".to_string(),
+            body: "mads was here".to_owned(),
         };
 
         let args = RunCommandArguments {

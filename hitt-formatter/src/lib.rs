@@ -12,11 +12,12 @@ pub enum ContentType {
 impl From<&str> for ContentType {
     #[inline]
     fn from(value: &str) -> Self {
-        if value.to_lowercase().starts_with("application/json") {
-            return Self::Json;
-        }
-
-        Self::Unknown
+        value
+            .parse::<mime::Mime>()
+            .map_or(Self::Unknown, |m| match (m.type_(), m.subtype()) {
+                (_, mime::JSON) => Self::Json,
+                _ => Self::Unknown,
+            })
     }
 }
 
@@ -28,6 +29,10 @@ mod test_from_str_to_content_type {
     fn it_should_parse_unknown_text_as_unknown() {
         for x in u8::MIN..u8::MAX {
             assert!(ContentType::Unknown == ContentType::from(x.to_string().as_str()));
+            assert!(
+                ContentType::Unknown == ContentType::from(format!("application/masd-{x}").as_str())
+            );
+            assert!(ContentType::Unknown == ContentType::from(format!("text/masd-{x}").as_str()));
         }
     }
 
@@ -38,6 +43,8 @@ mod test_from_str_to_content_type {
         assert!(ContentType::Json == ContentType::from(input));
         assert!(ContentType::Json == ContentType::from(input.to_lowercase().as_str()));
         assert!(ContentType::Json == ContentType::from(input.to_uppercase().as_str()));
+
+        assert!(ContentType::Json == ContentType::from("application/json; charset=utf-8"));
     }
 }
 
