@@ -14,3 +14,4 @@ categories = ["parser-implementations"]
 
 [dependencies]
 jsonformat = "2.0.0"
+mime = "0.3.17"
