@@ -93,7 +93,7 @@ mod test_print_body {
 
         term.flush().expect("it to flush");
         assert_eq!(
-            "\n\x1B[38;5;3m{\n  \"key\": \"value\"\n}\n\x1B[39m\n\n",
+            "\n\x1B[38;5;3m{\n  \"key\": \"value\"\n}\x1B[39m\n\n",
             String::from_utf8_lossy(&term)
         );
         term.clear();
