@@ -2,9 +2,10 @@ use json::format_json;
 
 mod json;
 
-#[derive(Copy, Clone, PartialEq, Eq)]
+#[derive(Copy, Clone, Default, PartialEq, Eq)]
 pub enum ContentType {
     Json,
+    #[default]
     Unknown,
 }
 
