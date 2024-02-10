@@ -31,9 +31,8 @@ pub fn handle_response<W: std::io::Write>(
         let content_type = response
             .headers
             .get("content-type")
-            .map_or(ContentType::Unknown, |value| {
-                ContentType::from(value.to_str().unwrap_or_default())
-            });
+            .map(|value| ContentType::from(value.to_str().unwrap_or_default()))
+            .unwrap_or_default();
 
         print_body(term, &response.body, content_type, args.disable_formatting)?;
     }
@@ -41,10 +40,289 @@ pub fn handle_response<W: std::io::Write>(
     if args.fail_fast
         && (response.status_code.is_client_error() || response.status_code.is_server_error())
     {
-        term.flush()?;
-        // NOTE: should the exit code be changed?
-        std::process::exit(0);
+        return Err(HittCliError::FailFast);
     }
 
     Ok(())
+}
+
+#[cfg(test)]
+mod test_handle_response {
+    use std::io::Write;
+
+    use hitt_request::HittResponse;
+    use http::{HeaderMap, HeaderName, HeaderValue, StatusCode};
+
+    use crate::{config::RunCommandArguments, error::HittCliError, terminal::handle_response};
+
+    #[test]
+    fn it_should_print_the_response() {
+        let n = "mads";
+        let v = "hougesen";
+
+        let response = HittResponse {
+            url: "https://mhouge.dk/".to_owned(),
+            method: "GET".to_owned(),
+            status_code: StatusCode::OK,
+            duration: std::time::Duration::from_millis(123),
+            headers: HeaderMap::from_iter([
+                (HeaderName::from_static(n), HeaderValue::from_static(v)),
+                (HeaderName::from_static(n), HeaderValue::from_static(n)),
+                (HeaderName::from_static(v), HeaderValue::from_static(v)),
+                (HeaderName::from_static(v), HeaderValue::from_static(n)),
+            ]),
+            http_version: http::Version::HTTP_11,
+            body: "mads was here".to_string(),
+        };
+
+        let args = RunCommandArguments {
+            disable_formatting: true,
+            //
+            path: std::path::PathBuf::new(),
+            timeout: None,
+            var: None,
+            recursive: false,
+            fail_fast: false,
+            hide_body: false,
+            hide_headers: false,
+            vim: false,
+        };
+
+        let mut term = Vec::new();
+
+        handle_response(&mut term, &response, &args).expect("it to be ok");
+
+        let status = format!(
+            "\x1b[38;5;10m\x1B[1m{:?} {} {} {} {}ms\n\x1B[0m",
+            response.http_version,
+            response.method,
+            response.url,
+            response.status_code.as_u16(),
+            response.duration.as_millis(),
+        );
+
+        let headers = format!("\x1B[38;5;3m{n}\x1B[39m: {v}\n\x1B[38;5;3m{n}\x1B[39m: {n}\n\x1B[38;5;3m{v}\x1B[39m: {v}\n\x1B[38;5;3m{v}\x1B[39m: {n}\n");
+
+        let body = format!("\n\x1B[38;5;3m{}\x1B[39m\n\n", response.body);
+
+        let expected_response = format!("{status}{headers}{body}");
+
+        term.flush().expect("it to flush");
+
+        assert_eq!(expected_response, String::from_utf8_lossy(&term));
+    }
+
+    #[test]
+    fn it_should_not_print_headers_if_hide_headers_enabled() {
+        let response = HittResponse {
+            url: "https://mhouge.dk/".to_owned(),
+            method: "GET".to_owned(),
+            status_code: StatusCode::OK,
+            duration: std::time::Duration::from_millis(123),
+            headers: HeaderMap::from_iter([(
+                HeaderName::from_static("mads"),
+                HeaderValue::from_static("hougesen"),
+            )]),
+            http_version: http::Version::HTTP_11,
+            body: "mads was here".to_string(),
+        };
+
+        let args = RunCommandArguments {
+            hide_headers: true,
+            disable_formatting: true,
+            //
+            path: std::path::PathBuf::new(),
+            timeout: None,
+            var: None,
+            recursive: false,
+            fail_fast: false,
+            hide_body: false,
+            vim: false,
+        };
+
+        let mut term = Vec::new();
+
+        handle_response(&mut term, &response, &args).expect("it to be ok");
+
+        let expected_response = format!(
+            "\x1b[38;5;10m\x1B[1m{:?} {} {} {} {}ms\n\x1B[0m\n\x1B[38;5;3m{}\x1B[39m\n\n",
+            response.http_version,
+            response.method,
+            response.url,
+            response.status_code.as_u16(),
+            response.duration.as_millis(),
+            response.body,
+        );
+
+        term.flush().expect("it to flush");
+
+        assert_eq!(expected_response, String::from_utf8_lossy(&term));
+    }
+
+    #[test]
+    fn it_should_not_print_body_if_empty() {
+        let n = "mads";
+        let v = "hougesen";
+
+        let response = HittResponse {
+            url: "https://mhouge.dk/".to_owned(),
+            method: "GET".to_owned(),
+            status_code: StatusCode::OK,
+            duration: std::time::Duration::from_millis(123),
+            headers: HeaderMap::from_iter([
+                (HeaderName::from_static(n), HeaderValue::from_static(v)),
+                (HeaderName::from_static(n), HeaderValue::from_static(n)),
+                (HeaderName::from_static(v), HeaderValue::from_static(v)),
+                (HeaderName::from_static(v), HeaderValue::from_static(n)),
+            ]),
+            http_version: http::Version::HTTP_11,
+            body: String::new(),
+        };
+
+        let args = RunCommandArguments {
+            disable_formatting: true,
+            hide_body: true,
+            //
+            path: std::path::PathBuf::new(),
+            timeout: None,
+            var: None,
+            recursive: false,
+            fail_fast: false,
+            hide_headers: false,
+            vim: false,
+        };
+
+        let mut term = Vec::new();
+
+        handle_response(&mut term, &response, &args).expect("it to be ok");
+
+        let status = format!(
+            "\x1b[38;5;10m\x1B[1m{:?} {} {} {} {}ms\n\x1B[0m",
+            response.http_version,
+            response.method,
+            response.url,
+            response.status_code.as_u16(),
+            response.duration.as_millis(),
+        );
+
+        let headers = format!("\x1B[38;5;3m{n}\x1B[39m: {v}\n\x1B[38;5;3m{n}\x1B[39m: {n}\n\x1B[38;5;3m{v}\x1B[39m: {v}\n\x1B[38;5;3m{v}\x1B[39m: {n}\n");
+
+        let expected_response = format!("{status}{headers}");
+
+        term.flush().expect("it to flush");
+
+        assert_eq!(expected_response, String::from_utf8_lossy(&term));
+    }
+
+    #[test]
+    fn it_should_not_print_body_if_hide_body_enabled() {
+        let n = "mads";
+        let v = "hougesen";
+
+        let response = HittResponse {
+            url: "https://mhouge.dk/".to_owned(),
+            method: "GET".to_owned(),
+            status_code: StatusCode::OK,
+            duration: std::time::Duration::from_millis(123),
+            headers: HeaderMap::from_iter([
+                (HeaderName::from_static(n), HeaderValue::from_static(v)),
+                (HeaderName::from_static(n), HeaderValue::from_static(n)),
+                (HeaderName::from_static(v), HeaderValue::from_static(v)),
+                (HeaderName::from_static(v), HeaderValue::from_static(n)),
+            ]),
+            http_version: http::Version::HTTP_11,
+            body: "mads was here".to_string(),
+        };
+
+        let args = RunCommandArguments {
+            disable_formatting: true,
+            hide_body: true,
+            //
+            path: std::path::PathBuf::new(),
+            timeout: None,
+            var: None,
+            recursive: false,
+            fail_fast: false,
+            hide_headers: false,
+            vim: false,
+        };
+
+        let mut term = Vec::new();
+
+        handle_response(&mut term, &response, &args).expect("it to be ok");
+
+        let status = format!(
+            "\x1b[38;5;10m\x1B[1m{:?} {} {} {} {}ms\n\x1B[0m",
+            response.http_version,
+            response.method,
+            response.url,
+            response.status_code.as_u16(),
+            response.duration.as_millis(),
+        );
+
+        let headers = format!("\x1B[38;5;3m{n}\x1B[39m: {v}\n\x1B[38;5;3m{n}\x1B[39m: {n}\n\x1B[38;5;3m{v}\x1B[39m: {v}\n\x1B[38;5;3m{v}\x1B[39m: {n}\n");
+
+        let expected_response = format!("{status}{headers}");
+
+        term.flush().expect("it to flush");
+
+        assert_eq!(expected_response, String::from_utf8_lossy(&term));
+    }
+
+    #[test]
+    fn it_should_return_early_if_fail_fast_enabled() {
+        let n = "mads";
+        let v = "hougesen";
+
+        let response = HittResponse {
+            url: "https://mhouge.dk/".to_owned(),
+            method: "GET".to_owned(),
+            status_code: StatusCode::SERVICE_UNAVAILABLE,
+            duration: std::time::Duration::from_millis(123),
+            headers: HeaderMap::from_iter([(
+                HeaderName::from_static(n),
+                HeaderValue::from_static(v),
+            )]),
+            http_version: http::Version::HTTP_11,
+            body: "mads was here".to_string(),
+        };
+
+        let args = RunCommandArguments {
+            disable_formatting: true,
+            fail_fast: true,
+            //
+            path: std::path::PathBuf::new(),
+            timeout: None,
+            var: None,
+            recursive: false,
+            hide_headers: false,
+            hide_body: false,
+            vim: false,
+        };
+
+        let mut term = Vec::new();
+
+        let error = handle_response(&mut term, &response, &args).expect_err("it to fail fast");
+
+        assert!(matches!(error, HittCliError::FailFast));
+
+        let status = format!(
+            "\x1b[38;5;9m\x1B[1m{:?} {} {} {} {}ms\n\x1B[0m",
+            response.http_version,
+            response.method,
+            response.url,
+            response.status_code.as_u16(),
+            response.duration.as_millis(),
+        );
+
+        let headers = format!("\x1B[38;5;3m{n}\x1B[39m: {v}\n");
+
+        let body = format!("\n\x1B[38;5;3m{}\x1B[39m\n\n", response.body);
+
+        let expected_response = format!("{status}{headers}{body}");
+
+        term.flush().expect("it to flush");
+
+        assert_eq!(expected_response, String::from_utf8_lossy(&term));
+    }
 }
