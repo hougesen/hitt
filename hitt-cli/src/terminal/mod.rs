@@ -113,6 +113,60 @@ mod test_handle_response {
     }
 
     #[test]
+    fn it_should_format_json_body() {
+        let n = "content-type";
+        let v = "application/json";
+
+        let response = HittResponse {
+            url: "https://mhouge.dk/".to_owned(),
+            method: "GET".to_owned(),
+            status_code: StatusCode::OK,
+            duration: core::time::Duration::from_millis(123),
+            headers: HeaderMap::from_iter([(
+                HeaderName::from_static(n),
+                HeaderValue::from_static(v),
+            )]),
+            http_version: http::Version::HTTP_11,
+            body: "{\"key\": \"value\"}".to_owned(),
+        };
+
+        let args = RunCommandArguments {
+            disable_formatting: false,
+            path: std::path::PathBuf::new(),
+            timeout: None,
+            var: None,
+            recursive: false,
+            fail_fast: false,
+            hide_body: false,
+            hide_headers: false,
+            vim: false,
+        };
+
+        let mut term = Vec::new();
+
+        handle_response(&mut term, &response, &args).expect("it to be ok");
+
+        let status = format!(
+            "\x1b[38;5;10m\x1B[1m{:?} {} {} {} {}ms\n\x1B[0m",
+            response.http_version,
+            response.method,
+            response.url,
+            response.status_code.as_u16(),
+            response.duration.as_millis(),
+        );
+
+        let headers = format!("\x1B[38;5;3m{n}\x1B[39m: {v}\n");
+
+        let body = "\n\x1B[38;5;3m{\n  \"key\": \"value\"\n}\x1B[39m\n\n";
+
+        let expected_response = format!("{status}{headers}{body}");
+
+        term.flush().expect("it to flush");
+
+        assert_eq!(expected_response, String::from_utf8_lossy(&term));
+    }
+
+    #[test]
     fn it_should_not_print_headers_if_hide_headers_enabled() {
         let response = HittResponse {
             url: "https://mhouge.dk/".to_owned(),
