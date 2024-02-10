@@ -5,7 +5,7 @@ mod json;
 #[derive(Copy, Clone, Default, PartialEq, Eq)]
 pub enum ContentType {
     Json,
-    [default]
+    #[default]
     Unknown,
 }
 
