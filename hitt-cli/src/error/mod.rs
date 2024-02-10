@@ -10,6 +10,7 @@ pub enum HittCliError {
     VariableArgumentKeyIndexing(String),
     VariableArgumentValueIndexing(String),
     RecursiveNotEnabled,
+    FailFast,
 }
 
 impl core::fmt::Display for HittCliError {
@@ -34,6 +35,7 @@ impl core::fmt::Display for HittCliError {
             Self::RecursiveNotEnabled => {
                 write!(f, "received directory path but --recursive is not enabled")
             }
+            Self::FailFast => write!(f, "exiting early since --fail-fast is enabled"),
         }
     }
 }

@@ -29,7 +29,7 @@ async fn main() -> Result<(), HittCliError> {
     };
 
     if let Err(err) = command_result {
-        queue!(term, Print(err.to_string().red().bold()), Print("\n"))?;
+        queue!(term, Print(format!("hitt: {err}\n").red().bold()))?;
     }
 
     term.flush()?;
