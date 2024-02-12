@@ -11,19 +11,22 @@ jobs:
     env:
       CARGO_TERM_COLOR: always
     steps:
-      - name: checkout_repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: install_rust_nightly
+      - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
 
-      - name: install_code_coverage_tool
+      - name: Install cargo-llvm-cov
         uses: taiki-e/install-action@cargo-llvm-cov
 
-      - name: generate_code_coverage
+      - name: Generate code coverage
         run: cargo llvm-cov --all-features --locked --lcov --output-path lcov.info
 
-      - name: upload_code_coverage
+      - name: Upload code coverage
         uses: codecov/codecov-action@v4
         with:
           files: lcov.info
+        env:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: hougesen/hitt
