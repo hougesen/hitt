@@ -462,6 +462,15 @@ GET https://mhouge.dk/
     }
 
     #[test]
+    fn it_should_raise_error_if_missing_variable() {
+        let input = "GET {{missing_variable}}";
+
+        let err = tokenize(input, &EMPTY_VARS).expect_err("it to be a missing variable error");
+
+        assert!(matches!(err, RequestParseError::VariableNotFound(v) if v == "missing_variable"));
+    }
+
+    #[test]
     fn input_variables_should_be_overwritten_by_local_variables() {
         let vars = std::collections::HashMap::from([("method".to_owned(), "PUT".to_owned())]);
 
