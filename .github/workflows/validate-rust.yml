@@ -1,6 +1,9 @@
-name: validate
+name: validate-rust
 
-on: [push]
+on:
+  push:
+    paths-ignore:
+      - 'docs/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
