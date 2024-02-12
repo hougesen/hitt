@@ -221,7 +221,8 @@ mod test_send_request {
 
         let response = send_request(&http_client, &input, &timeout)
             .await
-            .expect_err("it to throw an error");
+            .err()
+            .expect("it to throw an error");
 
         assert!(response.is_timeout());
     }
