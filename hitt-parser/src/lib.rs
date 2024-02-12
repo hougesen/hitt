@@ -379,71 +379,39 @@ DELETE https://mhouge.dk/";
     }
 
     #[test]
-    fn it_should_only_check_for_hashtag_comments_when_parsermode_request() {
+    fn it_should_only_check_for_comments_when_parsermode_request() {
         let url = "https://mhouge.dk/api/something/?refresh=true";
         let method = "DELETE";
 
         let status_line = format!("{method} {url}");
 
-        let body = "# this is not a comment";
+        for comment_style in ["#", "//"] {
+            let body = format!("{comment_style} this is not a comment");
 
-        let hashtag = format!(
-            "{status_line}
-
-{body}"
-        );
-
-        let tokens = tokenize(&hashtag, &EMPTY_VARS).expect("it to parse successfully");
-
-        assert_eq!(tokens.len(), 3);
-
-        let method_token = tokens.first().expect("it to be some");
-
-        assert!(
-            matches!(method_token, RequestToken::Method(m) if m == http::method::Method::DELETE)
-        );
-
-        let uri_token = tokens.get(1).expect("it to be Some");
-
-        assert!(matches!(uri_token, RequestToken::Uri(u) if u == url));
-
-        let body_token = tokens.get(2).expect("it to be Some");
-
-        assert!(matches!(body_token, RequestToken::Body(b) if b == &Some(body.to_owned())));
-    }
-
-    #[test]
-    fn it_should_only_check_for_slash_comments_when_parsermode_request() {
-        let url = "https://mhouge.dk/api/something/?refresh=true";
-        let method = "DELETE";
-
-        let status_line = format!("{method} {url}");
-
-        let body = "// this is not a comment";
-
-        let hashtag = format!(
-            "{status_line}
+            let hashtag = format!(
+                "{status_line}
 
 {body}"
-        );
+            );
 
-        let tokens = tokenize(&hashtag, &EMPTY_VARS).expect("it to parse successfully");
+            let tokens = tokenize(&hashtag, &EMPTY_VARS).expect("it to parse successfully");
 
-        assert_eq!(tokens.len(), 3);
+            assert_eq!(tokens.len(), 3);
 
-        let method_token = tokens.first().expect("it to be some");
+            let method_token = tokens.first().expect("it to be some");
 
-        assert!(
-            matches!(method_token, RequestToken::Method(m) if m == http::method::Method::DELETE)
-        );
+            assert!(
+                matches!(method_token, RequestToken::Method(m) if m == http::method::Method::DELETE)
+            );
 
-        let uri_token = tokens.get(1).expect("it to be Some");
+            let uri_token = tokens.get(1).expect("it to be Some");
 
-        assert!(matches!(uri_token, RequestToken::Uri(u) if u == url));
+            assert!(matches!(uri_token, RequestToken::Uri(u) if u == url));
 
-        let body_token = tokens.get(2).expect("it to be Some");
+            let body_token = tokens.get(2).expect("it to be Some");
 
-        assert!(matches!(body_token, RequestToken::Body(b) if b == &Some(body.to_owned())));
+            assert!(matches!(body_token, RequestToken::Body(b) if b == &Some(body)));
+        }
     }
 
     #[test]
