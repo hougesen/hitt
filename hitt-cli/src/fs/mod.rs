@@ -16,18 +16,16 @@ pub async fn parse_requests_threaded(
             let var_clone = Arc::clone(&vars);
 
             tokio::task::spawn(async move {
-                {
-                    match tokio::fs::read(&path).await {
-                        Ok(buf) => {
-                            let content = String::from_utf8_lossy(&buf);
+                match tokio::fs::read(&path).await {
+                    Ok(buf) => {
+                        let content = String::from_utf8_lossy(&buf);
 
-                            match hitt_parser::parse_requests(&content, &var_clone) {
-                                Ok(reqs) => Ok((reqs, path.clone())),
-                                Err(e) => Err(HittCliError::Parse(path.clone(), e)),
-                            }
+                        match hitt_parser::parse_requests(&content, &var_clone) {
+                            Ok(reqs) => Ok((reqs, path.clone())),
+                            Err(e) => Err(HittCliError::Parse(path.clone(), e)),
                         }
-                        Err(err) => Err(HittCliError::IoRead(path.clone(), err)),
                     }
+                    Err(err) => Err(HittCliError::IoRead(path.clone(), err)),
                 }
             })
         })
