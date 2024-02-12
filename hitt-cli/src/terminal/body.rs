@@ -6,7 +6,7 @@ use hitt_formatter::ContentType;
 
 #[inline]
 fn __print_body<W: std::io::Write>(term: &mut W, body: &str) -> Result<(), std::io::Error> {
-    queue!(term, Print("\n"), Print(body.dark_yellow()), Print("\n\n"))
+    queue!(term, Print('\n'), Print(body.dark_yellow()), Print("\n\n"))
 }
 
 #[cfg(test)]

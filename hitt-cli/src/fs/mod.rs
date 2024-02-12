@@ -1,17 +1,28 @@
 use std::sync::Arc;
 
+use futures::future::TryJoinAll;
 use hitt_parser::HittRequest;
 
 use crate::error::HittCliError;
 
-#[inline]
-async fn get_file_content(path: &std::path::Path) -> Result<String, std::io::Error> {
-    tokio::fs::read(path)
-        .await
-        .map(|buf| String::from_utf8_lossy(&buf).to_string())
+pub async fn parse_file(
+    path: &std::path::Path,
+    input_variables: Arc<std::collections::HashMap<String, String>>,
+) -> Result<(std::path::PathBuf, Vec<HittRequest>), HittCliError> {
+    match tokio::fs::read(&path).await {
+        Ok(buf) => {
+            let content = String::from_utf8_lossy(&buf);
+
+            match hitt_parser::parse_requests(&content, &input_variables) {
+                Ok(reqs) => Ok((path.to_owned(), reqs)),
+                Err(e) => Err(HittCliError::Parse(path.to_owned(), e)),
+            }
+        }
+        Err(err) => Err(HittCliError::IoRead(path.to_owned(), err)),
+    }
 }
 
-pub async fn parse_requests_threaded(
+pub async fn parse_files(
     paths: Vec<std::path::PathBuf>,
     input_variables: std::collections::HashMap<String, String>,
 ) -> Result<Vec<(std::path::PathBuf, Vec<HittRequest>)>, HittCliError> {
@@ -22,36 +33,18 @@ pub async fn parse_requests_threaded(
         .map(|path| {
             let var_clone = Arc::clone(&vars);
 
-            tokio::task::spawn(async move {
-                (
-                    get_file_content(&path)
-                        .await
-                        .map(|content| {
-                            hitt_parser::parse_requests(&content, &var_clone)
-                                .map_err(|error| HittCliError::Parse(path.clone(), error))
-                        })
-                        .map_err(|error| HittCliError::IoRead(path.clone(), error)),
-                    path,
-                )
-            })
+            tokio::task::spawn(async move { parse_file(&path, var_clone).await })
         })
-        .collect::<Vec<_>>();
+        .collect::<TryJoinAll<_>>()
+        .await?;
 
     let mut parsed_requests = Vec::new();
 
     for handle in handles {
-        let result = handle.await.map_err(HittCliError::Join)?;
-
-        // TODO: clean up this mess
-        let reqs = result.0??;
-
-        parsed_requests.push((reqs, result.1));
+        parsed_requests.push(handle?);
     }
 
-    Ok(parsed_requests
-        .into_iter()
-        .map(|(reqs, path)| (path, reqs))
-        .collect())
+    Ok(parsed_requests)
 }
 
 pub fn find_http_files(path: &std::path::Path) -> Vec<std::path::PathBuf> {
