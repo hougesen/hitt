@@ -21,7 +21,7 @@ pub async fn parse_requests_threaded(
                         let content = String::from_utf8_lossy(&buf);
 
                         match hitt_parser::parse_requests(&content, &var_clone) {
-                            Ok(reqs) => Ok((reqs, path.clone())),
+                            Ok(reqs) => Ok((path.clone(), reqs)),
                             Err(e) => Err(HittCliError::Parse(path.clone(), e)),
                         }
                     }
@@ -39,10 +39,7 @@ pub async fn parse_requests_threaded(
         parsed_requests.push(result);
     }
 
-    Ok(parsed_requests
-        .into_iter()
-        .map(|(reqs, path)| (path, reqs))
-        .collect())
+    Ok(parsed_requests)
 }
 
 pub fn find_http_files(path: &std::path::Path) -> Vec<std::path::PathBuf> {
