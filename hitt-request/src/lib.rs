@@ -1,6 +1,5 @@
 use hitt_parser::HittRequest;
 
-#[derive(Debug)]
 pub struct HittResponse {
     pub url: String,
     pub method: String,
