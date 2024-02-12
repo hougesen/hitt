@@ -9,7 +9,6 @@ use crossterm::{
 use self::{
     commands::run::run_command,
     config::{Cli, Commands},
-    error::HittCliError,
 };
 
 mod commands;
@@ -19,7 +18,7 @@ mod fs;
 mod terminal;
 
 #[tokio::main]
-async fn main() -> Result<(), HittCliError> {
+async fn main() -> std::io::Result<()> {
     let cli = Cli::parse();
 
     let mut term = stdout();
