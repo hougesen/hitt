@@ -249,13 +249,13 @@ mod test_tokenize {
         for method in &methods {
             for version in &versions {
                 writeln!(input, "{method} {uri} {version:?}").expect("it to write");
-                write!(input, "{header_key}: {header_value}\n\n").expect("it to write");
+                writeln!(input, "{header_key}: {header_value}\n").expect("it to write");
 
                 if input_request_index % 2 == 0 {
                     writeln!(input, "{body}").expect("it to write");
                 }
 
-                write!(input, "###\n\n").expect("it to write");
+                writeln!(input, "###\n").expect("it to write");
 
                 input_request_index += 1;
             }
