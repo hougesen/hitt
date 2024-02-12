@@ -1,10 +1,28 @@
 use std::sync::Arc;
 
+use futures::future::TryJoinAll;
 use hitt_parser::HittRequest;
 
 use crate::error::HittCliError;
 
-pub async fn parse_requests_threaded(
+pub async fn parse_file(
+    path: &std::path::Path,
+    input_variables: Arc<std::collections::HashMap<String, String>>,
+) -> Result<(std::path::PathBuf, Vec<HittRequest>), HittCliError> {
+    match tokio::fs::read(&path).await {
+        Ok(buf) => {
+            let content = String::from_utf8_lossy(&buf);
+
+            match hitt_parser::parse_requests(&content, &input_variables) {
+                Ok(reqs) => Ok((path.to_owned(), reqs)),
+                Err(e) => Err(HittCliError::Parse(path.to_owned(), e)),
+            }
+        }
+        Err(err) => Err(HittCliError::IoRead(path.to_owned(), err)),
+    }
+}
+
+pub async fn parse_files(
     paths: Vec<std::path::PathBuf>,
     input_variables: std::collections::HashMap<String, String>,
 ) -> Result<Vec<(std::path::PathBuf, Vec<HittRequest>)>, HittCliError> {
@@ -15,28 +33,15 @@ pub async fn parse_requests_threaded(
         .map(|path| {
             let var_clone = Arc::clone(&vars);
 
-            tokio::task::spawn(async move {
-                match tokio::fs::read(&path).await {
-                    Ok(buf) => {
-                        let content = String::from_utf8_lossy(&buf);
-
-                        match hitt_parser::parse_requests(&content, &var_clone) {
-                            Ok(reqs) => Ok((path.clone(), reqs)),
-                            Err(e) => Err(HittCliError::Parse(path.clone(), e)),
-                        }
-                    }
-                    Err(err) => Err(HittCliError::IoRead(path.clone(), err)),
-                }
-            })
+            tokio::task::spawn(async move { parse_file(&path, var_clone).await })
         })
-        .collect::<Vec<_>>();
+        .collect::<TryJoinAll<_>>()
+        .await?;
 
     let mut parsed_requests = Vec::new();
 
     for handle in handles {
-        let result = handle.await??;
-
-        parsed_requests.push(result);
+        parsed_requests.push(handle?);
     }
 
     Ok(parsed_requests)
