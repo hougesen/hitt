@@ -55,8 +55,6 @@ pub fn parse_header(
             } else {
                 value.push(ch);
             }
-
-            continue;
         } else if ch == '{' {
             // FIXME: remove cloning of enumerator
             if let Some((var, jumps)) = parse_variable(&mut line.clone()) {
