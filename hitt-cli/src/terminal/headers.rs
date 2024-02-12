@@ -9,17 +9,11 @@ pub fn print_headers<W: std::io::Write>(
     headers: &reqwest::header::HeaderMap,
 ) -> Result<(), std::io::Error> {
     for (key, value) in headers {
-        if let Ok(value_str) = value.to_str() {
-            queue!(
-                term,
-                Print(format!("{}: {value_str}\n", key.to_string().dark_yellow()))
-            )?;
-        } else {
-            queue!(
-                term,
-                Print(format!("hitt: error printing value for header - {key} '{value:?}\n'").red())
-            )?;
-        }
+        let value_str = String::from_utf8_lossy(value.as_ref());
+
+        let line = format!("{}: {value_str}\n", key.to_string().dark_yellow());
+
+        queue!(term, Print(line))?;
     }
 
     Ok(())
