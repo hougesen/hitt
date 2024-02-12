@@ -1,5 +1,6 @@
 /target
-/Cargo.lock
+# NOTE: https://github.com/rust-lang/cargo/issues/6172#issuecomment-429905812
+# /Cargo.lock
 
 .trunk
 .vscode
