@@ -44,13 +44,17 @@ pub async fn run_command<W: std::io::Write + Send>(
 
     for (path, file) in parsed_files {
         if !args.vim {
-            term.queue(Print(format!("hitt: running {path:?}\n\n").cyan()))?;
+            if request_count > 0 {
+                term.queue(Print('\n'))?;
+            }
+
+            term.queue(Print(format!("hitt: running {path:?}\n").cyan()))?;
             term.flush()?;
         }
 
         for req in file {
-            if request_count > 0 {
-                term.queue(Print("\n"))?;
+            if !args.vim || request_count != 0 {
+                term.queue(Print('\n'))?;
             }
 
             match send_request(&http_client, &req, &timeout).await {
