@@ -154,34 +154,14 @@ fn tokenize(
 
 #[cfg(test)]
 mod test_tokenize {
+    use core::fmt::Write as _;
+
     use once_cell::sync::Lazy;
 
     use crate::{error::RequestParseError, tokenize, RequestToken};
 
     static EMPTY_VARS: Lazy<std::collections::HashMap<String, String>> =
         Lazy::new(std::collections::HashMap::new);
-
-    fn assert_method_token(token: &RequestToken, method: &http::Method) {
-        assert!(matches!(token, RequestToken::Method(m) if m == method));
-    }
-
-    fn assert_uri_token(token: &RequestToken, uri: &str) {
-        assert!(matches!(token , RequestToken::Uri(u) if u == uri));
-    }
-
-    fn assert_http_version_token(token: &RequestToken, version: http::Version) {
-        assert!(matches!(token, RequestToken::HttpVersion(v) if v == &version));
-    }
-
-    fn assert_header_token(token: &RequestToken, key: &str, value: &str) {
-        assert!(matches!(token , RequestToken::Header(h) if h.key  == key));
-
-        assert!(matches!(token, RequestToken::Header(h) if h.value == value));
-    }
-
-    fn assert_body_token(token: &RequestToken, body: &Option<String>) {
-        assert!(matches!(token, RequestToken::Body(b) if b == body));
-    }
 
     #[test]
     fn should_return_a_list_of_tokens() {
@@ -235,122 +215,92 @@ mod test_tokenize {
 
     #[test]
     fn it_should_be_able_to_parse_multiple_requests() {
-        let input = "
-GET https://mhouge.dk/ HTTP/0.9
-x-test-header: test value
+        let uri = "https://mhouge.dk/";
 
-###
+        let methods = [
+            http::Method::GET,
+            http::Method::PUT,
+            http::Method::POST,
+            http::Method::PATCH,
+            http::Method::DELETE,
+            http::Method::OPTIONS,
+            http::Method::HEAD,
+            http::Method::TRACE,
+            http::Method::CONNECT,
+        ];
 
-GET https://mhouge.dk/ HTTP/1.0
-x-test-header: test value
+        let versions = [
+            http::Version::HTTP_09,
+            http::Version::HTTP_10,
+            http::Version::HTTP_11,
+            http::Version::HTTP_2,
+            http::Version::HTTP_3,
+        ];
 
-###
+        let header_key = "x-test-header";
+        let header_value = "test-value";
 
-GET https://mhouge.dk/ HTTP/1.1
-x-test-header: test value
+        let body = "mads was here\n".to_owned();
 
-###
+        let mut input = String::new();
 
-GET https://mhouge.dk/ HTTP/2
-x-test-header: test value
+        let mut input_request_index: u16 = 0;
 
-###
+        for method in &methods {
+            for version in &versions {
+                writeln!(input, "{method} {uri} {version:?}").expect("it to write");
+                writeln!(input, "{header_key}: {header_value}\n").expect("it to write");
 
-GET https://mhouge.dk/ HTTP/3
-x-test-header: test value
-###
+                if input_request_index % 2 == 0 {
+                    writeln!(input, "{body}").expect("it to write");
+                }
 
+                writeln!(input, "###\n").expect("it to write");
 
+                input_request_index += 1;
+            }
+        }
 
-";
-        let tokens = tokenize(input, &EMPTY_VARS).expect("it to return a list of tokens");
+        let tokens = tokenize(&input, &EMPTY_VARS).expect("it to return a list of tokens");
 
-        assert_eq!(25, tokens.len());
+        assert_eq!(tokens.len(), methods.len() * versions.len() * 5);
 
-        {
-            let method_token = tokens.first().expect("it to be a method token");
-            assert_method_token(method_token, &http::Method::GET);
+        let mut output_request_index: u16 = 0;
+        let mut token_index = 0;
 
-            let uri_token = tokens.get(1).expect("it to be an uri token");
-            assert_uri_token(uri_token, "https://mhouge.dk/");
+        let body_option = Some(body);
 
-            let version_token = tokens.get(2).expect("it to be a version token");
-            assert_http_version_token(version_token, http::Version::HTTP_09);
+        for method in &methods {
+            for version in &versions {
+                let method_token = tokens.get(token_index).expect("it to be a method token");
+                assert!(matches!(method_token, RequestToken::Method(m) if m == method));
+                token_index += 1;
 
-            let header_token = tokens.get(3).expect("it to be a header token");
-            assert_header_token(header_token, "x-test-header", "test value");
+                let uri_token = tokens.get(token_index).expect("it to be an uri token");
+                assert!(matches!(uri_token, RequestToken::Uri(u) if u == uri));
+                token_index += 1;
 
-            let body_token = tokens.get(4).expect("it to be a body token");
-            assert_body_token(body_token, &None);
-        };
+                let version_token = tokens.get(token_index).expect("it to be a version token");
+                assert!(matches!(version_token, RequestToken::HttpVersion(v) if v == version));
+                token_index += 1;
 
-        {
-            let method_token = tokens.get(5).expect("it to be a method token");
-            assert_method_token(method_token, &http::Method::GET);
+                let header_token = tokens.get(token_index).expect("it to be a header token");
+                assert!(
+                    matches!(header_token, RequestToken::Header(h) if h.key  == header_key && h.value == header_value)
+                );
+                token_index += 1;
 
-            let uri_token = tokens.get(6).expect("it to be an uri token");
-            assert_uri_token(uri_token, "https://mhouge.dk/");
+                let body_token = tokens.get(token_index).expect("it to be a body token");
+                if output_request_index % 2 == 0 {
+                    assert!(matches!(body_token, RequestToken::Body(b) if b == &body_option));
+                } else {
+                    assert!(matches!(body_token, RequestToken::Body(b) if b.is_none()));
+                }
+                token_index += 1;
 
-            let version_token = tokens.get(7).expect("it to be a version token");
-            assert_http_version_token(version_token, http::Version::HTTP_10);
-
-            let header_token = tokens.get(8).expect("it to be a header token");
-            assert_header_token(header_token, "x-test-header", "test value");
-
-            let body_token = tokens.get(9).expect("it to be a body token");
-            assert_body_token(body_token, &None);
-        };
-
-        {
-            let method_token = tokens.get(10).expect("it to be a method token");
-            assert_method_token(method_token, &http::Method::GET);
-
-            let uri_token = tokens.get(11).expect("it to be an uri token");
-            assert_uri_token(uri_token, "https://mhouge.dk/");
-
-            let version_token = tokens.get(12).expect("it to be a version token");
-            assert_http_version_token(version_token, http::Version::HTTP_11);
-
-            let header_token = tokens.get(13).expect("it to be a header token");
-            assert_header_token(header_token, "x-test-header", "test value");
-
-            let body_token = tokens.get(14).expect("it to be a body token");
-            assert_body_token(body_token, &None);
-        };
-
-        {
-            let method_token = tokens.get(15).expect("it to be a method token");
-            assert_method_token(method_token, &http::Method::GET);
-
-            let uri_token = tokens.get(16).expect("it to be an uri token");
-            assert_uri_token(uri_token, "https://mhouge.dk/");
-
-            let version_token = tokens.get(17).expect("it to be a version token");
-            assert_http_version_token(version_token, http::Version::HTTP_2);
-
-            let header_token = tokens.get(18).expect("it to be a header token");
-            assert_header_token(header_token, "x-test-header", "test value");
-
-            let body_token = tokens.get(19).expect("it to be a body token");
-            assert_body_token(body_token, &None);
-        };
-
-        {
-            let method_token = tokens.get(20).expect("it to be a method token");
-            assert_method_token(method_token, &http::Method::GET);
-
-            let uri_token = tokens.get(21).expect("it to be an uri token");
-            assert_uri_token(uri_token, "https://mhouge.dk/");
-
-            let version_token = tokens.get(22).expect("it to be a version token");
-            assert_http_version_token(version_token, http::Version::HTTP_3);
-
-            let header_token = tokens.get(23).expect("it to be a header token");
-            assert_header_token(header_token, "x-test-header", "test value");
-
-            let body_token = tokens.get(24).expect("it to be a body token");
-            assert_body_token(body_token, &None);
-        };
+                output_request_index += 1;
+            }
+        }
     }
 
     #[test]
@@ -536,66 +486,6 @@ GET https://mhouge.dk/
     }
 
     #[test]
-    fn it_should_support_multiple_requests() {
-        let input = "
-CONNECT https://mhouge.dk/?q=mads HTTP/2
-key: value
-
-mads was here
-###
-
-PUT https://mhouge.dk/ HTTP/3
-x-test-header:{{test value
-
-mads
-was
-here
-###
-
-
-
-";
-
-        let output = tokenize(input, &EMPTY_VARS).expect("it to parse successfully");
-
-        assert_eq!(output.len(), 10);
-
-        {
-            let method = output.first().expect("it to be a method token");
-            assert_method_token(method, &http::Method::CONNECT);
-
-            let uri = output.get(1).expect("it to be a uri token");
-            assert_uri_token(uri, "https://mhouge.dk/?q=mads");
-
-            let version = output.get(2).expect("it to be a version token");
-            assert_http_version_token(version, http::Version::HTTP_2);
-
-            let header = output.get(3).expect("it to be a header token");
-            assert_header_token(header, "key", "value");
-
-            let body = output.get(4).expect("it to be a body token");
-            assert_body_token(body, &Some("mads was here".to_owned()));
-        };
-
-        {
-            let method = output.get(5).expect("it to be a method token");
-            assert_method_token(method, &http::Method::PUT);
-
-            let uri = output.get(6).expect("it to be a uri token");
-            assert_uri_token(uri, "https://mhouge.dk/");
-
-            let version = output.get(7).expect("it to be a version token");
-            assert_http_version_token(version, http::Version::HTTP_3);
-
-            let header = output.get(8).expect("it to be a header token");
-            assert_header_token(header, "x-test-header", "{{test value");
-
-            let body = output.get(9).expect("it to be a body token");
-            assert_body_token(body, &Some("mads\nwas\nhere".to_owned()));
-        };
-    }
-
-    #[test]
     fn it_should_ignore_triple_hashtag_when_in_parsermode_request() {
         let input = "
 ###
@@ -617,21 +507,21 @@ HEAD https://mhouge.dk/blog/";
 
         {
             let method = output.first().expect("it to return a method token");
-            assert_method_token(method, &http::method::Method::OPTIONS);
+            assert!(matches!(method, RequestToken::Method(m) if m == http::Method::OPTIONS));
 
             let uri = output.get(1).expect("it to return a uri token");
-            assert_uri_token(uri, "https://mhouge.dk/");
+            assert!(matches!(uri, RequestToken::Uri(u) if u == "https://mhouge.dk/"));
 
             let body = output.get(2).expect("it to be an empty body token");
-            assert_body_token(body, &None);
+            assert!(matches!(body, RequestToken::Body(b) if b.is_none()));
         };
 
         {
             let method = output.get(3).expect("it to return a method token");
-            assert_method_token(method, &http::method::Method::HEAD);
+            assert!(matches!(method, RequestToken::Method(m) if m == http::Method::HEAD));
 
             let uri = output.get(4).expect("it to return a uri token");
-            assert_uri_token(uri, "https://mhouge.dk/blog/");
+            assert!(matches!(uri, RequestToken::Uri(u) if u == "https://mhouge.dk/blog/"));
         };
     }
 }
