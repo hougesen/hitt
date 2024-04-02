@@ -15,18 +15,18 @@ description = "command line HTTP testing tool focused on speed and simplicity"
 homepage = "https://hitt.mhouge.dk"
 readme = "README.md"
 categories = [
-    "command-line-utilities",
-    "development-tools",
-    "web-programming",
-    "web-programming::http-client",
+  "command-line-utilities",
+  "development-tools",
+  "web-programming",
+  "web-programming::http-client",
 ]
 
 [workspace.dependencies]
 hitt-formatter = { path = "hitt-formatter", version = "0.0.4" }
 hitt-parser = { path = "hitt-parser", version = "0.0.4" }
 hitt-request = { path = "hitt-request", version = "0.0.4" }
-http = { version = "0.2.12" }
-reqwest = { version = "0.11.27" }
+http = { version = "1.1.0" }
+reqwest = { version = "0.12.2" }
 tokio = { version = "1.37.0", features = ["fs", "macros", "rt-multi-thread"] }
 
 [profile.release]
