@@ -467,7 +467,7 @@ checksum = "d231dfb89cfffdbc30e7fc41579ed6066ad03abda9e567ccafae602b97ec5024"
 
 [[package]]
 name = "hitt"
-version = "0.0.4"
+version = "0.0.5"
 dependencies = [
  "clap",
  "crossterm",
@@ -485,7 +485,7 @@ dependencies = [
 
 [[package]]
 name = "hitt-formatter"
-version = "0.0.4"
+version = "0.0.5"
 dependencies = [
  "jsonformat",
  "mime",
@@ -493,7 +493,7 @@ dependencies = [
 
 [[package]]
 name = "hitt-parser"
-version = "0.0.4"
+version = "0.0.5"
 dependencies = [
  "http",
  "once_cell",
@@ -501,7 +501,7 @@ dependencies = [
 
 [[package]]
 name = "hitt-request"
-version = "0.0.4"
+version = "0.0.5"
 dependencies = [
  "hitt-parser",
  "http",
