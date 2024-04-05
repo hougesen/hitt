@@ -1,5 +1,9 @@
 # hitt
 
+<a href="https://crates.io/crates/hitt"><img src="https://img.shields.io/crates/v/hitt.svg"></a>
+<a href="https://github.com/hougesen/hitt/actions/workflows/validate.yml"><img src="https://github.com/hougesen/hitt/actions/workflows/validate.yml/badge.svg"></a>
+<a href="https://codecov.io/gh/hougesen/hitt"><img src="https://codecov.io/gh/hougesen/hitt/branch/main/graph/badge.svg"/></a>
+
 hitt is a command line HTTP testing tool focused on speed and simplicity.
 
 ## Install
