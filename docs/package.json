@@ -22,10 +22,10 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
-    "@nuxt/devtools": "^1.1.5",
+    "@nuxt/devtools": "^1.2.0",
     "@tailwindcss/typography": "^0.5.12",
     "autoprefixer": "^10.4.19",
-    "nuxt": "^3.11.1",
+    "nuxt": "^3.11.2",
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.3",
     "vue": "^3.4.23",
