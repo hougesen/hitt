@@ -1,6 +1,9 @@
 use std::sync::Arc;
 
-use crossterm::{style::Print, style::Stylize, QueueableCommand};
+use crossterm::{
+    style::{Print, Stylize},
+    QueueableCommand,
+};
 use hitt_parser::HittRequest;
 use hitt_request::send_request;
 

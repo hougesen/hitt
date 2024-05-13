@@ -54,9 +54,8 @@ pub fn parse_variable_declaration(
 mod test_parse_variable_declarations {
     use once_cell::sync::Lazy;
 
-    use crate::{error::RequestParseError, to_enum_chars};
-
     use super::parse_variable_declaration;
+    use crate::{error::RequestParseError, to_enum_chars};
 
     static EMPTY_VARS: Lazy<std::collections::HashMap<String, String>> =
         Lazy::new(std::collections::HashMap::new);
@@ -204,9 +203,8 @@ pub fn parse_variable(
 
 #[cfg(test)]
 mod test_parse_variable {
-    use crate::to_enum_chars;
-
     use super::parse_variable;
+    use crate::to_enum_chars;
 
     #[test]
     fn it_should_parse_variables() {

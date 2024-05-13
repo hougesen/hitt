@@ -17,9 +17,8 @@ impl From<HeaderToken> for RequestToken {
 
 #[cfg(test)]
 mod test_from_header_token_for_request_token {
-    use crate::RequestToken;
-
     use super::HeaderToken;
+    use crate::RequestToken;
 
     #[test]
     fn it_should_wrap() {

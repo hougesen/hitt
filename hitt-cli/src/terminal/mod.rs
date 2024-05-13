@@ -1,9 +1,8 @@
 use hitt_formatter::ContentType;
 use hitt_request::HittResponse;
 
-use crate::{config::RunCommandArguments, error::HittCliError};
-
 use self::{body::print_body, headers::print_headers, status::print_status};
+use crate::{config::RunCommandArguments, error::HittCliError};
 
 pub mod body;
 pub mod headers;
