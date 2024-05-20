@@ -33,6 +33,6 @@
   },
   "dependencies": {
     "@nuxt/content": "^2.12.1",
-    "@nuxt/image": "^1.6.0"
+    "@nuxt/image": "^1.7.0"
   }
 }
