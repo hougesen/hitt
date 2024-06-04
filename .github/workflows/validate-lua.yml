@@ -1,14 +1,10 @@
 name: validate-lua
-
 on:
   push:
-    paths:
-      - 'lua/**'
-
+    paths: [lua/**]
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
-
 jobs:
   stylua:
     name: stylua
@@ -20,18 +16,15 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           version: latest
           args: --color always --check .
-
   luacheck:
     name: Luacheck
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: Prepare
         run: |
           sudo apt-get update
           sudo apt-get install -y luarocks
           sudo luarocks install luacheck
-
       - name: Lint
         run: luacheck lua --globals vim
