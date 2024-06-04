@@ -1,57 +1,44 @@
 version: 2
 updates:
-  - package-ecosystem: 'cargo'
-    directory: '/'
+  - package-ecosystem: cargo
+    directory: /
     schedule:
-      interval: 'monthly'
-    assignees:
-      - 'hougesen'
+      interval: monthly
+    assignees: [hougesen]
     open-pull-requests-limit: 25
-
-  - package-ecosystem: 'cargo'
-    directory: '/hitt-cli'
+  - package-ecosystem: cargo
+    directory: /hitt-cli
     schedule:
-      interval: 'monthly'
-    assignees:
-      - 'hougesen'
+      interval: monthly
+    assignees: [hougesen]
     open-pull-requests-limit: 25
-
-  - package-ecosystem: 'cargo'
-    directory: '/hitt-formatter'
+  - package-ecosystem: cargo
+    directory: /hitt-formatter
     schedule:
-      interval: 'weekly'
-    assignees:
-      - 'hougesen'
+      interval: weekly
+    assignees: [hougesen]
     open-pull-requests-limit: 25
-
-  - package-ecosystem: 'cargo'
-    directory: '/hitt-parser'
+  - package-ecosystem: cargo
+    directory: /hitt-parser
     schedule:
-      interval: 'monthly'
-    assignees:
-      - 'hougesen'
+      interval: monthly
+    assignees: [hougesen]
     open-pull-requests-limit: 25
-
-  - package-ecosystem: 'cargo'
-    directory: '/hitt-request'
+  - package-ecosystem: cargo
+    directory: /hitt-request
     schedule:
-      interval: 'monthly'
-    assignees:
-      - 'hougesen'
+      interval: monthly
+    assignees: [hougesen]
     open-pull-requests-limit: 25
-
-  - package-ecosystem: 'npm'
-    directory: '/docs'
+  - package-ecosystem: npm
+    directory: /docs
     schedule:
-      interval: 'monthly'
-    assignees:
-      - 'hougesen'
+      interval: monthly
+    assignees: [hougesen]
     open-pull-requests-limit: 25
-
-  - package-ecosystem: 'github-actions'
-    directory: '/'
+  - package-ecosystem: github-actions
+    directory: /
     schedule:
-      interval: 'monthly'
-    assignees:
-      - 'hougesen'
+      interval: monthly
+    assignees: [hougesen]
     open-pull-requests-limit: 25

@@ -1,37 +1,25 @@
 name: validate-docs
-
 on:
   push:
-    paths:
-      - '**/*.md'
-      - '**/*.json'
-      - '**/*.yml'
-      - '**/*.yaml'
-      - 'docs/**'
-
+    paths: ['**/*.md', '**/*.json', '**/*.yml', '**/*.yaml', docs/**]
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
-
 jobs:
   prettier:
     runs-on: ${{ matrix.os }}
-
     strategy:
       matrix:
         os: [ubuntu-latest]
         node: [20]
-
     steps:
       - name: Checkout 🛎
         uses: actions/checkout@v4
-
       - name: Setup node env 🏗
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
           check-latest: true
-
       - name: Cache node_modules 📦
         uses: actions/cache@v4
         with:
@@ -39,6 +27,5 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-
       - name: Run format 💎
         run: npx prettier --check --cache .

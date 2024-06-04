@@ -1,10 +1,7 @@
 name: coverage
-
 on:
   push:
-    branches:
-      - main
-
+    branches: [main]
 jobs:
   coverage:
     name: coverage
@@ -14,16 +11,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
-
       - name: Install cargo-llvm-cov
         uses: taiki-e/install-action@cargo-llvm-cov
-
       - name: Generate code coverage
         run: cargo llvm-cov --all-features --locked --lcov --output-path lcov.info
-
       - name: Upload code coverage
         uses: codecov/codecov-action@v4
         with:
