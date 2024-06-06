@@ -13,8 +13,6 @@ build-local:
     sudo cp target/release/hitt /usr/local/bin/hitt-local
 
 format:
-    yamlfix .
-    yamlfmt .
     just --fmt --unstable .
     mdsf format .
     npx prettier --write --cache .
