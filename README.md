@@ -16,6 +16,50 @@ cargo install hitt
 
 If you do not have Cargo installed, you need to [install it first](https://www.rust-lang.org/learn/get-started).
 
+### Shell completions
+
+Shell completions can be generated using `mdsf completions <SHELL>`.
+
+#### Bash
+
+Add the following to your `.bashrc`.
+
+```bash
+eval "$(mdsf completions bash)"
+```
+
+#### Bash
+
+Add the following to your `.zshrc`.
+
+```bash
+eval "$(mdsf completions zsh)"
+```
+
+#### Fish
+
+Add the following to `~/.config/fish/config.fish`.
+
+```fish
+mdsf completions fish | source
+```
+
+#### PowerShell
+
+Add the following to your PowerShell configuraiton (Can be found by running `$PROFILE`).
+
+```powershell
+Invoke-Expression (&mdsf completions powershell)
+```
+
+#### Elvish
+
+Add the following to `~/.elvish/rc.elv`.
+
+```elvish
+eval (mdsf completions elvish)
+```
+
 ## Usage
 
 To send a request create a file ending in `.http`.

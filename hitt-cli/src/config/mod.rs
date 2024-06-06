@@ -13,6 +13,8 @@ pub struct Cli {
 #[derive(Subcommand, Debug)]
 pub enum Commands {
     Run(RunCommandArguments),
+
+    Completions(CompletionsCommandArguments),
 }
 
 /// Send request
@@ -52,4 +54,10 @@ pub struct RunCommandArguments {
 
     #[arg(long, default_value_t = false, hide = true)]
     pub vim: bool,
+}
+
+/// Generate shell completions
+#[derive(Args, Debug)]
+pub struct CompletionsCommandArguments {
+    pub shell: clap_complete::Shell,
 }
