@@ -16,10 +16,10 @@ description = "command line HTTP testing tool focused on speed and simplicity"
 homepage = "https://hitt.mhouge.dk"
 readme = "README.md"
 categories = [
-  "command-line-utilities",
-  "development-tools",
-  "web-programming",
-  "web-programming::http-client",
+    "command-line-utilities",
+    "development-tools",
+    "web-programming",
+    "web-programming::http-client",
 ]
 exclude = ["www", "examples"]
 
