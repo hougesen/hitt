@@ -16,6 +16,141 @@ cargo install hitt
 
 If you do not have Cargo installed, you need to [install it first](https://www.rust-lang.org/learn/get-started).
 
+### Dependencies
+
+`hitt` does not require any external dependencies for Windows and macOS user.
+
+Linux users must install `openssl`.
+
+#### Debian and Ubuntu
+
+```sh
+sudo apt-get install pkg-config libssl-dev
+```
+
+#### Arch Linux
+
+```sh
+sudo pacman -S pkg-config openssl
+```
+
+#### Fedora
+
+```sh
+sudo dnf install pkg-config perl-FindBin openssl-devel
+```
+
+#### Alpine Linux
+
+```sh
+apk add pkgconfig openssl-dev
+```
+
+#### openSUSE
+
+```sh
+sudo zypper in libopenssl-devel
+```
+
+## Usage
+
+To send a request create a file ending in `.http`.
+
+The syntax of `.http` files is pretty straightforward:
+
+```http
+GET https://mhouge.dk/
+```
+
+The file can then be run using the following command:
+
+```sh
+hitt run <PATH_TO_FILE>
+```
+
+That is all that is need to send a request.
+
+### Arguments
+
+| Argument                 | Description                    |
+| ------------------------ | ------------------------------ |
+| `--var <KEY>=<VALUE>`    | Variables to pass to request   |
+| `--recursive`            | Run all files in directory     |
+| `--fail-fast`            | Exit on status code 4XX or 5xx |
+| `--hide-headers`         | Hide response headers          |
+| `--hide-body`            | Hide response body             |
+| `--timeout <TIMEOUT_MS>` | Request timeout in ms          |
+
+### Request headers
+
+Request headers can be added by writing key value pairs (`KEY:VALUE`) on a new line after the method and URL:
+
+```http
+GET https://mhouge.dk/
+key:value
+```
+
+Leading spaces in the header value is ignored, so `KEY: VALUE` and `KEY:VALUE` will both have the value `VALUE`.
+
+### Request body
+
+A body can be sent with the request by creating a blank line, followed by the desired body input.
+
+Please note, hitt **does not** infer content type. That has to be written as a header.
+
+```http
+POST https://mhouge.dk/
+content-type:application/json
+
+{
+    "key": "value"
+}
+```
+
+### Multiple request in single file
+
+Multiple requests can be written in a single file by adding a line with `###` as a separator:
+
+```http
+GET https://mhouge.dk/
+
+###
+
+GET https://mhouge.dk/
+```
+
+### Variables
+
+hitt has support for request variables.
+
+A variable can be set in a file using the following syntax `@name = VALUE`. Whitespace is ignored.
+
+Variables are used by wrapping the name in curly brackets (`{{ name }}`).
+
+```http
+@variable_name = localhost
+
+GET {{ variable_name }}/api
+```
+
+In-file variables are not shared between other files.
+
+#### Variable arguments
+
+Variables can be passed to all requests using the `--var <KEY>=<VALUE>` argument:
+
+```http
+# file.http
+
+GET {{ host }}/api
+```
+
+The file can the be run:
+
+```sh
+hitt run --var host=localhost:5000 file.http
+```
+
 ### Shell completions
 
 Shell completions can be generated using `mdsf completions <SHELL>`.
@@ -58,105 +193,6 @@ Add the following to `~/.elvish/rc.elv`.
 
 ```elvish
 eval (mdsf completions elvish)
-```
-
-## Usage
-
-To send a request create a file ending in `.http`.
-
-The syntax of `.http` files is pretty straightforward:
-
-```hitt
-GET https://mhouge.dk/
-```
-
-The file can then be run using the following command:
-
-```sh
-hitt run <PATH_TO_FILE>
-```
-
-That is all that is need to send a request.
-
-### Arguments
-
-| Argument                 | Description                    |
-| ------------------------ | ------------------------------ |
-| `--var <KEY>=<VALUE>`    | Variables to pass to request   |
-| `--recursive`            | Run all files in directory     |
-| `--fail-fast`            | Exit on status code 4XX or 5xx |
-| `--hide-headers`         | Hide response headers          |
-| `--hide-body`            | Hide response body             |
-| `--timeout <TIMEOUT_MS>` | Request timeout in ms          |
-
-### Request headers
-
-Request headers can be added by writing key value pairs (`KEY:VALUE`) on a new line after the method and URL:
-
-```hitt
-GET https://mhouge.dk/
-key:value
-```
-
-Leading spaces in the header value is ignored, so `KEY: VALUE` and `KEY:VALUE` will both have the value `VALUE`.
-
-### Request body
-
-A body can be sent with the request by creating a blank line, followed by the desired body input.
-
-Please note, hitt **does not** infer content type. That has to be written as a header.
-
-```hitt
-POST https://mhouge.dk/
-content-type:application/json
-
-{
-    "key": "value"
-}
-```
-
-### Multiple request in single file
-
-Multiple requests can be written in a single file by adding a line with `###` as a separator:
-
-```hitt
-GET https://mhouge.dk/
-
-###
-
-GET https://mhouge.dk/
-```
-
-### Variables
-
-hitt has support for request variables.
-
-A variable can be set in a file using the following syntax `@name = VALUE`. Whitespace is ignored.
-
-Variables are used by wrapping the name in curly brackets (`{{ name }}`).
-
-```hitt
-@variable_name = localhost
-
-GET {{ variable_name }}/api
-```
-
-In-file variables are not shared between other files.
-
-#### Variable arguments
-
-Variables can be passed to all requests using the `--var <KEY>=<VALUE>` argument:
-
-```hitt
-# file.http
-
-GET {{ host }}/api
-```
-
-The file can the be run:
-
-```sh
-hitt run --var host=localhost:5000 file.http
 ```
 
 ## Neovim
