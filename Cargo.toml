@@ -8,7 +8,6 @@ version = "0.0.9"
 authors = ["Mads Hougesen <mads@mhouge.dk>"]
 edition = "2021"
 license = "MIT"
-rust-version = "1.74.0"
 repository = "https://github.com/hougesen/hitt"
 documentation = "https://github.com/hougesen/hitt#readme"
 keywords = ["http", "cli", "testing", "api-testing", "vim"]

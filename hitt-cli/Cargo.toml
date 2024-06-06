@@ -7,11 +7,11 @@ edition.workspace = true
 license.workspace = true
 repository.workspace = true
 keywords.workspace = true
-rust-version.workspace = true
 homepage.workspace = true
 documentation.workspace = true
 readme.workspace = true
 categories.workspace = true
+rust-version = "1.74"
 
 [[bin]]
 name = "hitt"
