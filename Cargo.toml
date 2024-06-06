@@ -4,7 +4,7 @@ exclude = ["docs", "examples"]
 resolver = "2"
 
 [workspace.package]
-version = "0.0.7"
+version = "0.0.8"
 authors = ["Mads Hougesen <mads@mhouge.dk>"]
 edition = "2021"
 license = "MIT"
@@ -24,9 +24,9 @@ categories = [
 exclude = ["www", "examples"]
 
 [workspace.dependencies]
-hitt-formatter = { path = "hitt-formatter", version = "0.0.7" }
-hitt-parser = { path = "hitt-parser", version = "0.0.7" }
-hitt-request = { path = "hitt-request", version = "0.0.7" }
+hitt-formatter = { path = "hitt-formatter", version = "0.0.8" }
+hitt-parser = { path = "hitt-parser", version = "0.0.8" }
+hitt-request = { path = "hitt-request", version = "0.0.8" }
 http = { version = "1.1.0" }
 reqwest = { version = "0.12.4" }
 tokio = { version = "1.38.0", features = ["fs", "macros", "rt-multi-thread"] }
