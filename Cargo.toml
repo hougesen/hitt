@@ -1,5 +1,11 @@
 [workspace]
-members = ["hitt-cli", "hitt-formatter", "hitt-parser", "hitt-request"]
+members = [
+  "hitt-cli",
+  "hitt-formatter",
+  "hitt-parser",
+  "hitt-request",
+  "hitt-sse",
+]
 exclude = ["docs", "examples"]
 resolver = "2"
 
@@ -23,11 +29,14 @@ categories = [
 exclude = ["www", "examples"]
 
 [workspace.dependencies]
+eventsource-stream = "0.2.3"
+futures = "0.3.30"
 hitt-formatter = { path = "hitt-formatter", version = "0.0.9" }
 hitt-parser = { path = "hitt-parser", version = "0.0.9" }
 hitt-request = { path = "hitt-request", version = "0.0.9" }
 http = { version = "1.1.0" }
 reqwest = { version = "0.12.4" }
+reqwest-eventsource = { version = "0.6.0" }
 tokio = { version = "1.38.0", features = ["fs", "macros", "rt-multi-thread"] }
 
 [profile.release]
