@@ -67,10 +67,10 @@ async fn get_requests(
     let vars = build_variable_map(var_input)?;
 
     if is_dir_path {
-        return parse_files(find_http_files(path), vars).await;
+        parse_files(find_http_files(path), vars).await
+    } else {
+        parse_file(path, Arc::new(vars)).await.map(|r| vec![r])
     }
-
-    parse_file(path, Arc::new(vars)).await.map(|r| vec![r])
 }
 
 #[cfg(test)]
