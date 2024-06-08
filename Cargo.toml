@@ -16,14 +16,7 @@ edition = "2021"
 license = "MIT"
 repository = "https://github.com/hougesen/hitt"
 documentation = "https://github.com/hougesen/hitt#readme"
-keywords = [
-  "http",
-  "cli",
-  "testing",
-  "api-testing",
-  "sse",
-  "server-sent-events",
-]
+keywords = ["http", "cli", "testing", "sse", "server-sent-events"]
 description = "command line HTTP testing tool focused on speed and simplicity"
 homepage = "https://hitt.mhouge.dk"
 readme = "README.md"
