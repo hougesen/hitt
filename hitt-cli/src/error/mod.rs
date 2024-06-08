@@ -11,7 +11,11 @@ pub enum HittCliError {
     VariableArgumentValueIndexing(String),
     RecursiveNotEnabled,
     FailFast,
+    SSEParseUrl(String),
+    SSEError(hitt_sse::Error),
 }
+
+impl std::error::Error for HittCliError {}
 
 impl core::fmt::Display for HittCliError {
     #[inline]
@@ -36,6 +40,8 @@ impl core::fmt::Display for HittCliError {
                 write!(f, "received directory path but --recursive is not enabled")
             }
             Self::FailFast => write!(f, "exiting early since --fail-fast is enabled"),
+            Self::SSEParseUrl(url) => write!(f, "'{url}' is not a valid url"),
+            Self::SSEError(error) => write!(f, "sse error - {error}"),
         }
     }
 }
@@ -51,5 +57,11 @@ impl From<std::io::Error> for HittCliError {
     #[inline]
     fn from(value: std::io::Error) -> Self {
         Self::Io(value)
+    }
+}
+
+impl From<hitt_sse::Error> for HittCliError {
+    fn from(value: hitt_sse::Error) -> Self {
+        Self::SSEError(value)
     }
 }

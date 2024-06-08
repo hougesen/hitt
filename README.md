@@ -151,6 +151,14 @@ The file can the be run:
 hitt run --var host=localhost:5000 file.http
 ```
 
+### Server sent events (SSE)
+
+A SSE listener can be started using the `hitt sse` command.
+
+```sh
+hitt sse https://sse.dev/test
+```
+
 ### Shell completions
 
 Shell completions can be generated using `mdsf completions <SHELL>`.

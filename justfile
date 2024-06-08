@@ -46,4 +46,5 @@ publish-crates:
     cargo publish -p hitt-formatter
     cargo publish -p hitt-parser
     cargo publish -p hitt-request
+    cargo publish -p hitt-sse
     cargo publish -p hitt

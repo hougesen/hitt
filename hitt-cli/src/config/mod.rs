@@ -15,17 +15,20 @@ const HELP_TEMPLATE: &str = "\
 #[command(propagate_version = true)]
 pub struct Cli {
     #[command(subcommand)]
-    pub command: Commands,
+    pub command: HittCommand,
 }
 
 #[derive(Subcommand, Debug)]
-pub enum Commands {
+pub enum HittCommand {
     Run(RunCommandArguments),
+
+    #[command(name = "sse")]
+    ServerSentEvent(SSECommandArguments),
 
     Completions(CompletionsCommandArguments),
 }
 
-/// Send request
+/// Send http request
 #[derive(Args, Debug)]
 pub struct RunCommandArguments {
     /// Path to .http file, or directory if supplied with the `--recursive` argument
@@ -68,4 +71,11 @@ pub struct RunCommandArguments {
 #[derive(Args, Debug)]
 pub struct CompletionsCommandArguments {
     pub shell: clap_complete::Shell,
+}
+
+/// Listen to sse events
+#[derive(Args, Debug)]
+pub struct SSECommandArguments {
+    #[arg()]
+    pub url: String,
 }

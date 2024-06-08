@@ -1,0 +1,21 @@
+[package]
+name = "hitt-sse"
+description = "SSE utility library for the hitt http testing tool"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+documentation.workspace = true
+keywords.workspace = true
+homepage.workspace = true
+readme = "README.md"
+categories = ["web-programming"]
+rust-version = "1.64"
+
+[dependencies]
+eventsource-stream = { workspace = true }
+futures = { workspace = true }
+reqwest = { workspace = true }
+reqwest-eventsource = { workspace = true }
+tokio = { workspace = true }

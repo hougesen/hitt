@@ -1,14 +1,29 @@
+use body::print_body;
+use crossterm::{
+    queue,
+    style::{Print, Stylize},
+};
+use headers::print_headers;
 use hitt_formatter::ContentType;
 use hitt_request::HittResponse;
+use status::print_status;
 
-use self::{body::print_body, headers::print_headers, status::print_status};
 use crate::{config::RunCommandArguments, error::HittCliError};
 
 pub mod body;
-pub mod headers;
-pub mod status;
+mod headers;
+pub mod sse;
+mod status;
 
-pub fn handle_response<W: std::io::Write>(
+#[inline]
+pub fn print_running_file<W: std::io::Write + Send>(
+    term: &mut W,
+    path: &std::path::Path,
+) -> std::io::Result<()> {
+    queue!(term, Print(format!("hitt: running {path:?}\n").cyan()))
+}
+
+pub fn handle_response<W: std::io::Write + Send>(
     term: &mut W,
     response: &HittResponse,
     args: &RunCommandArguments,

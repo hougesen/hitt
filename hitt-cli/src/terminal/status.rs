@@ -4,7 +4,7 @@ use crossterm::{
 };
 
 #[inline]
-pub fn print_status<W: std::io::Write>(
+pub fn print_status<W: std::io::Write + Send>(
     term: &mut W,
     http_version: http::version::Version,
     method: &str,
