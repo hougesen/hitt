@@ -4,7 +4,7 @@ use crossterm::{
 };
 
 #[inline]
-pub fn print_headers<W: std::io::Write>(
+pub fn print_headers<W: std::io::Write + Send>(
     term: &mut W,
     headers: &reqwest::header::HeaderMap,
 ) -> Result<(), std::io::Error> {

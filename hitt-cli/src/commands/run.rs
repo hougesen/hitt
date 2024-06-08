@@ -1,9 +1,6 @@
 use std::sync::Arc;
 
-use crossterm::{
-    style::{Print, Stylize},
-    QueueableCommand,
-};
+use crossterm::{style::Print, QueueableCommand};
 use hitt_parser::HittRequest;
 use hitt_request::send_request;
 
@@ -11,7 +8,7 @@ use crate::{
     config::{variables::parse_variable_argument, RunCommandArguments},
     error::HittCliError,
     fs::{find_http_files, parse_file, parse_files},
-    terminal::handle_response,
+    terminal::{handle_response, print_running_file},
 };
 
 fn build_variable_map(
@@ -183,7 +180,8 @@ pub async fn run_command<W: std::io::Write + Send>(
                 term.queue(Print('\n'))?;
             }
 
-            term.queue(Print(format!("hitt: running {path:?}\n").cyan()))?;
+            print_running_file(term, &path)?;
+
             term.flush()?;
         }
 

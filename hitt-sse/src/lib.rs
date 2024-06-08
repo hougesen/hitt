@@ -1,26 +1,36 @@
 use futures::StreamExt;
-use reqwest_eventsource::{Event, EventSource};
+use reqwest_eventsource::EventSource;
+use tokio::sync::mpsc::{error::SendError, UnboundedSender};
 
-pub enum HittSSEEvent {
-    Open(String),
-    Message(String, eventsource_stream::Event),
-    Error(String, reqwest_eventsource::Error),
+pub type Error = reqwest_eventsource::Error;
+
+#[derive(Debug)]
+pub enum Event {
+    Open,
+    Message(String),
+    Error(Error),
 }
 
 pub async fn start_sse(
     url: reqwest::Url,
-    w: std::sync::mpsc::Sender<HittSSEEvent>,
-) -> Result<(), std::sync::mpsc::SendError<HittSSEEvent>> {
-    let url_string = url.to_string();
-
+    tx: UnboundedSender<Event>,
+) -> Result<(), SendError<Event>> {
     let mut ev = EventSource::get(url);
 
     while let Some(event) = ev.next().await {
         match event {
-            Ok(Event::Open) => w.send(HittSSEEvent::Open(url_string.clone())),
-            Ok(Event::Message(m)) => w.send(HittSSEEvent::Message(url_string.clone(), m)),
-            Err(error) => w.send(HittSSEEvent::Error(url_string.clone(), error)),
-        }?;
+            Ok(reqwest_eventsource::Event::Open) => {
+                tx.send(Event::Open)?;
+            }
+            Ok(reqwest_eventsource::Event::Message(m)) => {
+                tx.send(Event::Message(m.data))?;
+            }
+            Err(error) => {
+                tx.send(Event::Error(error))?;
+
+                ev.close();
+            }
+        };
     }
 
     Ok(())
