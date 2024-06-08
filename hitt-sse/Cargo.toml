@@ -11,6 +11,7 @@ keywords.workspace = true
 homepage.workspace = true
 readme = "README.md"
 categories = ["web-programming"]
+rust-version = "1.64"
 
 [dependencies]
 eventsource-stream = { workspace = true }
