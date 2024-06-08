@@ -30,6 +30,12 @@ updates:
       interval: monthly
     assignees: [hougesen]
     open-pull-requests-limit: 25
+  - package-ecosystem: cargo
+    directory: /hitt-sse
+    schedule:
+      interval: monthly
+    assignees: [hougesen]
+    open-pull-requests-limit: 25
   - package-ecosystem: npm
     directory: /docs
     schedule:
