@@ -15,7 +15,6 @@ categories = ["web-programming"]
 [dependencies]
 eventsource-stream = { workspace = true }
 futures = { workspace = true }
-http = { workspace = true }
 reqwest = { workspace = true }
 reqwest-eventsource = { workspace = true }
 tokio = { workspace = true }

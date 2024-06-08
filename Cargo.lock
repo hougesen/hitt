@@ -550,7 +550,6 @@ version = "0.0.9"
 dependencies = [
  "eventsource-stream",
  "futures",
- "http",
  "reqwest",
  "reqwest-eventsource",
  "tokio",
