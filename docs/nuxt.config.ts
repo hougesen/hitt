@@ -1,4 +1,55 @@
 export default defineNuxtConfig({
+  app: {
+    head: {
+      htmlAttrs: {
+        lang: 'en',
+      },
+      link: [
+        {
+          href: 'https://mhouge.dk/apple-touch-icon.png',
+          rel: 'apple-touch-icon',
+          sizes: '180x180',
+        },
+        {
+          href: 'https://mhouge.dk/favicon-32x32.png',
+          rel: 'icon',
+          sizes: '32x32',
+          type: 'image/png',
+        },
+        {
+          href: 'https://mhouge.dk/favicon-16x16.png',
+          rel: 'icon',
+          sizes: '16x16',
+          type: 'image/png',
+        },
+        {
+          href: 'https://mhouge.dk/site.webmanifest',
+          rel: 'manifest',
+        },
+        {
+          color: '#5bbad5',
+          href: 'https://mhouge.dk/safari-pinned-tab.svg',
+          rel: 'mask-icon',
+        },
+        {
+          href: 'https://mhouge.dk/favicon.ico',
+          rel: 'shortcut icon',
+          type: 'image/x-icon',
+        },
+      ],
+      meta: [
+        {
+          content: '#da532c',
+          name: 'msapplication-TileColor',
+        },
+        {
+          content: '#ffffff',
+          name: 'theme-color',
+        },
+      ],
+    },
+  },
+
   devtools: { enabled: true },
 
   modules: ['@nuxt/image', '@nuxt/content'],
