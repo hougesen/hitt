@@ -23,6 +23,6 @@ const external = computed(() => {
 
 <template>
   <NuxtLink :to="href" :target="external ? '_blank' : undefined">
-    <slot></slot>
+    <slot />
   </NuxtLink>
 </template>

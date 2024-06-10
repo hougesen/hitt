@@ -52,7 +52,7 @@ export default defineNuxtConfig({
 
   devtools: { enabled: true },
 
-  modules: ['@nuxt/image', '@nuxt/content'],
+  modules: ['@nuxt/image', '@nuxt/content', '@nuxt/eslint'],
 
   image: {
     domains: ['mhouge.dk', 'hitt.mhouge.dk'],
@@ -89,11 +89,19 @@ export default defineNuxtConfig({
       theme: {
         default: 'one-dark-pro',
       },
-
       langs: ['http', 'sh', 'lua', 'bash', 'powershell', 'zsh', 'fish'],
     },
     experimental: {
       cacheContents: true,
+    },
+  },
+  eslint: {
+    checker: true,
+    config: {
+      stylistic: false,
+      typescript: {
+        strict: true,
+      },
     },
   },
 });
