@@ -26,6 +26,30 @@ const route = useRoute();
             GitHub
           </NuxtLink>
         </li>
+
+        <li class="text-lg font-bold mt-2">
+          <a href="https://crates.io/crates/hitt">
+            <img src="https://img.shields.io/crates/v/hitt.svg" />
+          </a>
+        </li>
+
+        <li class="text-lg font-bold mt-2">
+          <a
+            href="https://github.com/hougesen/hitt/actions/workflows/validate.yml"
+          >
+            <img
+              src="https://github.com/hougesen/hitt/actions/workflows/validate.yml/badge.svg"
+            />
+          </a>
+        </li>
+
+        <li class="text-lg font-bold mt-2">
+          <a href="https://codecov.io/gh/hougesen/hitt">
+            <img
+              src="https://codecov.io/gh/hougesen/hitt/branch/main/graph/badge.svg"
+            />
+          </a>
+        </li>
       </ul>
     </ContentNavigation>
   </nav>
