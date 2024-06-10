@@ -89,7 +89,8 @@ export default defineNuxtConfig({
       theme: {
         default: 'one-dark-pro',
       },
-      preload: ['sh', 'lua'],
+
+      langs: ['http', 'sh', 'lua', 'bash', 'powershell', 'zsh', 'fish'],
     },
     experimental: {
       cacheContents: true,
