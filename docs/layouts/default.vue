@@ -16,7 +16,7 @@ useContentHead(page);
       :key="page._id"
       :value="page"
       class="flex-col"
-      style="flex-direction: column !important "
+      style="flex-direction: column !important"
     />
 
     <div class="flex w-full gap-4">
