@@ -5,7 +5,11 @@
   "type": "module",
   "licence": "MIT",
   "contributors": [
-    "Mads Hougesen <mads@mhouge.dk> (https://mhouge.dk)"
+    {
+      "name": "Mads Hougesen",
+      "url": "https://mhouge.dk",
+      "email": "mads@mhouge.dk"
+    }
   ],
   "repository": {
     "type": "git",
@@ -35,11 +39,15 @@
     "postcss": "^8.4.38",
     "prettier": "^3.3.1",
     "tailwindcss": "^3.4.4",
+    "vite-plugin-eslint2": "^4.4.0",
     "vue": "^3.4.27",
     "vue-router": "^4.3.3"
   },
   "dependencies": {
     "@nuxt/content": "^2.12.1",
     "@nuxt/image": "^1.7.0"
-  }
+  },
+  "packageManager": "pnpm@9.3.0+sha512.ee7b93e0c2bd11409c6424f92b866f31d3ea1bef5fbe47d3c7500cdc3c9668833d2e55681ad66df5b640c61fa9dc25d546efa54d76d7f8bf54b13614ac293631",
+  "homepage": "https://hitt.mhouge.dk",
+  "license": "MIT"
 }
