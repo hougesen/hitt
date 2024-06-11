@@ -50,51 +50,25 @@ export default defineNuxtConfig({
     },
   },
 
-  devtools: { enabled: true },
-
-  modules: ['@nuxt/image', '@nuxt/content', '@nuxt/eslint'],
-
-  image: {
-    domains: ['mhouge.dk', 'hitt.mhouge.dk'],
-    provider: 'ipx',
-    presets: {
-      default: {
-        modifiers: {
-          format: 'webp',
-          quality: '80',
-        },
-      },
-      svg: {
-        modifiers: {
-          format: 'svg',
-          quality: '100',
-        },
-      },
+  content: {
+    documentDriven: true,
+    experimental: {
+      cacheContents: true,
     },
-  },
-
-  postcss: {
-    plugins: {
-      tailwindcss: {},
-      autoprefixer: {},
+    highlight: {
+      langs: ['http', 'sh', 'lua', 'bash', 'powershell', 'zsh', 'fish'],
+      theme: {
+        default: 'one-dark-pro',
+      },
     },
   },
 
   css: ['~/assets/css/main.css'],
 
-  content: {
-    documentDriven: true,
-
-    highlight: {
-      theme: {
-        default: 'one-dark-pro',
-      },
-      langs: ['http', 'sh', 'lua', 'bash', 'powershell', 'zsh', 'fish'],
-    },
-    experimental: {
-      cacheContents: true,
-    },
+  devtools: {
+    enabled: true,
   },
+
   eslint: {
     checker: true,
     config: {
@@ -104,4 +78,46 @@ export default defineNuxtConfig({
       },
     },
   },
+
+  image: {
+    domains: ['mhouge.dk', 'hitt.mhouge.dk'],
+    provider: 'ipxStatic',
+  },
+
+  modules: ['@nuxt/image', '@nuxt/content', '@nuxt/eslint', '@nuxtjs/sitemap'],
+
+  nitro: {
+    minify: true,
+    prerender: {
+      crawlLinks: true,
+      routes: ['/', '/sitemap.xml'],
+    },
+  },
+
+  postcss: {
+    plugins: {
+      autoprefixer: {},
+      tailwindcss: {},
+    },
+  },
+
+  routeRules: {
+    '/': {
+      prerender: true,
+    },
+  },
+
+  site: {
+    indexable: true,
+    url: 'https://hitt.mhouge.dk',
+  },
+
+  sitemap: {
+    cacheMaxAgeSeconds: 3600,
+    credits: false,
+    discoverImages: true,
+    enabled: true,
+  },
+
+  telemetry: false,
 });
