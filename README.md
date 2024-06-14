@@ -11,7 +11,7 @@ hitt is a command line HTTP testing tool focused on speed and simplicity.
 hitt can be installed using Cargo.
 
 ```sh
-cargo install hitt
+cargo install hitt --locked
 ```
 
 If you do not have Cargo installed, you need to [install it first](https://www.rust-lang.org/learn/get-started).
