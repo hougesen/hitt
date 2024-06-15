@@ -10,7 +10,7 @@ hitt is a command line HTTP testing tool focused on speed and simplicity.
 
 hitt can be installed using Cargo.
 
-```sh
+```shell
 cargo install hitt --locked
 ```
 
@@ -24,31 +24,31 @@ Linux users must install `openssl`.
 
 #### Debian and Ubuntu
 
-```sh
+```shell
 sudo apt-get install pkg-config libssl-dev
 ```
 
 #### Arch Linux
 
-```sh
+```shell
 sudo pacman -S pkg-config openssl
 ```
 
 #### Fedora
 
-```sh
+```shell
 sudo dnf install pkg-config perl-FindBin openssl-devel
 ```
 
 #### Alpine Linux
 
-```sh
+```shell
 apk add pkgconfig openssl-dev
 ```
 
 #### openSUSE
 
-```sh
+```shell
 sudo zypper in libopenssl-devel
 ```
 
@@ -64,8 +64,8 @@ GET https://mhouge.dk/
 
 The file can then be run using the following command:
 
-```sh
-hitt run <PATH_TO_FILE>
+```shell
+hitt run PATH_TO_FILE
 ```
 
 That is all that is need to send a request.
@@ -147,7 +147,7 @@ GET {{ host }}/api
 
 The file can the be run:
 
-```sh
+```shell
 hitt run --var host=localhost:5000 file.http
 ```
 
@@ -155,7 +155,7 @@ hitt run --var host=localhost:5000 file.http
 
 A SSE listener can be started using the `hitt sse` command.
 
-```sh
+```shell
 hitt sse https://sse.dev/test
 ```
 
