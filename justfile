@@ -14,6 +14,7 @@ build-local:
 
 format:
     just --fmt --unstable .
+    stylua .
     mdsf format .
     npx prettier --write --cache .
     cargo fmt
