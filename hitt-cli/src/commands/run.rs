@@ -168,7 +168,10 @@ pub async fn run_command<W: std::io::Write + Send>(
     term: &mut W,
     args: &RunCommandArguments,
 ) -> Result<(), HittCliError> {
-    let http_client = reqwest::Client::new();
+    let http_client = reqwest::ClientBuilder::new()
+        .http09_responses()
+        .build()
+        .unwrap_or_else(|_| reqwest::Client::new());
 
     let timeout = args.timeout.map(core::time::Duration::from_millis);
 
