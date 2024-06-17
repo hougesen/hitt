@@ -6,6 +6,8 @@
 
 hitt is a command line HTTP testing tool focused on speed and simplicity.
 
+![hitt example](/docs/public/hitt-cli-example.png)
+
 ## Install
 
 hitt can be installed using Cargo.
@@ -233,7 +235,7 @@ local hitt = require("hitt")
 vim.keymap.set("n", "<leader>rr", hitt.HittSendRequest, {})
 ```
 
-![hitt neovim window](/docs/public/hitt-neovim-window.png)
+![hitt neovim window](/docs/public/hitt-neovim-example.png)
 
 ### Configuration
 
@@ -242,6 +244,18 @@ vim.keymap.set("n", "<leader>rr", hitt.HittSendRequest, {})
 | window_width  | 80      | Window width in percentage        |
 | window_height | 80      | Window height in percentage       |
 | fail_fast     | false   | Enables the `--fail-fast` options |
+
+#### HTTP syntax highlighting
+
+Syntax highlighting can be enabled by installing the `http` treesitter parser (`:TSInstall http`) and adding a file association for `.http` files.
+
+```lua
+vim.filetype.add({
+    extension = {
+        http = "http",
+    },
+})
+```
 
 ## Disclaimer
 
