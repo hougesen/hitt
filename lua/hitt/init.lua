@@ -82,6 +82,8 @@ local function show_response(content)
         border = "rounded",
         title = "hitt",
     })
+
+    vim.bo.filetype = "http"
 end
 
 function M.HittSendRequest()
