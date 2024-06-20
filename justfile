@@ -32,7 +32,11 @@ test-coverage:
     cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info
     cargo llvm-cov --open
 
+changelog:
+    npx auto-changelog
+
 precommit:
+    just changelog && typos -w CHANGELOG.md
     cargo clean
     just format
     just build
