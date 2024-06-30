@@ -36,13 +36,13 @@ changelog:
     npx auto-changelog
 
 precommit:
-    just changelog && typos -w CHANGELOG.md
+    just changelog
     cargo clean
     just format
     just build
     just lint
     just test
-    typos .
+    typos --exclude CHANGELOG.md .
 
 publish-crates:
     just build
