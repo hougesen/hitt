@@ -35,7 +35,7 @@
     "@tailwindcss/typography": "^0.5.13",
     "autoprefixer": "^10.4.19",
     "eslint-plugin-tailwindcss": "^3.17.4",
-    "eslint-plugin-vuejs-accessibility": "^2.3.0",
+    "eslint-plugin-vuejs-accessibility": "^2.3.1",
     "nuxt": "^3.12.2",
     "postcss": "^8.4.38",
     "prettier": "^3.3.2",
