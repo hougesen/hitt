@@ -111,7 +111,7 @@ mod test_parse_uri_input {
     }
 
     #[test]
-    fn it_should_support_query_paramers() {
+    fn it_should_support_query_parameters() {
         let input_uri = "https://mhouge.dk/";
 
         for i in i8::MIN..i8::MAX {
