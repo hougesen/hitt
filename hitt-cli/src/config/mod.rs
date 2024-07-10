@@ -28,7 +28,7 @@ pub enum HittCommand {
     Completions(CompletionsCommandArguments),
 }
 
-/// Send http request
+/// Send http requests
 #[derive(Args, Debug)]
 pub struct RunCommandArguments {
     /// Path to .http file, or directory if supplied with the `--recursive` argument

@@ -8,6 +8,29 @@ hitt is a command line HTTP testing tool focused on speed and simplicity.
 
 ![hitt example](/docs/public/hitt-cli-example.png)
 
+<!-- START_SECTION:base-command-help -->
+
+```
+hitt 0.0.10
+command line HTTP testing tool focused on speed and simplicity
+Mads Hougesen <mads@mhouge.dk>
+
+Usage: hitt <COMMAND>
+
+Commands:
+  run          Send http request
+  sse          Listen to sse events
+  completions  Generate shell completions
+  help         Print this message or the help of the given subcommand(s)
+
+Options:
+  -h, --help     Print help
+  -V, --version  Print version
+
+```
+
+<!-- END_SECTION:base-command-help -->
+
 ## Install
 
 hitt can be installed using Cargo.
@@ -71,6 +94,31 @@ hitt run PATH_TO_FILE
 ```
 
 That is all that is need to send a request.
+
+<!-- START_SECTION:run-command-help -->
+
+```
+Send http request
+
+Usage: hitt run [OPTIONS] <PATH>
+
+Arguments:
+  <PATH>  Path to .http file, or directory if supplied with the `--recursive` argument
+
+Options:
+      --timeout <TIMEOUT_MS>  Request timeout in milliseconds
+      --var <KEY>=<VALUE>     Variables to pass to request
+  -r, --recursive             Enable to run directory recursively
+      --fail-fast             Exit on error response status code
+      --hide-body             Whether or not to show response body
+      --hide-headers          Whether or not to show response headers
+      --disable-formatting    Disable pretty printing of response body
+  -h, --help                  Print help
+  -V, --version               Print version
+
+```
+
+<!-- END_SECTION:run-command-help -->
 
 ### Arguments
 
@@ -161,9 +209,45 @@ A SSE listener can be started using the `hitt sse` command.
 hitt sse https://sse.dev/test
 ```
 
+<!-- START_SECTION:sse-command-help -->
+
+```
+Listen to sse events
+
+Usage: hitt sse <URL>
+
+Arguments:
+  <URL>
+
+Options:
+  -h, --help     Print help
+  -V, --version  Print version
+
+```
+
+<!-- END_SECTION:sse-command-help -->
+
 ### Shell completions
 
 Shell completions can be generated using `mdsf completions <SHELL>`.
+
+<!-- START_SECTION:completions-command-help -->
+
+```
+Generate shell completions
+
+Usage: hitt completions <SHELL>
+
+Arguments:
+  <SHELL>  [possible values: bash, elvish, fish, powershell, zsh]
+
+Options:
+  -h, --help     Print help
+  -V, --version  Print version
+
+```
+
+<!-- END_SECTION:completions-command-help -->
 
 #### Bash
 
