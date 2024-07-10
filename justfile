@@ -33,7 +33,7 @@ test-coverage:
     cargo llvm-cov --open
 
 changelog:
-    npx auto-changelog
+    npx auto-changelog -u
 
 precommit:
     just changelog
