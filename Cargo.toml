@@ -38,7 +38,7 @@ hitt-sse = { path = "hitt-sse", version = "0.0.11" }
 http = { version = "1.1.0" }
 reqwest = { version = "0.12.5" }
 reqwest-eventsource = { version = "0.6.0" }
-tokio = { version = "1.38.0", features = ["fs", "macros", "rt-multi-thread"] }
+tokio = { version = "1.38.1", features = ["fs", "macros", "rt-multi-thread"] }
 
 [profile.release]
 lto = true
