@@ -13,5 +13,5 @@ categories = ["parser-implementations"]
 rust-version = "1.64"
 
 [dependencies]
-jsonformat = "2.0.0"
-mime = "0.3.17"
+jsonformat = { workspace = true }
+mime = { workspace = true }

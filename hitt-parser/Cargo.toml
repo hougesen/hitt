@@ -16,4 +16,4 @@ rust-version = "1.70"
 http = { workspace = true }
 
 [dev-dependencies]
-once_cell = { version = "1.19.0" }
+once_cell = { workspace = true }
