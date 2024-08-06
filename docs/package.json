@@ -33,7 +33,7 @@
     "@nuxt/eslint": "^0.4.0",
     "@nuxtjs/sitemap": "^5.3.5",
     "@tailwindcss/typography": "^0.5.13",
-    "autoprefixer": "^10.4.19",
+    "autoprefixer": "^10.4.20",
     "eslint-plugin-tailwindcss": "^3.17.4",
     "eslint-plugin-vuejs-accessibility": "^2.4.1",
     "nuxt": "^3.12.4",
