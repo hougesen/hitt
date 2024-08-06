@@ -10,7 +10,7 @@ exclude = ["docs", "examples"]
 resolver = "2"
 
 [workspace.package]
-version = "0.0.11"
+version = "0.0.12"
 authors = ["Mads Hougesen <mads@mhouge.dk>"]
 edition = "2021"
 license = "MIT"
@@ -34,10 +34,10 @@ clap_complete = { version = "4.5.12" }
 crossterm = { version = "0.27.0" }
 eventsource-stream = { version = "0.2.3" }
 futures = { version = "0.3.30" }
-hitt-formatter = { path = "hitt-formatter", version = "0.0.11" }
-hitt-parser = { path = "hitt-parser", version = "0.0.11" }
-hitt-request = { path = "hitt-request", version = "0.0.11" }
-hitt-sse = { path = "hitt-sse", version = "0.0.11" }
+hitt-formatter = { path = "hitt-formatter", version = "0.0.12" }
+hitt-parser = { path = "hitt-parser", version = "0.0.12" }
+hitt-request = { path = "hitt-request", version = "0.0.12" }
+hitt-sse = { path = "hitt-sse", version = "0.0.12" }
 http = { version = "1.1.0" }
 ignore = { version = "0.4.22" }
 jsonformat = { version = "2.0.0" }
