@@ -12,5 +12,8 @@ export default {
   theme: {
     extend: {},
   },
-  plugins: [require('@tailwindcss/typography')],
+  plugins: [
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    require('@tailwindcss/typography'),
+  ],
 } satisfies Config;
