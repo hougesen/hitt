@@ -2,7 +2,7 @@
 const props = defineProps({
   href: {
     type: String,
-    default: '',
+    default: "",
   },
   blank: {
     type: Boolean,
@@ -14,7 +14,7 @@ const external = computed(() => {
   try {
     const url = new URL(props?.href);
 
-    return url?.hostname !== 'hitt.mhouge.dk';
+    return url?.hostname !== "hitt.mhouge.dk";
   } catch {
     return false;
   }

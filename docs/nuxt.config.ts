@@ -2,49 +2,49 @@ export default defineNuxtConfig({
   app: {
     head: {
       htmlAttrs: {
-        lang: 'en',
+        lang: "en",
       },
       link: [
         {
-          href: 'https://mhouge.dk/apple-touch-icon.png',
-          rel: 'apple-touch-icon',
-          sizes: '180x180',
+          href: "https://mhouge.dk/apple-touch-icon.png",
+          rel: "apple-touch-icon",
+          sizes: "180x180",
         },
         {
-          href: 'https://mhouge.dk/favicon-32x32.png',
-          rel: 'icon',
-          sizes: '32x32',
-          type: 'image/png',
+          href: "https://mhouge.dk/favicon-32x32.png",
+          rel: "icon",
+          sizes: "32x32",
+          type: "image/png",
         },
         {
-          href: 'https://mhouge.dk/favicon-16x16.png',
-          rel: 'icon',
-          sizes: '16x16',
-          type: 'image/png',
+          href: "https://mhouge.dk/favicon-16x16.png",
+          rel: "icon",
+          sizes: "16x16",
+          type: "image/png",
         },
         {
-          href: 'https://mhouge.dk/site.webmanifest',
-          rel: 'manifest',
+          href: "https://mhouge.dk/site.webmanifest",
+          rel: "manifest",
         },
         {
-          color: '#5bbad5',
-          href: 'https://mhouge.dk/safari-pinned-tab.svg',
-          rel: 'mask-icon',
+          color: "#5bbad5",
+          href: "https://mhouge.dk/safari-pinned-tab.svg",
+          rel: "mask-icon",
         },
         {
-          href: 'https://mhouge.dk/favicon.ico',
-          rel: 'shortcut icon',
-          type: 'image/x-icon',
+          href: "https://mhouge.dk/favicon.ico",
+          rel: "shortcut icon",
+          type: "image/x-icon",
         },
       ],
       meta: [
         {
-          content: '#da532c',
-          name: 'msapplication-TileColor',
+          content: "#da532c",
+          name: "msapplication-TileColor",
         },
         {
-          content: '#ffffff',
-          name: 'theme-color',
+          content: "#ffffff",
+          name: "theme-color",
         },
       ],
     },
@@ -56,14 +56,14 @@ export default defineNuxtConfig({
       cacheContents: true,
     },
     highlight: {
-      langs: ['http', 'sh', 'lua', 'bash', 'powershell', 'zsh', 'fish'],
+      langs: ["http", "sh", "lua", "bash", "powershell", "zsh", "fish"],
       theme: {
-        default: 'one-dark-pro',
+        default: "one-dark-pro",
       },
     },
   },
 
-  css: ['~/assets/css/main.css'],
+  css: ["~/assets/css/main.css"],
 
   devtools: {
     enabled: true,
@@ -80,17 +80,17 @@ export default defineNuxtConfig({
   },
 
   image: {
-    domains: ['mhouge.dk', 'hitt.mhouge.dk'],
-    provider: 'ipxStatic',
+    domains: ["mhouge.dk", "hitt.mhouge.dk"],
+    provider: "ipxStatic",
   },
 
-  modules: ['@nuxt/image', '@nuxt/content', '@nuxt/eslint', '@nuxtjs/sitemap'],
+  modules: ["@nuxt/image", "@nuxt/content", "@nuxt/eslint", "@nuxtjs/sitemap"],
 
   nitro: {
     minify: true,
     prerender: {
       crawlLinks: true,
-      routes: ['/', '/sitemap.xml'],
+      routes: ["/", "/sitemap.xml"],
     },
   },
 
@@ -102,14 +102,14 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
-    '/': {
+    "/": {
       prerender: true,
     },
   },
 
   site: {
     indexable: true,
-    url: 'https://hitt.mhouge.dk',
+    url: "https://hitt.mhouge.dk",
   },
 
   sitemap: {

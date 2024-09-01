@@ -7,3 +7,5 @@
 .idea
 
 mutants.out*
+
+.env

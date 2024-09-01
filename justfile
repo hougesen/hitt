@@ -16,7 +16,7 @@ format:
     just --fmt --unstable .
     stylua .
     mdsf format .
-    npx prettier --write --cache .
+    npx prettier --write --cache --ignore-unknown .
     cargo fmt
 
 lint:
