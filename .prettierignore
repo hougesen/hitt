@@ -1,5 +1,7 @@
+.github/workflows/release.yml
 docs/.nuxt
 docs/.output
-docs/node_modules
 docs/dist
+docs/node_modules
 docs/pnpm-lock.yaml
+hitt-cli/wix/main.wxs
