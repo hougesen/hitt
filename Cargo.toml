@@ -43,11 +43,17 @@ ignore = { version = "0.4.22" }
 jsonformat = { version = "2.0.0" }
 mime = { version = "0.3.17" }
 once_cell = { version = "1.19.0" }
-reqwest = { version = "0.12.7", features = [
+reqwest = { version = "0.12.7", default-features = false, features = [
   "brotli",
+  "charset",
+  "cookies",
   "deflate",
   "gzip",
+  "http2",
   "json",
+  "macos-system-configuration",
+  "rustls-tls",
+  "zstd",
 ] }
 reqwest-eventsource = { version = "0.6.0" }
 tempfile = { version = "3.12.0" }
