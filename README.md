@@ -36,13 +36,13 @@ Options:
 ### Linux & MacOS
 
 ```shell
-curl --proto '=https' --tlsv1.2 -LsSf https://github.com/hougesen/hitt/releases/download/latest/hitt-installer.sh | sh
+curl --proto '=https' --tlsv1.2 -LsSf https://github.com/hougesen/hitt/releases/latest/download/hitt-installer.sh | sh
 ```
 
 ### Windows
 
 ```powershell
-powershell -ExecutionPolicy ByPass -c "irm https://github.com/hougesen/hitt/releases/download/latest/hitt-installer.ps1 | iex"
+powershell -ExecutionPolicy ByPass -c "irm https://github.com/hougesen/hitt/releases/latest/download/hitt-installer.ps1 | iex"
 ```
 
 ### Cargo
@@ -57,16 +57,16 @@ If you do not have Cargo installed, you need to [install it first](https://www.r
 
 ### npm/npx
 
-You can install hitt using npm:
+You can install hitt using [npm](https://www.npmjs.com/package/hitt-cli):
 
 ```shell
-npm install -g hitt
+npm install -g hitt-cli
 ```
 
 or run it directly using npx:
 
 ```shell
-npx hitt run hello-world.http
+npx hitt-cli run hello-world.http
 ```
 
 ### Homebrew
