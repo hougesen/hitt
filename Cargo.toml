@@ -43,7 +43,12 @@ ignore = { version = "0.4.22" }
 jsonformat = { version = "2.0.0" }
 mime = { version = "0.3.17" }
 once_cell = { version = "1.19.0" }
-reqwest = { version = "0.12.7" }
+reqwest = { version = "0.12.7", features = [
+  "brotli",
+  "deflate",
+  "gzip",
+  "json",
+] }
 reqwest-eventsource = { version = "0.6.0" }
 tempfile = { version = "3.12.0" }
 tokio = { version = "1.40.0", features = ["fs", "macros", "rt-multi-thread"] }
@@ -59,7 +64,12 @@ installers = ["shell", "powershell", "npm", "homebrew", "msi"]
 # A GitHub repo to push Homebrew formulas to
 tap = "hougesen/homebrew-tap"
 # Target platforms to build apps for (Rust target-triple syntax)
-targets = ["aarch64-apple-darwin", "x86_64-apple-darwin", "x86_64-unknown-linux-gnu", "x86_64-pc-windows-msvc"]
+targets = [
+  "aarch64-apple-darwin",
+  "x86_64-apple-darwin",
+  "x86_64-unknown-linux-gnu",
+  "x86_64-pc-windows-msvc",
+]
 # The archive format to use for windows builds (defaults .zip)
 windows-archive = ".tar.gz"
 # The archive format to use for non-windows builds (defaults .tar.xz)
