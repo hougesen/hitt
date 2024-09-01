@@ -11,14 +11,14 @@ hitt is a command line HTTP testing tool focused on speed and simplicity.
 <!-- START_SECTION:base-command-help -->
 
 ```
-hitt 0.0.11
+hitt 0.0.14
 command line HTTP testing tool focused on speed and simplicity
 Mads Hougesen <mads@mhouge.dk>
 
 Usage: hitt <COMMAND>
 
 Commands:
-  run          Send http request
+  run          Send http requests
   sse          Listen to sse events
   completions  Generate shell completions
   help         Print this message or the help of the given subcommand(s)
@@ -96,7 +96,7 @@ That is all that is need to send a request.
 <!-- START_SECTION:run-command-help -->
 
 ```
-Send http request
+Send http requests
 
 Usage: hitt run [OPTIONS] <PATH>
 
