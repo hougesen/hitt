@@ -41,42 +41,6 @@ cargo install hitt --locked
 
 If you do not have Cargo installed, you need to [install it first](https://www.rust-lang.org/learn/get-started).
 
-### Dependencies
-
-`hitt` does not require any external dependencies for Windows and macOS user.
-
-Linux users must install `openssl`.
-
-#### Debian and Ubuntu
-
-```shell
-sudo apt-get install pkg-config libssl-dev
-```
-
-#### Arch Linux
-
-```shell
-sudo pacman -S pkg-config openssl
-```
-
-#### Fedora
-
-```shell
-sudo dnf install pkg-config perl-FindBin openssl-devel
-```
-
-#### Alpine Linux
-
-```shell
-apk add pkgconfig openssl-dev
-```
-
-#### openSUSE
-
-```shell
-sudo zypper in libopenssl-devel
-```
-
 ## Usage
 
 To send a request create a file ending in `.http`.
