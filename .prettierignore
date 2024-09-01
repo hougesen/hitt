@@ -1,3 +1,4 @@
+.github/workflows/release.yml
 docs/.nuxt
 docs/.output
 docs/dist
