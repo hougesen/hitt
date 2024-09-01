@@ -38,6 +38,7 @@ changelog:
 precommit:
     just changelog
     cargo clean
+    cargo dist init --yes
     just format
     just build
     just lint
