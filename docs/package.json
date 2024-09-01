@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@nuxt/devtools": "^1.4.1",
-    "@nuxt/eslint": "^0.5.4",
+    "@nuxt/eslint": "^0.5.5",
     "@nuxtjs/sitemap": "^5.3.5",
     "@tailwindcss/typography": "^0.5.15",
     "autoprefixer": "^10.4.20",
