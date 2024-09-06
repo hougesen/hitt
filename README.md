@@ -61,6 +61,8 @@ You can install hitt using [npm](https://www.npmjs.com/package/hitt-cli):
 
 ```shell
 npm install -g hitt-cli
+
+hitt-cli run hello-world.http
 ```
 
 or run it directly using npx:
@@ -227,7 +229,7 @@ Options:
 
 ### Shell completions
 
-Shell completions can be generated using `mdsf completions <SHELL>`.
+Shell completions can be generated using `hitt completions <SHELL>`.
 
 <!-- START_SECTION:completions-command-help -->
 
@@ -252,7 +254,7 @@ Options:
 Add the following to your `.bashrc`.
 
 ```bash
-eval "$(mdsf completions bash)"
+eval "$(hitt completions bash)"
 ```
 
 #### Bash
@@ -260,7 +262,7 @@ eval "$(mdsf completions bash)"
 Add the following to your `.zshrc`.
 
 ```bash
-eval "$(mdsf completions zsh)"
+eval "$(hitt completions zsh)"
 ```
 
 #### Fish
@@ -268,7 +270,7 @@ eval "$(mdsf completions zsh)"
 Add the following to `~/.config/fish/config.fish`.
 
 ```fish
-mdsf completions fish | source
+hitt completions fish | source
 ```
 
 #### PowerShell
@@ -276,7 +278,7 @@ mdsf completions fish | source
 Add the following to your PowerShell configuration (Can be found by running `$PROFILE`).
 
 ```powershell
-Invoke-Expression (&mdsf completions powershell)
+Invoke-Expression (&hitt completions powershell)
 ```
 
 #### Elvish
@@ -284,7 +286,7 @@ Invoke-Expression (&mdsf completions powershell)
 Add the following to `~/.elvish/rc.elv`.
 
 ```elvish
-eval (mdsf completions elvish)
+eval (hitt completions elvish)
 ```
 
 ## Neovim
