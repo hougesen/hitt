@@ -39,7 +39,7 @@ hitt-parser = { path = "hitt-parser", version = "0.0.16" }
 hitt-request = { path = "hitt-request", version = "0.0.16" }
 hitt-sse = { path = "hitt-sse", version = "0.0.16" }
 http = { version = "1.1.0" }
-ignore = { version = "0.4.22" }
+ignore = { version = "0.4.23" }
 jsonformat = { version = "2.0.0" }
 mime = { version = "0.3.17" }
 once_cell = { version = "1.19.0" }
