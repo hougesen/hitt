@@ -30,7 +30,7 @@ exclude = ["www", "examples"]
 
 [workspace.dependencies]
 clap = { version = "4.5.18", features = ["derive"] }
-clap_complete = { version = "4.5.28" }
+clap_complete = { version = "4.5.29" }
 crossterm = { version = "0.28.1" }
 eventsource-stream = { version = "0.2.3" }
 futures = { version = "0.3.30" }
