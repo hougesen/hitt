@@ -29,7 +29,7 @@ categories = [
 exclude = ["www", "examples"]
 
 [workspace.dependencies]
-clap = { version = "4.5.18", features = ["derive"] }
+clap = { version = "4.5.19", features = ["derive"] }
 clap_complete = { version = "4.5.29" }
 crossterm = { version = "0.28.1" }
 eventsource-stream = { version = "0.2.3" }
