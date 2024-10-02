@@ -609,7 +609,7 @@ checksum = "d231dfb89cfffdbc30e7fc41579ed6066ad03abda9e567ccafae602b97ec5024"
 
 [[package]]
 name = "hitt"
-version = "0.0.16"
+version = "0.0.17"
 dependencies = [
  "clap",
  "clap_complete",
@@ -628,7 +628,7 @@ dependencies = [
 
 [[package]]
 name = "hitt-formatter"
-version = "0.0.16"
+version = "0.0.17"
 dependencies = [
  "jsonformat",
  "mime",
@@ -636,7 +636,7 @@ dependencies = [
 
 [[package]]
 name = "hitt-parser"
-version = "0.0.16"
+version = "0.0.17"
 dependencies = [
  "http",
  "once_cell",
@@ -644,7 +644,7 @@ dependencies = [
 
 [[package]]
 name = "hitt-request"
-version = "0.0.16"
+version = "0.0.17"
 dependencies = [
  "hitt-parser",
  "http",
@@ -654,7 +654,7 @@ dependencies = [
 
 [[package]]
 name = "hitt-sse"
-version = "0.0.16"
+version = "0.0.17"
 dependencies = [
  "eventsource-stream",
  "futures",
