@@ -62,7 +62,7 @@ You can install hitt using [npm](https://www.npmjs.com/package/hitt-cli):
 ```shell
 npm install -g hitt-cli
 
-hitt-cli run hello-world.http
+hitt run hello-world.http
 ```
 
 or run it directly using npx:
