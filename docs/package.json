@@ -29,7 +29,7 @@
     "lint:fix": "eslint . --fix"
   },
   "devDependencies": {
-    "@nuxt/devtools": "^1.5.1",
+    "@nuxt/devtools": "^1.6.0",
     "@nuxt/eslint": "^0.5.7",
     "@nuxtjs/sitemap": "^6.1.1",
     "@tailwindcss/typography": "^0.5.15",
