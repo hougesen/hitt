@@ -33,7 +33,7 @@ clap = { version = "4.5.20", features = ["derive"] }
 clap_complete = { version = "4.5.36" }
 crossterm = { version = "0.28.1" }
 eventsource-stream = { version = "0.2.3" }
-futures = { version = "0.3.30" }
+futures = { version = "0.3.31" }
 hitt-formatter = { path = "hitt-formatter", version = "0.0.17" }
 hitt-parser = { path = "hitt-parser", version = "0.0.17" }
 hitt-request = { path = "hitt-request", version = "0.0.17" }
