@@ -20,7 +20,7 @@ importers:
         version: 1.6.0(rollup@4.24.0)(vite@5.4.8(@types/node@20.14.2)(terser@5.31.1))(vue@3.5.12(typescript@5.6.3))(webpack-sources@3.2.3)
       '@nuxt/eslint':
         specifier: ^0.6.1
-        version: 0.6.1(eslint@8.57.0)(magicast@0.3.5)(rollup@4.24.0)(typescript@5.6.3)(vite-plugin-eslint2@5.0.1(@types/eslint@9.6.1)(eslint@8.57.0)(rollup@4.24.0)(vite@5.4.8(@types/node@20.14.2)(terser@5.31.1)))(vite@5.4.8(@types/node@20.14.2)(terser@5.31.1))(webpack-sources@3.2.3)
+        version: 0.6.1(eslint@8.57.0)(magicast@0.3.5)(rollup@4.24.0)(typescript@5.6.3)(vite-plugin-eslint2@5.0.3(@types/eslint@9.6.1)(eslint@8.57.0)(rollup@4.24.0)(vite@5.4.8(@types/node@20.14.2)(terser@5.31.1)))(vite@5.4.8(@types/node@20.14.2)(terser@5.31.1))(webpack-sources@3.2.3)
       '@nuxtjs/sitemap':
         specifier: ^6.1.4
         version: 6.1.4(h3@1.13.0)(magicast@0.3.5)(rollup@4.24.0)(vite@5.4.8(@types/node@20.14.2)(terser@5.31.1))(vue@3.5.12(typescript@5.6.3))(webpack-sources@3.2.3)
@@ -52,8 +52,8 @@ importers:
         specifier: ^5.6.3
         version: 5.6.3
       vite-plugin-eslint2:
-        specifier: ^5.0.1
-        version: 5.0.1(@types/eslint@9.6.1)(eslint@8.57.0)(rollup@4.24.0)(vite@5.4.8(@types/node@20.14.2)(terser@5.31.1))
+        specifier: ^5.0.3
+        version: 5.0.3(@types/eslint@9.6.1)(eslint@8.57.0)(rollup@4.24.0)(vite@5.4.8(@types/node@20.14.2)(terser@5.31.1))
       vue:
         specifier: ^3.5.12
         version: 3.5.12(typescript@5.6.3)
@@ -1190,6 +1190,15 @@ packages:
 
   '@rollup/pluginutils@5.1.2':
     resolution: {integrity: sha512-/FIdS3PyZ39bjZlwqFnWqCOVnW7o963LtKMwQOD0NhQqw22gSr2YY1afu3FxRip4ZCZNsD5jq6Aaz6QV3D/Njw==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^1.20.0||^2.0.0||^3.0.0||^4.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+
+  '@rollup/pluginutils@5.1.3':
+    resolution: {integrity: sha512-Pnsb6f32CD2W3uCaLZIzDmeFyQ2b8UWMFI7xtwUezpcGBDVDW6y9XgAWIlARiGAo6eNF5FK5aQTr0LFyNyqq5A==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
       rollup: ^1.20.0||^2.0.0||^3.0.0||^4.0.0
@@ -4753,14 +4762,14 @@ packages:
       vue-tsc:
         optional: true
 
-  vite-plugin-eslint2@5.0.1:
-    resolution: {integrity: sha512-Pr/Df4mpYtKoYOFMRQonoDE/SH56ah2cbtjyQmRveh+Wz2pgk/RfTM3ApZ6xrAEpmIyBctfy5JoBmcWmikKTlg==}
+  vite-plugin-eslint2@5.0.3:
+    resolution: {integrity: sha512-kbjjbSyxSYK1oK0kOnSVs2er8DhqNbVA5pNN21SJo8AldQIOgG4LVQvwp6ISYMDXQaaBMOCrmXFTfGkQUjIZ1g==}
     engines: {node: '>=18'}
     peerDependencies:
-      '@types/eslint': ^7.0.0 || ^8.0.0 || ^9.0.0-0
-      eslint: ^7.0.0 || ^8.0.0 || ^9.0.0-0
+      '@types/eslint': ^7.0.0 || ^8.0.0 || ^9.0.0
+      eslint: ^7.0.0 || ^8.0.0 || ^9.0.0
       rollup: ^2.0.0 || ^3.0.0 || ^4.0.0
-      vite: ^2.0.0 || ^3.0.0 || ^4.0.0 || ^5.0.0
+      vite: ^2.0.0 || ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0
     peerDependenciesMeta:
       '@types/eslint':
         optional: true
@@ -5874,7 +5883,7 @@ snapshots:
       - supports-color
       - typescript
 
-  '@nuxt/eslint@0.6.1(eslint@8.57.0)(magicast@0.3.5)(rollup@4.24.0)(typescript@5.6.3)(vite-plugin-eslint2@5.0.1(@types/eslint@9.6.1)(eslint@8.57.0)(rollup@4.24.0)(vite@5.4.8(@types/node@20.14.2)(terser@5.31.1)))(vite@5.4.8(@types/node@20.14.2)(terser@5.31.1))(webpack-sources@3.2.3)':
+  '@nuxt/eslint@0.6.1(eslint@8.57.0)(magicast@0.3.5)(rollup@4.24.0)(typescript@5.6.3)(vite-plugin-eslint2@5.0.3(@types/eslint@9.6.1)(eslint@8.57.0)(rollup@4.24.0)(vite@5.4.8(@types/node@20.14.2)(terser@5.31.1)))(vite@5.4.8(@types/node@20.14.2)(terser@5.31.1))(webpack-sources@3.2.3)':
     dependencies:
       '@eslint/config-inspector': 0.5.6(eslint@8.57.0)
       '@nuxt/devtools-kit': 1.6.0(magicast@0.3.5)(rollup@4.24.0)(vite@5.4.8(@types/node@20.14.2)(terser@5.31.1))(webpack-sources@3.2.3)
@@ -5891,7 +5900,7 @@ snapshots:
       pathe: 1.1.2
       unimport: 3.13.1(rollup@4.24.0)(webpack-sources@3.2.3)
     optionalDependencies:
-      vite-plugin-eslint2: 5.0.1(@types/eslint@9.6.1)(eslint@8.57.0)(rollup@4.24.0)(vite@5.4.8(@types/node@20.14.2)(terser@5.31.1))
+      vite-plugin-eslint2: 5.0.3(@types/eslint@9.6.1)(eslint@8.57.0)(rollup@4.24.0)(vite@5.4.8(@types/node@20.14.2)(terser@5.31.1))
     transitivePeerDependencies:
       - bufferutil
       - magicast
@@ -6274,6 +6283,14 @@ snapshots:
       '@types/estree': 1.0.6
       estree-walker: 2.0.2
       picomatch: 2.3.1
+    optionalDependencies:
+      rollup: 4.24.0
+
+  '@rollup/pluginutils@5.1.3(rollup@4.24.0)':
+    dependencies:
+      '@types/estree': 1.0.6
+      estree-walker: 2.0.2
+      picomatch: 4.0.2
     optionalDependencies:
       rollup: 4.24.0
 
@@ -10754,9 +10771,9 @@ snapshots:
       typescript: 5.6.3
       vue-tsc: 2.1.10(typescript@5.6.3)
 
-  vite-plugin-eslint2@5.0.1(@types/eslint@9.6.1)(eslint@8.57.0)(rollup@4.24.0)(vite@5.4.8(@types/node@20.14.2)(terser@5.31.1)):
+  vite-plugin-eslint2@5.0.3(@types/eslint@9.6.1)(eslint@8.57.0)(rollup@4.24.0)(vite@5.4.8(@types/node@20.14.2)(terser@5.31.1)):
     dependencies:
-      '@rollup/pluginutils': 5.1.2(rollup@4.24.0)
+      '@rollup/pluginutils': 5.1.3(rollup@4.24.0)
       debug: 4.3.7
       eslint: 8.57.0
       vite: 5.4.8(@types/node@20.14.2)(terser@5.31.1)
