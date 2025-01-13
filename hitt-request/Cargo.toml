@@ -10,7 +10,6 @@ keywords.workspace = true
 homepage.workspace = true
 readme = "README.md"
 categories = ["web-programming::http-client"]
-rust-version = "1.70"
 
 [dependencies]
 hitt-parser = { workspace = true }

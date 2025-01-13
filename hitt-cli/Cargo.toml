@@ -11,7 +11,6 @@ homepage.workspace = true
 documentation.workspace = true
 readme.workspace = true
 categories.workspace = true
-rust-version = "1.74"
 
 [package.metadata.wix]
 upgrade-guid = "C48B5625-D4B1-4010-AB90-5A691543995F"
@@ -26,6 +25,7 @@ path = "src/main.rs"
 [dependencies]
 clap = { workspace = true }
 clap_complete = { workspace = true }
+clap_complete_nushell = { workspace = true }
 crossterm = { workspace = true }
 futures = { workspace = true }
 hitt-formatter = { workspace = true }

@@ -31,6 +31,7 @@ exclude = ["www", "examples"]
 [workspace.dependencies]
 clap = { version = "4.5.26", features = ["derive"] }
 clap_complete = { version = "4.5.42" }
+clap_complete_nushell = { version = "4.5.5" }
 crossterm = { version = "0.28.1" }
 eventsource-stream = { version = "0.2.3" }
 futures = { version = "0.3.31" }

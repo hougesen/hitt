@@ -11,6 +11,7 @@ use crate::{
     terminal::{handle_response, print_running_file},
 };
 
+#[inline]
 fn build_variable_map(
     var: &Option<Vec<String>>,
 ) -> Result<std::collections::HashMap<String, String>, HittCliError> {
