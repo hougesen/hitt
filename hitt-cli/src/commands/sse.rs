@@ -12,8 +12,8 @@ pub async fn sse_command<W: std::io::Write + Send>(
     term: &mut W,
     args: &SSECommandArguments,
 ) -> Result<(), HittCliError> {
-    let x = reqwest::Url::parse(&args.url)
-        .map_err(|_| HittCliError::SSEParseUrl(args.url.to_owned()))?;
+    let x =
+        reqwest::Url::parse(&args.url).map_err(|_| HittCliError::SSEParseUrl(args.url.clone()))?;
 
     let (tx, mut rx) = unbounded_channel::<hitt_sse::Event>();
 

@@ -9,6 +9,7 @@ mod completions;
 mod run;
 mod sse;
 
+#[inline]
 pub async fn execute_command<W: std::io::Write + Send>(term: &mut W) -> Result<(), HittCliError> {
     let cli = Cli::parse();
 
