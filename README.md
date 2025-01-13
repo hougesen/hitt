@@ -11,7 +11,7 @@ hitt is a command line HTTP testing tool focused on speed and simplicity.
 <!-- START_SECTION:base-command-help -->
 
 ```
-hitt 0.0.14
+hitt 0.0.17
 command line HTTP testing tool focused on speed and simplicity
 Mads Hougesen <mads@mhouge.dk>
 
@@ -239,7 +239,7 @@ Generate shell completions
 Usage: hitt completions <SHELL>
 
 Arguments:
-  <SHELL>  [possible values: bash, elvish, fish, powershell, zsh]
+  <SHELL>  [possible values: bash, elvish, fish, nushell, powershell, zsh]
 
 Options:
   -h, --help     Print help
