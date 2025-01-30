@@ -84,7 +84,7 @@ export default defineNuxtConfig({
     provider: "ipxStatic",
   },
 
-  modules: ["@nuxt/image", "@nuxt/content", "@nuxt/eslint", "@nuxtjs/sitemap"],
+  modules: ["@nuxt/image", "@nuxtjs/sitemap", "@nuxt/content", "@nuxt/eslint"],
 
   nitro: {
     minify: true,
