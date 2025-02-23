@@ -29,7 +29,7 @@ pub fn completion_command<W: std::io::Write + Send>(
         }
 
         TerminalShell::Zsh => {
-            clap_complete::generate(clap_complete::Shell::Zsh, &mut cmd, cmd_name, term)
+            clap_complete::generate(clap_complete::Shell::Zsh, &mut cmd, cmd_name, term);
         }
 
         TerminalShell::Nushell => {
