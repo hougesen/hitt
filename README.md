@@ -6,7 +6,7 @@
 
 hitt is a command line HTTP testing tool focused on speed and simplicity.
 
-![hitt example](/docs/public/hitt-cli-example.png)
+![hitt example](/docs/images/hitt-cli-example.png)
 
 <!-- START_SECTION:base-command-help -->
 
@@ -319,7 +319,7 @@ local hitt = require("hitt")
 vim.keymap.set("n", "<leader>rr", hitt.HittSendRequest, {})
 ```
 
-![hitt neovim window](/docs/public/hitt-neovim-example.png)
+![hitt neovim window](/docs/images/hitt-neovim-example.png)
 
 ### Configuration
 
