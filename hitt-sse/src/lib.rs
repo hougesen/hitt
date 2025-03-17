@@ -1,6 +1,6 @@
 use futures::StreamExt;
 use reqwest_eventsource::EventSource;
-use tokio::sync::mpsc::{error::SendError, UnboundedSender};
+use tokio::sync::mpsc::{UnboundedSender, error::SendError};
 
 pub type Error = reqwest_eventsource::Error;
 

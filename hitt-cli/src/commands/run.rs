@@ -1,11 +1,11 @@
 use std::sync::Arc;
 
-use crossterm::{style::Print, QueueableCommand};
+use crossterm::{QueueableCommand, style::Print};
 use hitt_parser::HittRequest;
 use hitt_request::send_request;
 
 use crate::{
-    config::{variables::parse_variable_argument, RunCommandArguments},
+    config::{RunCommandArguments, variables::parse_variable_argument},
     error::HittCliError,
     fs::{find_http_files, parse_file, parse_files},
     terminal::{handle_response, print_running_file},

@@ -1,6 +1,6 @@
 use core::str::FromStr;
 
-use crate::{error::RequestParseError, variables::parse_variable, RequestToken};
+use crate::{RequestToken, error::RequestParseError, variables::parse_variable};
 
 #[derive(Debug)]
 pub struct HeaderToken {
@@ -221,8 +221,9 @@ mod test_parse_header {
             };
 
             {
-                let input =
-                format!("{open}{extra_spaces}{key}{extra_spaces}{close}:{extra_spaces}{open}{extra_spaces}{value}{extra_spaces}{close}");
+                let input = format!(
+                    "{open}{extra_spaces}{key}{extra_spaces}{close}:{extra_spaces}{open}{extra_spaces}{value}{extra_spaces}{close}"
+                );
 
                 let result = parse_header(&mut to_enum_chars(&input), &vars)
                     .expect("it to be parseable")

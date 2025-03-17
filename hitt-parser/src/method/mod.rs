@@ -1,6 +1,6 @@
 use core::str::FromStr;
 
-use crate::{error::RequestParseError, variables::parse_variable, RequestToken};
+use crate::{RequestToken, error::RequestParseError, variables::parse_variable};
 
 impl From<http::method::Method> for RequestToken {
     #[inline]

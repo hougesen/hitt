@@ -1,5 +1,5 @@
 use error::RequestParseError;
-use header::{parse_header, HeaderToken};
+use header::{HeaderToken, parse_header};
 use method::parse_method_input;
 use uri::parse_uri_input;
 use variables::{parse_variable, parse_variable_declaration};
@@ -158,7 +158,7 @@ mod test_tokenize {
 
     use once_cell::sync::Lazy;
 
-    use crate::{error::RequestParseError, tokenize, RequestToken};
+    use crate::{RequestToken, error::RequestParseError, tokenize};
 
     static EMPTY_VARS: Lazy<std::collections::HashMap<String, String>> =
         Lazy::new(std::collections::HashMap::new);
@@ -172,8 +172,9 @@ mod test_tokenize {
         let header1_value = "application/json";
         let body_input = "{ \"key\": \"value\"  }";
 
-        let input_request =
-            format!("{method_input} {uri_input} {http_version}\n{header1_key}: {header1_value}\n\n{body_input}");
+        let input_request = format!(
+            "{method_input} {uri_input} {http_version}\n{header1_key}: {header1_value}\n\n{body_input}"
+        );
 
         let tokens =
             tokenize(&input_request, &EMPTY_VARS).expect("it to return Result<Vec<RequestToken>>");
@@ -577,7 +578,7 @@ mod test_partial_http_request {
 
     use http::{HeaderMap, Uri};
 
-    use crate::{error::RequestParseError, PartialHittRequest};
+    use crate::{PartialHittRequest, error::RequestParseError};
 
     #[test]
     fn build_should_reject_if_no_uri() {
