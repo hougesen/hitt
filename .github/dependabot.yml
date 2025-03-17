@@ -3,12 +3,12 @@ updates:
   - package-ecosystem: cargo
     directory: /
     schedule:
-      interval: monthly
+      interval: weekly
     open-pull-requests-limit: 100
   - package-ecosystem: cargo
     directory: /hitt-cli
     schedule:
-      interval: monthly
+      interval: weekly
     open-pull-requests-limit: 100
   - package-ecosystem: cargo
     directory: /hitt-formatter
@@ -18,20 +18,20 @@ updates:
   - package-ecosystem: cargo
     directory: /hitt-parser
     schedule:
-      interval: monthly
+      interval: weekly
     open-pull-requests-limit: 100
   - package-ecosystem: cargo
     directory: /hitt-request
     schedule:
-      interval: monthly
+      interval: weekly
     open-pull-requests-limit: 100
   - package-ecosystem: cargo
     directory: /hitt-sse
     schedule:
-      interval: monthly
+      interval: weekly
     open-pull-requests-limit: 100
   - package-ecosystem: github-actions
     directory: /
     schedule:
-      interval: monthly
+      interval: weekly
     open-pull-requests-limit: 100
