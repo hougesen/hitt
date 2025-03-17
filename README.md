@@ -302,8 +302,8 @@ hitt can be run directly from Neovim.
 
 ```lua
 local hitt_plugin = {
-    "hougesen/hitt",
-    opts = {},
+	"hougesen/hitt",
+	opts = {},
 }
 ```
 
@@ -335,9 +335,9 @@ Syntax highlighting can be enabled by installing the `http` treesitter parser (`
 
 ```lua
 vim.filetype.add({
-    extension = {
-        http = "http",
-    },
+	extension = {
+		http = "http",
+	},
 })
 ```
 

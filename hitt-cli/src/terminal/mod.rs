@@ -115,7 +115,9 @@ mod test_handle_response {
             response.duration.as_millis(),
         );
 
-        let headers = format!("\x1B[38;5;3m{n}\x1B[39m: {v}\n\x1B[38;5;3m{n}\x1B[39m: {n}\n\x1B[38;5;3m{v}\x1B[39m: {v}\n\x1B[38;5;3m{v}\x1B[39m: {n}\n");
+        let headers = format!(
+            "\x1B[38;5;3m{n}\x1B[39m: {v}\n\x1B[38;5;3m{n}\x1B[39m: {n}\n\x1B[38;5;3m{v}\x1B[39m: {v}\n\x1B[38;5;3m{v}\x1B[39m: {n}\n"
+        );
 
         let body = format!("\n\x1B[38;5;3m{}\x1B[39m\n\n", response.body);
 
@@ -273,7 +275,9 @@ mod test_handle_response {
             response.duration.as_millis(),
         );
 
-        let headers = format!("\x1B[38;5;3m{n}\x1B[39m: {v}\n\x1B[38;5;3m{n}\x1B[39m: {n}\n\x1B[38;5;3m{v}\x1B[39m: {v}\n\x1B[38;5;3m{v}\x1B[39m: {n}\n");
+        let headers = format!(
+            "\x1B[38;5;3m{n}\x1B[39m: {v}\n\x1B[38;5;3m{n}\x1B[39m: {n}\n\x1B[38;5;3m{v}\x1B[39m: {v}\n\x1B[38;5;3m{v}\x1B[39m: {n}\n"
+        );
 
         let expected_response = format!("{status}{headers}");
 
@@ -328,7 +332,9 @@ mod test_handle_response {
             response.duration.as_millis(),
         );
 
-        let headers = format!("\x1B[38;5;3m{n}\x1B[39m: {v}\n\x1B[38;5;3m{n}\x1B[39m: {n}\n\x1B[38;5;3m{v}\x1B[39m: {v}\n\x1B[38;5;3m{v}\x1B[39m: {n}\n");
+        let headers = format!(
+            "\x1B[38;5;3m{n}\x1B[39m: {v}\n\x1B[38;5;3m{n}\x1B[39m: {n}\n\x1B[38;5;3m{v}\x1B[39m: {v}\n\x1B[38;5;3m{v}\x1B[39m: {n}\n"
+        );
 
         let expected_response = format!("{status}{headers}");
 

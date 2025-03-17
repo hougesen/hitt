@@ -28,7 +28,10 @@ impl core::fmt::Display for HittCliError {
             Self::Reqwest(method, uri, error) => write!(f, "{method} {uri} - {error}"),
             Self::RequestTimeout(method, uri) => write!(f, "{method} {uri} - request timed out"),
             Self::InvalidVariableArgument(input) => {
-                write!(f,"'{input}' is not a valid variable argument - variable input should be '--var <KEY>=<VALUE>'")
+                write!(
+                    f,
+                    "'{input}' is not a valid variable argument - variable input should be '--var <KEY>=<VALUE>'"
+                )
             }
             Self::VariableArgumentKeyIndexing(variable) => {
                 write!(f, "unable to index key of --var '{variable}'")
