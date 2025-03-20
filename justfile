@@ -38,7 +38,7 @@ test-coverage:
     cargo llvm-cov --open
 
 changelog:
-    npx auto-changelog -u
+    npx auto-changelog --hide-credit -u -l 100 -b 100
 
 precommit:
     just changelog
@@ -49,13 +49,3 @@ precommit:
     just lint
     just test
     typos --exclude CHANGELOG.md .
-
-publish-crates:
-    just build
-    just test
-
-    cargo publish -p hitt-formatter
-    cargo publish -p hitt-parser
-    cargo publish -p hitt-request
-    cargo publish -p hitt-sse
-    cargo publish -p hitt
