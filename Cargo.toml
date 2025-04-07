@@ -58,7 +58,7 @@ reqwest = { version = "0.12.15", default-features = false, features = [
 ] }
 reqwest-eventsource = { version = "0.6.0" }
 tempfile = { version = "3.19.1" }
-tokio = { version = "1.44.1", features = ["fs", "macros", "rt-multi-thread"] }
+tokio = { version = "1.44.2", features = ["fs", "macros", "rt-multi-thread"] }
 
 [profile.release]
 lto = true
