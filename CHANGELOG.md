@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file. Dates are d
 
 #### [Unreleased](https://github.com/hougesen/hitt/compare/v0.0.19...HEAD)
 
+- fix(cargo-dist): manually set gh action runs-on to ubuntu-latest [`#484`](https://github.com/hougesen/hitt/pull/484)
+- build(deps): bump clap from 4.5.35 to 4.5.36 [`#482`](https://github.com/hougesen/hitt/pull/482)
+- build(deps): bump tokio from 1.44.1 to 1.44.2 [`#481`](https://github.com/hougesen/hitt/pull/481)
+- build(deps): bump clap from 4.5.34 to 4.5.35 [`#480`](https://github.com/hougesen/hitt/pull/480)
+- build(deps): bump clap from 4.5.32 to 4.5.34 [`#478`](https://github.com/hougesen/hitt/pull/478)
+- build(deps): bump once_cell from 1.21.2 to 1.21.3 [`#479`](https://github.com/hougesen/hitt/pull/479)
+- build(deps): bump once_cell from 1.21.1 to 1.21.2 [`#477`](https://github.com/hougesen/hitt/pull/477)
+- build(deps): bump jsonformat from 2.0.0 to 2.1.0 [`#476`](https://github.com/hougesen/hitt/pull/476)
+
 #### [v0.0.19](https://github.com/hougesen/hitt/compare/v0.0.18...v0.0.19)
 
 > 20 March 2025
