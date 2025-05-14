@@ -20,7 +20,7 @@ pub fn completion_command<W: std::io::Write + Send>(
             clap_complete::generate(clap_complete::Shell::Elvish, &mut cmd, cmd_name, term);
         }
 
-        TerminalShell::PowerShell => {
+        TerminalShell::Powershell => {
             clap_complete::generate(clap_complete::Shell::PowerShell, &mut cmd, cmd_name, term);
         }
 

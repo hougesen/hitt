@@ -82,7 +82,7 @@ pub enum TerminalShell {
     Nushell,
 
     /// `PowerShell` (powershell)
-    PowerShell,
+    Powershell,
 
     /// Z `SHell` (zsh)
     Zsh,
@@ -95,7 +95,7 @@ impl clap::ValueEnum for TerminalShell {
             Self::Elvish,
             Self::Fish,
             Self::Nushell,
-            Self::PowerShell,
+            Self::Powershell,
             Self::Zsh,
         ]
     }
@@ -106,7 +106,7 @@ impl clap::ValueEnum for TerminalShell {
             Self::Elvish => clap::builder::PossibleValue::new("elvish"),
             Self::Fish => clap::builder::PossibleValue::new("fish"),
             Self::Nushell => clap::builder::PossibleValue::new("nushell"),
-            Self::PowerShell => clap::builder::PossibleValue::new("powershell"),
+            Self::Powershell => clap::builder::PossibleValue::new("powershell"),
             Self::Zsh => clap::builder::PossibleValue::new("zsh"),
         })
     }
