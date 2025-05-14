@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file. Dates are d
 
 #### [Unreleased](https://github.com/hougesen/hitt/compare/v0.0.19...HEAD)
 
+- feat(cli): support multiple input paths [`#491`](https://github.com/hougesen/hitt/pull/491)
 - test(cli): test commands [`#490`](https://github.com/hougesen/hitt/pull/490)
 - build(deps): bump clap_complete from 4.5.48 to 4.5.50 [`#489`](https://github.com/hougesen/hitt/pull/489)
 - build(deps): bump tokio from 1.44.2 to 1.45.0 [`#487`](https://github.com/hougesen/hitt/pull/487)

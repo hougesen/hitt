@@ -143,9 +143,12 @@ mod test_parse_method_input {
     fn it_should_require_method() {
         let input = "   ";
 
-        let output = parse_method_input(&mut to_enum_chars(input), &EMPTY_VARS);
+        let output = parse_method_input(&mut to_enum_chars(input), &EMPTY_VARS)
+            .expect_err("it to return a RequestParseError");
 
-        assert!(matches!(output, Err(RequestParseError::InvalidHttpMethod(m)) if m.is_empty()));
+        assert_eq!(output.to_string(), "invalid HTTP method ''");
+
+        assert!(matches!(output, RequestParseError::InvalidHttpMethod(m) if m.is_empty()));
     }
 
     #[test]

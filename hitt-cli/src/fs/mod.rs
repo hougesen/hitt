@@ -52,6 +52,7 @@ pub fn find_http_files(path: &std::path::Path) -> Vec<std::path::PathBuf> {
     ignore::WalkBuilder::new(path)
         .git_ignore(true)
         .require_git(false)
+        .add_custom_ignore_filename(".hittignore")
         .build()
         .filter_map(|original_entry| {
             if let Ok(entry) = original_entry {
@@ -71,8 +72,6 @@ pub fn find_http_files(path: &std::path::Path) -> Vec<std::path::PathBuf> {
 
 #[cfg(test)]
 mod test_find_http_files {
-    use std::io::Write;
-
     use super::find_http_files;
 
     #[test]
@@ -120,13 +119,9 @@ mod test_find_http_files {
         std::fs::File::create(dir.path().join("ignored_folder/file2.http"))
             .expect("it to create a file");
 
-        let gitignore = "
-ignored_folder
-";
+        let gitignore = "ignored_folder";
 
-        std::fs::File::create(dir.path().join(".gitignore"))
-            .expect("it to create .gitignore")
-            .write_all(gitignore.as_bytes())
+        std::fs::write(dir.path().join(".gitignore"), gitignore)
             .expect("it to write to .gitignore");
 
         let result = find_http_files(dir.path());

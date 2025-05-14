@@ -169,11 +169,14 @@ mod test_parse_uri_input {
         {
             let input = "{{host}}";
 
-            let output = parse_uri_input(&mut to_enum_chars(input), &EMPTY_VARS);
+            let output = parse_uri_input(&mut to_enum_chars(input), &EMPTY_VARS)
+                .expect_err("to to return a RequestParseError");
+
+            assert_eq!("variable 'host' was used, but not set", output.to_string());
 
             assert!(matches!(
                 output,
-                Err(RequestParseError::VariableNotFound(var))
+                RequestParseError::VariableNotFound(var)
                 if var == "host"
             ));
         };
@@ -181,11 +184,14 @@ mod test_parse_uri_input {
         {
             let input = "{{  host}}";
 
-            let output = parse_uri_input(&mut to_enum_chars(input), &EMPTY_VARS);
+            let output = parse_uri_input(&mut to_enum_chars(input), &EMPTY_VARS)
+                .expect_err("to to return a RequestParseError");
+
+            assert_eq!("variable 'host' was used, but not set", output.to_string());
 
             assert!(matches!(
                 output,
-                Err(RequestParseError::VariableNotFound(var))
+                RequestParseError::VariableNotFound(var)
                 if var == "host"
             ));
         };
@@ -193,11 +199,14 @@ mod test_parse_uri_input {
         {
             let input = "{{host  }}";
 
-            let output = parse_uri_input(&mut to_enum_chars(input), &EMPTY_VARS);
+            let output = parse_uri_input(&mut to_enum_chars(input), &EMPTY_VARS)
+                .expect_err("to to return a RequestParseError");
+
+            assert_eq!("variable 'host' was used, but not set", output.to_string());
 
             assert!(matches!(
                 output,
-                Err(RequestParseError::VariableNotFound(var))
+                RequestParseError::VariableNotFound(var)
                 if var == "host"
             ));
         };
@@ -205,11 +214,14 @@ mod test_parse_uri_input {
         {
             let input = "{{  host  }}";
 
-            let output = parse_uri_input(&mut to_enum_chars(input), &EMPTY_VARS);
+            let output = parse_uri_input(&mut to_enum_chars(input), &EMPTY_VARS)
+                .expect_err("to to return a RequestParseError");
+
+            assert_eq!("variable 'host' was used, but not set", output.to_string());
 
             assert!(matches!(
                 output,
-                Err(RequestParseError::VariableNotFound(var))
+                RequestParseError::VariableNotFound(var)
                 if var == "host"
             ));
         }

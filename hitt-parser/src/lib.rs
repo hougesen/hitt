@@ -400,7 +400,7 @@ DELETE https://mhouge.dk/";
             assert!(matches!(
                 body_token,
                 RequestToken::Body(value)
-                if value.clone().expect( "value to exist") == expected_body_value
+                if value.clone().expect("value to exist") == expected_body_value
             ));
         };
 
@@ -573,7 +573,6 @@ impl PartialHittRequest {
 
 #[cfg(test)]
 mod test_partial_http_request {
-
     use http::{HeaderMap, Uri};
 
     use crate::{PartialHittRequest, error::RequestParseError};
@@ -591,6 +590,8 @@ mod test_partial_http_request {
         .expect_err("it to raise RequestParseError::MissingUri");
 
         assert!(matches!(request, RequestParseError::MissingUri));
+
+        assert_eq!(request.to_string(), "missing uri");
     }
 
     #[test]
@@ -608,6 +609,8 @@ mod test_partial_http_request {
         .expect_err("it to raise RequestParseError::MissingMethod");
 
         assert!(matches!(request, RequestParseError::MissingMethod));
+
+        assert_eq!(request.to_string(), "missing HTTP method");
     }
 }
 
