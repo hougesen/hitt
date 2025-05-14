@@ -15,7 +15,7 @@ pub enum HittCliError {
     SSEError(hitt_sse::Error),
 }
 
-impl std::error::Error for HittCliError {}
+impl core::error::Error for HittCliError {}
 
 impl core::fmt::Display for HittCliError {
     #[inline]

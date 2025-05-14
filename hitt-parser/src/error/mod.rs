@@ -9,6 +9,8 @@ pub enum RequestParseError {
     VariableNotFound(String),
 }
 
+impl core::error::Error for RequestParseError {}
+
 impl core::fmt::Display for RequestParseError {
     #[inline]
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {

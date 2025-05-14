@@ -112,12 +112,10 @@ pub fn parse_header(
 mod test_parse_header {
     use core::str::FromStr;
 
-    use once_cell::sync::Lazy;
-
     use crate::{error::RequestParseError, parse_header, to_enum_chars};
 
-    static EMPTY_VARS: Lazy<std::collections::HashMap<String, String>> =
-        Lazy::new(std::collections::HashMap::new);
+    static EMPTY_VARS: std::sync::LazyLock<std::collections::HashMap<String, String>> =
+        std::sync::LazyLock::new(std::collections::HashMap::new);
 
     #[test]
     fn it_should_return_valid_headers() {

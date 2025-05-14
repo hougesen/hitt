@@ -1,18 +1,15 @@
 [package]
 name = "hitt-parser"
 description = "Parser for http files for the hitt http testing tool"
-version.workspace = true
-authors.workspace = true
-edition.workspace = true
-license.workspace = true
-repository.workspace = true
-keywords.workspace = true
-homepage.workspace = true
+version = { workspace = true }
+authors = { workspace = true }
+edition = { workspace = true }
+license = { workspace = true }
+repository = { workspace = true }
+keywords = { workspace = true }
+homepage = { workspace = true }
 readme = "README.md"
 categories = ["parser-implementations"]
 
 [dependencies]
 http = { workspace = true }
-
-[dev-dependencies]
-once_cell = { workspace = true }

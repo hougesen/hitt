@@ -52,13 +52,11 @@ pub fn parse_variable_declaration(
 
 #[cfg(test)]
 mod test_parse_variable_declarations {
-    use once_cell::sync::Lazy;
-
     use super::parse_variable_declaration;
     use crate::{error::RequestParseError, to_enum_chars};
 
-    static EMPTY_VARS: Lazy<std::collections::HashMap<String, String>> =
-        Lazy::new(std::collections::HashMap::new);
+    static EMPTY_VARS: std::sync::LazyLock<std::collections::HashMap<String, String>> =
+        std::sync::LazyLock::new(std::collections::HashMap::new);
 
     #[test]
     fn it_should_parse_variable_declarations() {
@@ -157,7 +155,7 @@ pub fn parse_variable(
 ) -> Option<(String, usize)> {
     if chars.next().is_some_and(|(_, ch)| ch != '{') {
         return None;
-    };
+    }
 
     let mut jumps = 1;
 

@@ -77,12 +77,10 @@ pub fn parse_method_input(
 mod test_parse_method_input {
     use core::str::FromStr;
 
-    use once_cell::sync::Lazy;
-
     use crate::{error::RequestParseError, method::parse_method_input, to_enum_chars};
 
-    static EMPTY_VARS: Lazy<std::collections::HashMap<String, String>> =
-        Lazy::new(std::collections::HashMap::new);
+    static EMPTY_VARS: std::sync::LazyLock<std::collections::HashMap<String, String>> =
+        std::sync::LazyLock::new(std::collections::HashMap::new);
 
     const HTTP_METHODS: [&str; 9] = [
         "GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS", "CONNECT", "TRACE",

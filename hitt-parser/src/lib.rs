@@ -58,7 +58,7 @@ fn tokenize(
                     tokens.push(RequestToken::Body(Some(body_parts.join("\n"))));
 
                     body_parts.clear();
-                };
+                }
 
                 parser_mode = ParserMode::Request;
             }
@@ -142,7 +142,7 @@ fn tokenize(
 
                 body_parts.push(current_line);
             }
-        };
+        }
     }
 
     if !body_parts.is_empty() {
@@ -156,12 +156,10 @@ fn tokenize(
 mod test_tokenize {
     use core::fmt::Write as _;
 
-    use once_cell::sync::Lazy;
-
     use crate::{RequestToken, error::RequestParseError, tokenize};
 
-    static EMPTY_VARS: Lazy<std::collections::HashMap<String, String>> =
-        Lazy::new(std::collections::HashMap::new);
+    static EMPTY_VARS: std::sync::LazyLock<std::collections::HashMap<String, String>> =
+        std::sync::LazyLock::new(std::collections::HashMap::new);
 
     #[test]
     fn should_return_a_list_of_tokens() {
@@ -649,12 +647,12 @@ pub fn parse_requests(
             RequestToken::HttpVersion(version_token) => {
                 partial_request.http_version = Some(version_token);
             }
-        };
+        }
     }
 
     if partial_request.method.is_some() {
         requests.push(partial_request.build()?);
-    };
+    }
 
     Ok(requests)
 }
@@ -663,16 +661,14 @@ pub fn parse_requests(
 mod test_parse_requests {
     use core::str::FromStr;
 
-    use once_cell::sync::Lazy;
-
     use crate::{error::RequestParseError, parse_requests};
 
     const HTTP_METHODS: [&str; 9] = [
         "GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS", "CONNECT", "TRACE",
     ];
 
-    static EMPTY_VARS: Lazy<std::collections::HashMap<String, String>> =
-        Lazy::new(std::collections::HashMap::new);
+    static EMPTY_VARS: std::sync::LazyLock<std::collections::HashMap<String, String>> =
+        std::sync::LazyLock::new(std::collections::HashMap::new);
 
     #[test]
     fn it_should_parse_http_method_correctly() {

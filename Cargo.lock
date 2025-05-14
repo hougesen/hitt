@@ -725,7 +725,6 @@ name = "hitt-parser"
 version = "0.0.19"
 dependencies = [
  "http",
- "once_cell",
 ]
 
 [[package]]

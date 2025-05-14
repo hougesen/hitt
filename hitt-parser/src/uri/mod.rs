@@ -60,12 +60,10 @@ pub fn parse_uri_input(
 
 #[cfg(test)]
 mod test_parse_uri_input {
-    use once_cell::sync::Lazy;
-
     use crate::{error::RequestParseError, to_enum_chars, uri::parse_uri_input};
 
-    static EMPTY_VARS: Lazy<std::collections::HashMap<String, String>> =
-        Lazy::new(std::collections::HashMap::new);
+    static EMPTY_VARS: std::sync::LazyLock<std::collections::HashMap<String, String>> =
+        std::sync::LazyLock::new(std::collections::HashMap::new);
 
     #[test]
     fn it_should_be_able_to_parse_uris() {
