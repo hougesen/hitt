@@ -56,21 +56,21 @@ async fn get_requests(
 ) -> Result<Vec<(std::path::PathBuf, Vec<HittRequest>)>, HittCliError> {
     let mut found_paths = Vec::new();
 
-    for path in input_paths {
-        let is_dir_path = std::fs::metadata(path).map(|metadata| metadata.is_dir())?;
+    for input_path in input_paths {
+        let is_dir_path = std::fs::metadata(input_path).map(|metadata| metadata.is_dir())?;
 
         if is_dir_path {
             if !recursive {
                 return Err(HittCliError::RecursiveNotEnabled);
             }
 
-            for p in find_http_files(path) {
-                if !found_paths.contains(&p) {
-                    found_paths.push(p);
+            for path in find_http_files(input_path) {
+                if !found_paths.contains(&path) {
+                    found_paths.push(path);
                 }
             }
-        } else if !found_paths.contains(path) {
-            found_paths.push(path.clone());
+        } else if !found_paths.contains(input_path) {
+            found_paths.push(input_path.clone());
         }
     }
 

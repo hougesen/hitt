@@ -20,7 +20,7 @@ mod run_command {
     fn setup_test_input(dir: &std::path::Path, code: &str) -> tempfile::NamedTempFile {
         let mut b = tempfile::Builder::new();
 
-        b.rand_bytes(12).suffix(".http");
+        b.prefix("hitt").rand_bytes(12).suffix(".http");
 
         let mut f = b.tempfile_in(dir).unwrap();
 
@@ -162,5 +162,42 @@ GET {url}"
             .stdout(predicates::str::contains(format!(
                 "HTTP/2.0 {method} {url}?2 200"
             )));
+    }
+
+    #[test]
+    fn it_should_only_process_directories_when_recursive_enabled() {
+        let dir = tempfile::TempDir::with_prefix("hitt-").unwrap();
+
+        let method = "GET";
+        let url = "https://api.goout.dk/";
+
+        let input = format!("{method} {url}");
+
+        let file = setup_test_input(dir.path(), &input);
+
+        run_command(Some(dir.path()))
+            .arg(dir.path())
+            .assert()
+            .success()
+            .stdout(predicates::str::is_empty().not())
+            .stdout(predicates::str::contains(
+                "received directory path but --recursive is not enabled",
+            ))
+            .stdout(predicates::str::contains(format!("HTTP/2.0 {method} {url} 200")).not())
+            .stdout(predicates::str::contains("Hello World!").not());
+
+        run_command(Some(dir.path()))
+            .arg("--recursive")
+            .arg(dir.path())
+            .assert()
+            .success()
+            .stdout(predicates::str::is_empty().not())
+            .stdout(predicates::str::contains(format!(
+                "HTTP/2.0 {method} {url} 200"
+            )))
+            .stdout(predicates::str::contains("Hello World!"));
+
+        // Needed so the file ins't dropped
+        assert!(std::fs::exists(file.path()).unwrap());
     }
 }

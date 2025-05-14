@@ -143,6 +143,8 @@ mod test_parse_header {
             let output = parse_header(&mut to_enum_chars(input), &EMPTY_VARS)
                 .expect_err("it to fail to parse");
 
+            assert_eq!(output.to_string(), "invalid header name 'key==='");
+
             assert!(
                 matches!(output, RequestParseError::InvalidHeaderName(name) if name == "key===")
             );
@@ -153,6 +155,8 @@ mod test_parse_header {
 
             let output = parse_header(&mut to_enum_chars(input), &EMPTY_VARS)
                 .expect_err("it to fail to parse");
+
+            assert_eq!(output.to_string(), "invalid header value ':v!###  `al\nue'");
 
             assert!(
                 matches!(output, RequestParseError::InvalidHeaderValue(val) if val == ":v!###  `al\nue")
