@@ -92,7 +92,7 @@ mod test_handle_response {
         let args = RunCommandArguments {
             disable_formatting: true,
             //
-            path: std::path::PathBuf::new(),
+            paths: vec![std::path::PathBuf::new()],
             timeout: None,
             var: None,
             recursive: false,
@@ -148,7 +148,7 @@ mod test_handle_response {
 
         let args = RunCommandArguments {
             disable_formatting: false,
-            path: std::path::PathBuf::new(),
+            paths: vec![std::path::PathBuf::new()],
             timeout: None,
             var: None,
             recursive: false,
@@ -201,7 +201,7 @@ mod test_handle_response {
             hide_headers: true,
             disable_formatting: true,
             //
-            path: std::path::PathBuf::new(),
+            paths: vec![std::path::PathBuf::new()],
             timeout: None,
             var: None,
             recursive: false,
@@ -253,7 +253,7 @@ mod test_handle_response {
             disable_formatting: true,
             hide_body: true,
             //
-            path: std::path::PathBuf::new(),
+            paths: vec![std::path::PathBuf::new()],
             timeout: None,
             var: None,
             recursive: false,
@@ -310,7 +310,7 @@ mod test_handle_response {
             disable_formatting: true,
             hide_body: true,
             //
-            path: std::path::PathBuf::new(),
+            paths: vec![std::path::PathBuf::new()],
             timeout: None,
             var: None,
             recursive: false,
@@ -365,7 +365,7 @@ mod test_handle_response {
             disable_formatting: true,
             fail_fast: true,
             //
-            path: std::path::PathBuf::new(),
+            paths: vec![std::path::PathBuf::new()],
             timeout: None,
             var: None,
             recursive: false,

@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file. Dates are d
 
 #### [Unreleased](https://github.com/hougesen/hitt/compare/v0.0.19...HEAD)
 
+- test(cli): test commands [`#490`](https://github.com/hougesen/hitt/pull/490)
 - build(deps): bump clap_complete from 4.5.48 to 4.5.50 [`#489`](https://github.com/hougesen/hitt/pull/489)
 - build(deps): bump tokio from 1.44.2 to 1.45.0 [`#487`](https://github.com/hougesen/hitt/pull/487)
 - build(deps): bump clap from 4.5.37 to 4.5.38 [`#488`](https://github.com/hougesen/hitt/pull/488)
@@ -18,12 +19,6 @@ All notable changes to this project will be documented in this file. Dates are d
 - build(deps): bump once_cell from 1.21.2 to 1.21.3 [`#479`](https://github.com/hougesen/hitt/pull/479)
 - build(deps): bump once_cell from 1.21.1 to 1.21.2 [`#477`](https://github.com/hougesen/hitt/pull/477)
 - build(deps): bump jsonformat from 2.0.0 to 2.1.0 [`#476`](https://github.com/hougesen/hitt/pull/476)
-- fix: run clippy fix [`f4f889b`](https://github.com/hougesen/hitt/commit/f4f889b13421f7c9744acf15cf83d36bf68a6240)
-- test(cli): test completions command [`de78ce7`](https://github.com/hougesen/hitt/commit/de78ce70fcaeada06f82d78d21473a2e17c08a2d)
-- test: run with --fail-fast and timeout [`2876188`](https://github.com/hougesen/hitt/commit/2876188bd08cc66e3be09423d414444804667bc2)
-- test: hitt run [`fd26eca`](https://github.com/hougesen/hitt/commit/fd26eca918cbbee42eca92923103523f7be97b27)
-- test: run with hidden body [`0bd1d1f`](https://github.com/hougesen/hitt/commit/0bd1d1fe98e40783baf9e70721b574a956de59d7)
-- test: make sure run has --help message [`671c4e0`](https://github.com/hougesen/hitt/commit/671c4e077110ef205f742aa7b69786feaafb9c0a)
 
 #### [v0.0.19](https://github.com/hougesen/hitt/compare/v0.0.18...v0.0.19)
 

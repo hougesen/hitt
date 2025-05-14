@@ -1,8 +1,3 @@
-alias b := build
-alias l := lint
-alias t := test
-alias tc := test-coverage
-
 build:
     cargo check
     cargo build
@@ -42,9 +37,10 @@ changelog:
 
 precommit:
     just changelog
-    dist init --yes
+    python3 readme-command-help.py
     just format
     just build
     just lint
     just test
     typos --exclude CHANGELOG.md .
+    dist init --yes

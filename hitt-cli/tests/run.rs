@@ -136,4 +136,31 @@ GET {url}"
             ))
             .stdout(predicates::str::contains(format!("GET {url}")).not());
     }
+
+    #[test]
+    fn it_should_support_multiple_input_paths() {
+        let dir = tempfile::tempdir().unwrap();
+
+        let method = "GET";
+        let url = "https://api.goout.dk/";
+
+        let input = format!("{method} {url}");
+
+        let file1 = setup_test_input(dir.path(), &format!("{input}?1"));
+        let file2 = setup_test_input(dir.path(), &format!("{input}?2"));
+
+        run_command(Some(dir.path()))
+            .arg(file1.path())
+            .arg(file2.path())
+            .assert()
+            .success()
+            .stdout(predicates::str::is_empty().not())
+            .stdout(predicates::str::contains(format!(
+                "HTTP/2.0 {method} {url}?1 200"
+            )))
+            .stdout(predicates::str::contains("Hello World!"))
+            .stdout(predicates::str::contains(format!(
+                "HTTP/2.0 {method} {url}?2 200"
+            )));
+    }
 }
