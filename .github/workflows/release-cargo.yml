@@ -12,12 +12,12 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
       - name: Publish hitt-formatter
-        run: cargo publish -p hitt-formatter  --verbose --locked --token ${{ secrets.CARGO_TOKEN }}
+        run: cargo publish -p hitt-formatter --verbose --locked --token ${{ secrets.CARGO_TOKEN }}
       - name: Publish hitt-parser
-        run: cargo publish -p hitt-parser  --verbose --locked --token ${{ secrets.CARGO_TOKEN }}
+        run: cargo publish -p hitt-parser --verbose --locked --token ${{ secrets.CARGO_TOKEN }}
       - name: Publish hitt-request
-        run: cargo publish -p hitt-request  --verbose --locked --token ${{ secrets.CARGO_TOKEN }}
+        run: cargo publish -p hitt-request --verbose --locked --token ${{ secrets.CARGO_TOKEN }}
       - name: Publish hitt-sse
         run: cargo publish -p hitt-sse --verbose --locked --token ${{ secrets.CARGO_TOKEN }}
       - name: Publish hitt
-        run: cargo publish -p hitt  --verbose --locked --token ${{ secrets.CARGO_TOKEN }}
+        run: cargo publish -p hitt --verbose --locked --token ${{ secrets.CARGO_TOKEN }}
