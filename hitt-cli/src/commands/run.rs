@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use crossterm::{QueueableCommand, style::Print};
 use hitt_parser::HittRequest;
 use hitt_request::send_request;
@@ -7,7 +5,7 @@ use hitt_request::send_request;
 use crate::{
     config::{RunCommandArguments, variables::parse_variable_argument},
     error::HittCliError,
-    fs::{find_http_files, parse_file, parse_files},
+    fs::{find_http_files, parse_files},
     terminal::{handle_response, print_running_file},
 };
 
@@ -52,23 +50,31 @@ mod test_build_variable_map {
 }
 
 async fn get_requests(
-    path: &std::path::Path,
+    input_paths: &[std::path::PathBuf],
     recursive: bool,
     var_input: Option<&Vec<String>>,
 ) -> Result<Vec<(std::path::PathBuf, Vec<HittRequest>)>, HittCliError> {
-    let is_dir_path = std::fs::metadata(path).map(|metadata| metadata.is_dir())?;
+    let mut found_paths = Vec::new();
 
-    if is_dir_path && !recursive {
-        return Err(HittCliError::RecursiveNotEnabled);
+    for path in input_paths {
+        let is_dir_path = std::fs::metadata(path).map(|metadata| metadata.is_dir())?;
+
+        if is_dir_path {
+            if !recursive {
+                return Err(HittCliError::RecursiveNotEnabled);
+            }
+
+            for p in find_http_files(path) {
+                if !found_paths.contains(&p) {
+                    found_paths.push(p);
+                }
+            }
+        } else if !found_paths.contains(path) {
+            found_paths.push(path.clone());
+        }
     }
 
-    let vars = build_variable_map(var_input)?;
-
-    if is_dir_path {
-        parse_files(find_http_files(path), vars).await
-    } else {
-        parse_file(path, Arc::new(vars)).await.map(|r| vec![r])
-    }
+    parse_files(found_paths, build_variable_map(var_input)?).await
 }
 
 #[cfg(test)]
@@ -86,7 +92,7 @@ mod test_get_requests {
 
         std::fs::write(f.path(), "GET https://mhouge.dk/").expect("it to write successfully");
 
-        let files = get_requests(f.path(), false, None)
+        let files = get_requests(&[f.path().to_path_buf()], false, None)
             .await
             .expect("it to return a list of requests");
 
@@ -117,7 +123,7 @@ mod test_get_requests {
 
         let p = dir.path();
 
-        let err = get_requests(p, false, None)
+        let err = get_requests(&[p.to_path_buf()], false, None)
             .await
             .expect_err("expect it to return a missing recursive arg error");
 
@@ -139,7 +145,7 @@ mod test_get_requests {
 
         std::fs::write(&file_path, "GET https://mhouge.dk/").expect("it to write successfully");
 
-        let files = get_requests(dir_path, true, None)
+        let files = get_requests(&[dir_path.to_path_buf()], true, None)
             .await
             .expect("it to return a list of requests");
 
@@ -176,7 +182,7 @@ pub async fn run_command<W: std::io::Write + Send>(
 
     let mut request_count: u16 = 0;
 
-    for (path, file) in get_requests(&args.path, args.recursive, args.var.as_ref()).await? {
+    for (path, file) in get_requests(&args.paths, args.recursive, args.var.as_ref()).await? {
         if !args.vim {
             if request_count > 0 {
                 term.queue(Print('\n'))?;

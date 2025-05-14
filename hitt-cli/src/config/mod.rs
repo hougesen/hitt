@@ -32,9 +32,9 @@ pub enum HittCommand {
 #[derive(Args, Debug)]
 #[allow(clippy::struct_excessive_bools)]
 pub struct RunCommandArguments {
-    /// Path to .http file, or directory if supplied with the `--recursive` argument
+    /// Path to .http files, or directories if supplied with the `--recursive` argument
     #[arg()]
-    pub path: std::path::PathBuf,
+    pub paths: Vec<std::path::PathBuf>,
 
     /// Request timeout in milliseconds
     #[arg(long, value_name = "TIMEOUT_MS")]

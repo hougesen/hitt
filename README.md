@@ -26,7 +26,6 @@ Commands:
 Options:
   -h, --help     Print help
   -V, --version  Print version
-
 ```
 
 <!-- END_SECTION:base-command-help -->
@@ -100,10 +99,10 @@ That is all that is need to send a request.
 ```
 Send http requests
 
-Usage: hitt run [OPTIONS] <PATH>
+Usage: hitt run [OPTIONS] [PATHS]...
 
 Arguments:
-  <PATH>  Path to .http file, or directory if supplied with the `--recursive` argument
+  [PATHS]...  Path to .http files, or directories if supplied with the `--recursive` argument
 
 Options:
       --timeout <TIMEOUT_MS>  Request timeout in milliseconds
@@ -115,7 +114,6 @@ Options:
       --disable-formatting    Disable pretty printing of response body
   -h, --help                  Print help
   -V, --version               Print version
-
 ```
 
 <!-- END_SECTION:run-command-help -->
@@ -222,7 +220,6 @@ Arguments:
 Options:
   -h, --help     Print help
   -V, --version  Print version
-
 ```
 
 <!-- END_SECTION:sse-command-help -->
@@ -244,7 +241,6 @@ Arguments:
 Options:
   -h, --help     Print help
   -V, --version  Print version
-
 ```
 
 <!-- END_SECTION:completions-command-help -->
