@@ -5,7 +5,7 @@ use crossterm::{
 use hitt_formatter::ContentType;
 
 #[inline]
-fn __print_body<W: std::io::Write + Send>(term: &mut W, body: &str) -> Result<(), std::io::Error> {
+fn __print_body<W: std::io::Write + Send>(term: &mut W, body: &str) -> std::io::Result<()> {
     queue!(term, Print('\n'), Print(body.dark_yellow()), Print("\n\n"))
 }
 
@@ -38,7 +38,7 @@ pub fn print_body<W: std::io::Write + Send>(
     body: &str,
     content_type: ContentType,
     disable_pretty_printing: bool,
-) -> Result<(), std::io::Error> {
+) -> std::io::Result<()> {
     if disable_pretty_printing {
         return __print_body(term, body);
     }

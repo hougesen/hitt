@@ -30,6 +30,7 @@ pub enum HittCommand {
 
 /// Send http requests
 #[derive(Args, Debug)]
+#[allow(clippy::struct_excessive_bools)]
 pub struct RunCommandArguments {
     /// Path to .http file, or directory if supplied with the `--recursive` argument
     #[arg()]

@@ -20,6 +20,8 @@ All notable changes to this project will be documented in this file. Dates are d
 - build(deps): bump jsonformat from 2.0.0 to 2.1.0 [`#476`](https://github.com/hougesen/hitt/pull/476)
 - fix: run clippy fix [`f4f889b`](https://github.com/hougesen/hitt/commit/f4f889b13421f7c9744acf15cf83d36bf68a6240)
 - test(cli): test completions command [`de78ce7`](https://github.com/hougesen/hitt/commit/de78ce70fcaeada06f82d78d21473a2e17c08a2d)
+- test: hitt run [`fd26eca`](https://github.com/hougesen/hitt/commit/fd26eca918cbbee42eca92923103523f7be97b27)
+- test: run with hidden body [`0bd1d1f`](https://github.com/hougesen/hitt/commit/0bd1d1fe98e40783baf9e70721b574a956de59d7)
 - test: make sure run has --help message [`671c4e0`](https://github.com/hougesen/hitt/commit/671c4e077110ef205f742aa7b69786feaafb9c0a)
 
 #### [v0.0.19](https://github.com/hougesen/hitt/compare/v0.0.18...v0.0.19)

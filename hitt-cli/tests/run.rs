@@ -83,4 +83,57 @@ mod run_command {
             )))
             .stdout(predicates::str::contains("Hello World!").not());
     }
+
+    #[test]
+    fn with_timeout() {
+        let dir = tempfile::tempdir().unwrap();
+
+        let method = "GET";
+        let url = "https://api.goout.dk/";
+
+        let input = format!("{method} {url}");
+
+        let file = setup_test_input(dir.path(), &input);
+
+        run_command(Some(dir.path()))
+            .arg("--timeout")
+            .arg("0")
+            .arg(file.path())
+            .assert()
+            .success()
+            .stdout(predicates::str::is_empty().not())
+            .stdout(predicates::str::contains(format!(
+                "{method} {url} - request timed out"
+            )));
+    }
+
+    #[test]
+    fn with_fail_fast() {
+        let dir = tempfile::tempdir().unwrap();
+
+        let url = "https://api.goout.dk/";
+        let input = format!(
+            "POST {url}
+
+###
+
+GET {url}"
+        );
+
+        let file = setup_test_input(dir.path(), &input);
+
+        run_command(Some(dir.path()))
+            .arg("--fail-fast")
+            .arg(file.path())
+            .assert()
+            .success()
+            .stdout(predicates::str::is_empty().not())
+            .stdout(predicates::str::contains(format!(
+                "HTTP/2.0 POST {url} 404"
+            )))
+            .stdout(predicates::str::contains(
+                "exiting early since --fail-fast is enabled",
+            ))
+            .stdout(predicates::str::contains(format!("GET {url}")).not());
+    }
 }
