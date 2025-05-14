@@ -30,7 +30,7 @@ pub async fn start_sse(
 
                 ev.close();
             }
-        };
+        }
     }
 
     Ok(())

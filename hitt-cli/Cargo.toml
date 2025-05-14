@@ -1,16 +1,16 @@
 [package]
 name = "hitt"
-description.workspace = true
-version.workspace = true
-authors.workspace = true
-edition.workspace = true
-license.workspace = true
-repository.workspace = true
-keywords.workspace = true
-homepage.workspace = true
-documentation.workspace = true
-readme.workspace = true
-categories.workspace = true
+description = { workspace = true }
+version = { workspace = true }
+authors = { workspace = true }
+edition = { workspace = true }
+license = { workspace = true }
+repository = { workspace = true }
+keywords = { workspace = true }
+homepage = { workspace = true }
+documentation = { workspace = true }
+readme = { workspace = true }
+categories = { workspace = true }
 
 [package.metadata.wix]
 upgrade-guid = "C48B5625-D4B1-4010-AB90-5A691543995F"
@@ -38,4 +38,6 @@ reqwest = { workspace = true }
 tokio = { workspace = true }
 
 [dev-dependencies]
+assert_cmd = { workspace = true }
+predicates = { workspace = true }
 tempfile = { workspace = true }

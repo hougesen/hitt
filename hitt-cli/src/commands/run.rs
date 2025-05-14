@@ -13,7 +13,7 @@ use crate::{
 
 #[inline]
 fn build_variable_map(
-    var: &Option<Vec<String>>,
+    var: Option<&Vec<String>>,
 ) -> Result<std::collections::HashMap<String, String>, HittCliError> {
     let mut vars = std::collections::HashMap::new();
 
@@ -39,14 +39,14 @@ mod test_build_variable_map {
             "host=https://mhouge.dk/?query=asd".to_owned(),
         ];
 
-        let x = build_variable_map(&Some(input)).expect("it to return a map");
+        let variables = build_variable_map(Some(&input)).expect("it to return a map");
 
-        assert_eq!(x.len(), 2);
+        assert_eq!(variables.len(), 2);
 
-        let host_var = x.get("host").expect("it to be some");
+        let host_var = variables.get("host").expect("it to be some");
         assert_eq!(host_var, "https://mhouge.dk/?query=asd");
 
-        let name_var = x.get("name").expect("it to be some");
+        let name_var = variables.get("name").expect("it to be some");
         assert_eq!(name_var, "hougesen");
     }
 }
@@ -54,7 +54,7 @@ mod test_build_variable_map {
 async fn get_requests(
     path: &std::path::Path,
     recursive: bool,
-    var_input: &Option<Vec<String>>,
+    var_input: Option<&Vec<String>>,
 ) -> Result<Vec<(std::path::PathBuf, Vec<HittRequest>)>, HittCliError> {
     let is_dir_path = std::fs::metadata(path).map(|metadata| metadata.is_dir())?;
 
@@ -84,11 +84,9 @@ mod test_get_requests {
             .tempfile()
             .expect("it to create a file");
 
-        let p = f.path();
+        std::fs::write(f.path(), "GET https://mhouge.dk/").expect("it to write successfully");
 
-        std::fs::write(p, "GET https://mhouge.dk/").expect("it to write successfully");
-
-        let files = get_requests(p, false, &None)
+        let files = get_requests(f.path(), false, None)
             .await
             .expect("it to return a list of requests");
 
@@ -119,7 +117,7 @@ mod test_get_requests {
 
         let p = dir.path();
 
-        let err = get_requests(p, false, &None)
+        let err = get_requests(p, false, None)
             .await
             .expect_err("expect it to return a missing recursive arg error");
 
@@ -141,7 +139,7 @@ mod test_get_requests {
 
         std::fs::write(&file_path, "GET https://mhouge.dk/").expect("it to write successfully");
 
-        let files = get_requests(dir_path, true, &None)
+        let files = get_requests(dir_path, true, None)
             .await
             .expect("it to return a list of requests");
 
@@ -178,7 +176,7 @@ pub async fn run_command<W: std::io::Write + Send>(
 
     let mut request_count: u16 = 0;
 
-    for (path, file) in get_requests(&args.path, args.recursive, &args.var).await? {
+    for (path, file) in get_requests(&args.path, args.recursive, args.var.as_ref()).await? {
         if !args.vim {
             if request_count > 0 {
                 term.queue(Print('\n'))?;
@@ -194,7 +192,7 @@ pub async fn run_command<W: std::io::Write + Send>(
                 term.queue(Print('\n'))?;
             }
 
-            match send_request(&http_client, &req, &timeout).await {
+            match send_request(&http_client, &req, timeout.as_ref()).await {
                 Ok(response) => handle_response(term, &response, args),
                 Err(request_error) => {
                     if request_error.is_timeout() {

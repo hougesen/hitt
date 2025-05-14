@@ -14,7 +14,7 @@ pub struct HittResponse {
 pub async fn send_request(
     http_client: &reqwest::Client,
     input: &HittRequest,
-    timeout: &Option<core::time::Duration>,
+    timeout: Option<&core::time::Duration>,
 ) -> Result<HittResponse, reqwest::Error> {
     let url = input.uri.to_string();
 
@@ -35,26 +35,26 @@ pub async fn send_request(
     }
 
     if timeout.is_some() {
-        if let Some(dur) = *timeout {
-            partial_req = partial_req.timeout(dur);
+        if let Some(dur) = timeout {
+            partial_req = partial_req.timeout(dur.to_owned());
         }
     }
 
-    let req = partial_req.build()?;
+    let request = partial_req.build()?;
 
     // TODO: implement more precise benchmark?
     let start = std::time::Instant::now();
-    let res = http_client.execute(req).await?;
+    let response = http_client.execute(request).await?;
     let duration = start.elapsed();
 
     Ok(HittResponse {
         url,
         method: input.method.to_string(),
-        status_code: res.status(),
-        headers: res.headers().to_owned(),
-        http_version: res.version(),
+        status_code: response.status(),
+        headers: response.headers().to_owned(),
+        http_version: response.version(),
         duration,
-        body: res.text().await?,
+        body: response.text().await?,
     })
 }
 
@@ -84,7 +84,7 @@ mod test_send_request {
             http_version: None,
         };
 
-        let result = send_request(&http_client, &input, &timeout)
+        let result = send_request(&http_client, &input, timeout.as_ref())
             .await
             .expect("it to be successful");
 
@@ -118,7 +118,7 @@ mod test_send_request {
             http_version: Some(http::Version::HTTP_11),
         };
 
-        let result = send_request(&http_client, &input, &timeout)
+        let result = send_request(&http_client, &input, timeout.as_ref())
             .await
             .expect("it to be successful");
 
@@ -160,7 +160,7 @@ mod test_send_request {
             http_version: None,
         };
 
-        let result = send_request(&http_client, &input, &timeout)
+        let result = send_request(&http_client, &input, timeout.as_ref())
             .await
             .expect("it to be successful");
 
@@ -192,7 +192,7 @@ mod test_send_request {
             http_version: None,
         };
 
-        let result = send_request(&http_client, &input, &timeout)
+        let result = send_request(&http_client, &input, timeout.as_ref())
             .await
             .expect("it to be successful");
 
@@ -219,7 +219,7 @@ mod test_send_request {
             http_version: None,
         };
 
-        let response = send_request(&http_client, &input, &timeout)
+        let response = send_request(&http_client, &input, timeout.as_ref())
             .await
             .err()
             .expect("it to throw an error");

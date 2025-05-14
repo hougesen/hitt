@@ -15,7 +15,7 @@ pub enum HittCliError {
     SSEError(hitt_sse::Error),
 }
 
-impl std::error::Error for HittCliError {}
+impl core::error::Error for HittCliError {}
 
 impl core::fmt::Display for HittCliError {
     #[inline]
@@ -49,22 +49,9 @@ impl core::fmt::Display for HittCliError {
     }
 }
 
-impl From<tokio::task::JoinError> for HittCliError {
-    #[inline]
-    fn from(value: tokio::task::JoinError) -> Self {
-        Self::Join(value)
-    }
-}
-
 impl From<std::io::Error> for HittCliError {
     #[inline]
     fn from(value: std::io::Error) -> Self {
         Self::Io(value)
-    }
-}
-
-impl From<hitt_sse::Error> for HittCliError {
-    fn from(value: hitt_sse::Error) -> Self {
-        Self::SSEError(value)
     }
 }

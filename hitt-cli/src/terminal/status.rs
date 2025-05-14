@@ -11,7 +11,7 @@ pub fn print_status<W: std::io::Write + Send>(
     url: &str,
     status_code: u16,
     duration: &core::time::Duration,
-) -> Result<(), std::io::Error> {
+) -> std::io::Result<()> {
     let line = format!(
         "{http_version:?} {method} {url} {status_code} {}ms\n",
         duration.as_millis()

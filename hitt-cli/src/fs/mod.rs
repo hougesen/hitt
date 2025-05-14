@@ -36,7 +36,8 @@ pub async fn parse_files(
             tokio::task::spawn(async move { parse_file(&path, var_clone).await })
         })
         .collect::<TryJoinAll<_>>()
-        .await?;
+        .await
+        .map_err(HittCliError::Join)?;
 
     let mut parsed_requests = Vec::new();
 

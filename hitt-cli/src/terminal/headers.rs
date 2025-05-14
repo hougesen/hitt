@@ -7,7 +7,7 @@ use crossterm::{
 pub fn print_headers<W: std::io::Write + Send>(
     term: &mut W,
     headers: &reqwest::header::HeaderMap,
-) -> Result<(), std::io::Error> {
+) -> std::io::Result<()> {
     for (key, value) in headers {
         let value_str = String::from_utf8_lossy(value.as_ref());
 

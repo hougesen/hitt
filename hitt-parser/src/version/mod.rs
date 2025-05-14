@@ -50,12 +50,10 @@ pub fn parse_http_version(
 
 #[cfg(test)]
 mod test_parse_http_version {
-    use once_cell::sync::Lazy;
-
     use crate::{to_enum_chars, version::parse_http_version};
 
-    static EMPTY_VARS: Lazy<std::collections::HashMap<String, String>> =
-        Lazy::new(std::collections::HashMap::new);
+    static EMPTY_VARS: std::sync::LazyLock<std::collections::HashMap<String, String>> =
+        std::sync::LazyLock::new(std::collections::HashMap::new);
 
     const HTTP_0_9_INPUTS: [&str; 5] = [
         "http/0.9",

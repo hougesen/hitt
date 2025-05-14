@@ -20,7 +20,7 @@ pub fn completion_command<W: std::io::Write + Send>(
             clap_complete::generate(clap_complete::Shell::Elvish, &mut cmd, cmd_name, term);
         }
 
-        TerminalShell::PowerShell => {
+        TerminalShell::Powershell => {
             clap_complete::generate(clap_complete::Shell::PowerShell, &mut cmd, cmd_name, term);
         }
 
@@ -35,7 +35,34 @@ pub fn completion_command<W: std::io::Write + Send>(
         TerminalShell::Nushell => {
             clap_complete::generate(clap_complete_nushell::Nushell, &mut cmd, cmd_name, term);
         }
-    };
+    }
 
     term.flush()
+}
+
+#[cfg(test)]
+mod test_completion_command {
+    use crate::config::{CompletionsCommandArguments, TerminalShell};
+
+    #[test]
+    fn it_should_write_shell_completions() {
+        let shells = [
+            TerminalShell::Bash,
+            TerminalShell::Elvish,
+            TerminalShell::Fish,
+            TerminalShell::Nushell,
+            TerminalShell::Powershell,
+            TerminalShell::Zsh,
+        ];
+
+        for shell in shells {
+            let args = CompletionsCommandArguments { shell };
+
+            let mut buffer = Vec::new();
+
+            super::completion_command(&mut buffer, &args).expect("it to not fail");
+
+            assert!(!buffer.is_empty());
+        }
+    }
 }
