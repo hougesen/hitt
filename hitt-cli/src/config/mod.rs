@@ -116,6 +116,7 @@ impl clap::ValueEnum for TerminalShell {
 /// Generate shell completions
 #[derive(Args, Debug)]
 pub struct CompletionsCommandArguments {
+    #[arg()]
     pub shell: TerminalShell,
 }
 
