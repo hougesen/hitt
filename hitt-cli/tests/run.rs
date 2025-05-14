@@ -60,4 +60,27 @@ mod run_command {
             )))
             .stdout(predicates::str::contains("Hello World!"));
     }
+
+    #[test]
+    fn with_hidden_body() {
+        let dir = tempfile::tempdir().unwrap();
+
+        let method = "GET";
+        let url = "https://api.goout.dk/";
+
+        let input = format!("{method} {url}");
+
+        let file = setup_test_input(dir.path(), &input);
+
+        run_command(Some(dir.path()))
+            .arg("--hide-body")
+            .arg(file.path())
+            .assert()
+            .success()
+            .stdout(predicates::str::is_empty().not())
+            .stdout(predicates::str::contains(format!(
+                "HTTP/2.0 {method} {url} 200"
+            )))
+            .stdout(predicates::str::contains("Hello World!").not());
+    }
 }
