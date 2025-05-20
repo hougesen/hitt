@@ -27,7 +27,7 @@ pub async fn sse_command<W: std::io::Write + Send>(
                         terminal::body::print_body(term, &message, ContentType::Unknown, true)
                             .map_err(HittCliError::Io)
                     }
-                    hitt_sse::Event::Error(error) => Err(HittCliError::SSEError(error)),
+                    hitt_sse::Event::Error(error) => Err(HittCliError::SSEError(Box::new(error))),
                 }?;
             }
 

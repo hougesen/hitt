@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file. Dates are d
 
 #### [Unreleased](https://github.com/hougesen/hitt/compare/v0.0.19...HEAD)
 
+- build(deps): bump crossterm to v0.29.0 [`#493`](https://github.com/hougesen/hitt/pull/493)
 - test(cli): run with dir input [`#492`](https://github.com/hougesen/hitt/pull/492)
 - feat(cli): support multiple input paths [`#491`](https://github.com/hougesen/hitt/pull/491)
 - test(cli): test commands [`#490`](https://github.com/hougesen/hitt/pull/490)
