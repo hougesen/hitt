@@ -12,7 +12,7 @@ pub enum HittCliError {
     RecursiveNotEnabled,
     FailFast,
     SSEParseUrl(String),
-    SSEError(hitt_sse::Error),
+    SSEError(Box<hitt_sse::Error>),
 }
 
 impl core::error::Error for HittCliError {}
@@ -27,12 +27,10 @@ impl core::fmt::Display for HittCliError {
             Self::Io(error) => write!(f, "io error {error:#?}"),
             Self::Reqwest(method, uri, error) => write!(f, "{method} {uri} - {error}"),
             Self::RequestTimeout(method, uri) => write!(f, "{method} {uri} - request timed out"),
-            Self::InvalidVariableArgument(input) => {
-                write!(
-                    f,
-                    "'{input}' is not a valid variable argument - variable input should be '--var <KEY>=<VALUE>'"
-                )
-            }
+            Self::InvalidVariableArgument(input) => write!(
+                f,
+                "'{input}' is not a valid variable argument - variable input should be '--var <KEY>=<VALUE>'"
+            ),
             Self::VariableArgumentKeyIndexing(variable) => {
                 write!(f, "unable to index key of --var '{variable}'")
             }
