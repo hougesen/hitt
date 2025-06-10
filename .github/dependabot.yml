@@ -5,33 +5,40 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 100
+    assignees: [hougesen]
   - package-ecosystem: cargo
     directory: /hitt-cli
     schedule:
       interval: weekly
     open-pull-requests-limit: 100
+    assignees: [hougesen]
   - package-ecosystem: cargo
     directory: /hitt-formatter
     schedule:
       interval: weekly
     open-pull-requests-limit: 100
+    assignees: [hougesen]
   - package-ecosystem: cargo
     directory: /hitt-parser
     schedule:
       interval: weekly
     open-pull-requests-limit: 100
+    assignees: [hougesen]
   - package-ecosystem: cargo
     directory: /hitt-request
     schedule:
       interval: weekly
     open-pull-requests-limit: 100
+    assignees: [hougesen]
   - package-ecosystem: cargo
     directory: /hitt-sse
     schedule:
       interval: weekly
     open-pull-requests-limit: 100
+    assignees: [hougesen]
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
     open-pull-requests-limit: 100
+    assignees: [hougesen]

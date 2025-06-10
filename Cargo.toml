@@ -10,14 +10,14 @@ exclude = ["docs", "examples"]
 resolver = "3"
 
 [workspace.package]
-version = "0.0.19"
+version = "0.0.20"
 authors = ["Mads Hougesen <mads@mhouge.dk>"]
 edition = "2024"
 license = "MIT"
 repository = "https://github.com/hougesen/hitt"
 documentation = "https://github.com/hougesen/hitt#readme"
 keywords = ["http", "cli", "testing", "sse", "server-sent-events"]
-description = "command line HTTP testing tool focused on speed and simplicity"
+description = "Command line HTTP testing tool focused on speed and simplicity"
 homepage = "https://hitt.mhouge.dk"
 readme = "README.md"
 categories = [
@@ -36,10 +36,10 @@ clap_complete_nushell = { version = "4.5.7" }
 crossterm = { version = "0.29.0" }
 eventsource-stream = { version = "0.2.3" }
 futures = { version = "0.3.31" }
-hitt-formatter = { path = "hitt-formatter", version = "0.0.19" }
-hitt-parser = { path = "hitt-parser", version = "0.0.19" }
-hitt-request = { path = "hitt-request", version = "0.0.19" }
-hitt-sse = { path = "hitt-sse", version = "0.0.19" }
+hitt-formatter = { path = "hitt-formatter", version = "0.0.20" }
+hitt-parser = { path = "hitt-parser", version = "0.0.20" }
+hitt-request = { path = "hitt-request", version = "0.0.20" }
+hitt-sse = { path = "hitt-sse", version = "0.0.20" }
 http = { version = "1.3.1" }
 ignore = { version = "0.4.23" }
 jsonformat = { version = "2.1.0" }

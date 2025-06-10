@@ -69,7 +69,7 @@
 
         <Package Id='*'
             Keywords='Installer'
-            Description='command line HTTP testing tool focused on speed and simplicity'
+            Description='Command line HTTP testing tool focused on speed and simplicity'
             Manufacturer='Mads Hougesen'
             InstallerVersion='450'
             Languages='1033'
