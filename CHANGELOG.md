@@ -2,8 +2,25 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
-#### [Unreleased](https://github.com/hougesen/hitt/compare/v0.0.19...HEAD)
+#### [Unreleased](https://github.com/hougesen/hitt/compare/v0.0.20...HEAD)
 
+#### [v0.0.20](https://github.com/hougesen/hitt/compare/v0.0.19...v0.0.20)
+
+> 11 June 2025
+
+- chore: release v0.0.20 [`#507`](https://github.com/hougesen/hitt/pull/507)
+- build(deps): bump reqwest from 0.12.19 to 0.12.20 [`#506`](https://github.com/hougesen/hitt/pull/506)
+- build(deps): bump clap_complete from 4.5.52 to 4.5.54 [`#505`](https://github.com/hougesen/hitt/pull/505)
+- build(deps): bump clap_complete_nushell from 4.5.6 to 4.5.7 [`#504`](https://github.com/hougesen/hitt/pull/504)
+- build(deps): bump clap from 4.5.39 to 4.5.40 [`#502`](https://github.com/hougesen/hitt/pull/502)
+- build(deps): bump clap_complete from 4.5.51 to 4.5.52 [`#500`](https://github.com/hougesen/hitt/pull/500)
+- build(deps): bump reqwest from 0.12.18 to 0.12.19 [`#501`](https://github.com/hougesen/hitt/pull/501)
+- build(deps): bump clap_complete_nushell from 4.5.5 to 4.5.6 [`#499`](https://github.com/hougesen/hitt/pull/499)
+- build(deps): bump clap_complete from 4.5.50 to 4.5.51 [`#497`](https://github.com/hougesen/hitt/pull/497)
+- build(deps): bump reqwest from 0.12.15 to 0.12.18 [`#496`](https://github.com/hougesen/hitt/pull/496)
+- build(deps): bump clap from 4.5.38 to 4.5.39 [`#498`](https://github.com/hougesen/hitt/pull/498)
+- build(deps): bump tokio from 1.45.0 to 1.45.1 [`#495`](https://github.com/hougesen/hitt/pull/495)
+- refactor(cli): heap allocate hitt_sse::Error to reduce enum size [`#494`](https://github.com/hougesen/hitt/pull/494)
 - build(deps): bump crossterm to v0.29.0 [`#493`](https://github.com/hougesen/hitt/pull/493)
 - test(cli): run with dir input [`#492`](https://github.com/hougesen/hitt/pull/492)
 - feat(cli): support multiple input paths [`#491`](https://github.com/hougesen/hitt/pull/491)

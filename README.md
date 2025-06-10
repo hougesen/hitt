@@ -11,7 +11,7 @@ hitt is a command line HTTP testing tool focused on speed and simplicity.
 <!-- START_SECTION:base-command-help -->
 
 ```
-hitt 0.0.19
+hitt 0.0.20
 command line HTTP testing tool focused on speed and simplicity
 Mads Hougesen <mads@mhouge.dk>
 
