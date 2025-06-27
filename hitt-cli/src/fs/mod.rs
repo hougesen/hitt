@@ -58,10 +58,10 @@ pub fn find_http_files(path: &std::path::Path) -> Vec<std::path::PathBuf> {
             if let Ok(entry) = original_entry {
                 let entry_path = entry.path();
 
-                if let Some(ext) = entry_path.extension() {
-                    if ext == "http" {
-                        return Some(entry_path.to_path_buf());
-                    }
+                if let Some(ext) = entry_path.extension()
+                    && ext == "http"
+                {
+                    return Some(entry_path.to_path_buf());
                 }
             }
 

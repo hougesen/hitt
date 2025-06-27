@@ -28,16 +28,16 @@ pub async fn send_request(
         partial_req = partial_req.headers(input.headers.clone());
     }
 
-    if input.body.is_some() {
-        if let Some(body) = input.body.clone() {
-            partial_req = partial_req.body(body);
-        }
+    if input.body.is_some()
+        && let Some(body) = input.body.clone()
+    {
+        partial_req = partial_req.body(body);
     }
 
-    if timeout.is_some() {
-        if let Some(dur) = timeout {
-            partial_req = partial_req.timeout(dur.to_owned());
-        }
+    if timeout.is_some()
+        && let Some(dur) = timeout
+    {
+        partial_req = partial_req.timeout(dur.to_owned());
     }
 
     let request = partial_req.build()?;

@@ -12,7 +12,7 @@ hitt is a command line HTTP testing tool focused on speed and simplicity.
 
 ```
 hitt 0.0.20
-command line HTTP testing tool focused on speed and simplicity
+Command line HTTP testing tool focused on speed and simplicity
 Mads Hougesen <mads@mhouge.dk>
 
 Usage: hitt <COMMAND>

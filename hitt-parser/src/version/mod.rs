@@ -16,19 +16,19 @@ pub fn parse_http_version(
             continue;
         } else if ch == '{' {
             // FIXME: remove clone
-            if let Some((var, jumps)) = parse_variable(&mut chars.clone()) {
-                if let Some(var_value) = vars.get(&var) {
-                    version.push_str(var_value);
+            if let Some((var, jumps)) = parse_variable(&mut chars.clone())
+                && let Some(var_value) = vars.get(&var)
+            {
+                version.push_str(var_value);
 
-                    for _ in 0..jumps {
-                        chars.next();
-                    }
-
-                    continue;
+                for _ in 0..jumps {
+                    chars.next();
                 }
 
-                // NOTE: should variable not existing raise an error?
+                continue;
             }
+
+            // NOTE: should variable not existing raise an error?
         }
 
         version.push(ch);

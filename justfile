@@ -8,6 +8,7 @@ build-local:
     sudo cp target/release/hitt /usr/local/bin/hitt-local
 
 format:
+    tombi format
     just --fmt --unstable .
     stylua .
     mdsf format .

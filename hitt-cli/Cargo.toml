@@ -1,15 +1,15 @@
 [package]
 name = "hitt"
-description = { workspace = true }
 version = { workspace = true }
 authors = { workspace = true }
 edition = { workspace = true }
-license = { workspace = true }
-repository = { workspace = true }
-keywords = { workspace = true }
-homepage = { workspace = true }
+description = { workspace = true }
 documentation = { workspace = true }
 readme = { workspace = true }
+homepage = { workspace = true }
+repository = { workspace = true }
+license = { workspace = true }
+keywords = { workspace = true }
 categories = { workspace = true }
 
 [package.metadata.wix]
