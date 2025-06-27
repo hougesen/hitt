@@ -1,15 +1,15 @@
 [package]
 name = "hitt-sse"
-description = "SSE utility library for the hitt http testing tool"
 version = { workspace = true }
 authors = { workspace = true }
 edition = { workspace = true }
-license = { workspace = true }
-repository = { workspace = true }
+description = "SSE utility library for the hitt http testing tool"
 documentation = { workspace = true }
-keywords = { workspace = true }
-homepage = { workspace = true }
 readme = "README.md"
+homepage = { workspace = true }
+repository = { workspace = true }
+license = { workspace = true }
+keywords = { workspace = true }
 categories = ["web-programming"]
 
 [dependencies]

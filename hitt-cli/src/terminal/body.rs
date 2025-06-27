@@ -44,10 +44,10 @@ pub fn print_body<W: std::io::Write + Send>(
     }
 
     if let Some(formatted) = hitt_formatter::format(body, content_type) {
-        return __print_body(term, &formatted);
+        __print_body(term, &formatted)
+    } else {
+        __print_body(term, body)
     }
-
-    __print_body(term, body)
 }
 
 #[cfg(test)]
