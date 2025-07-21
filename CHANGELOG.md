@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file. Dates are d
 - build(deps): bump reqwest from 0.12.20 to 0.12.22 [`#509`](https://github.com/hougesen/hitt/pull/509)
 - refactor: apply rust 1.88.0 fixes [`#508`](https://github.com/hougesen/hitt/pull/508)
 - test: validate all uses of expect_err [`bd9e673`](https://github.com/hougesen/hitt/commit/bd9e6732b5c9aa0a6bb5c115ce379a778601fc34)
+- test: sse should reject invalid urls [`2038e3b`](https://github.com/hougesen/hitt/commit/2038e3b1fb4bedcea1089e492d5a6bc2f7f6fa13)
 - test: validate invalid urls are rejected [`1560c81`](https://github.com/hougesen/hitt/commit/1560c81c03f6560d6544c41d881a868cc239df94)
 - test: validate parse_variable_argument returns HittCliError::InvalidVariableArgument [`5ac6d80`](https://github.com/hougesen/hitt/commit/5ac6d80644b3567d12353405e80d2ee063ca4d30)
 
