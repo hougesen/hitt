@@ -197,7 +197,30 @@ GET {url}"
             )))
             .stdout(predicates::str::contains("Hello World!"));
 
-        // Needed so the file ins't dropped
+        // Needed so the file isn't dropped
+        assert!(std::fs::exists(file.path()).unwrap());
+    }
+
+    #[test]
+    fn it_should_reject_with_invalid_url() {
+        let dir = tempfile::TempDir::with_prefix("hitt-").unwrap();
+
+        let method = "GET";
+        let url = "thisisnotanurl";
+
+        let input = format!("{method} {url}");
+
+        let file = setup_test_input(dir.path(), &input);
+
+        run_command(Some(dir.path()))
+            .arg(file.path())
+            .assert()
+            .success()
+            .stdout(predicates::str::contains(format!(
+                "hitt: {method} {url} - builder error"
+            )));
+
+        // Needed so the file isn't dropped
         assert!(std::fs::exists(file.path()).unwrap());
     }
 }

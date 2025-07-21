@@ -45,6 +45,13 @@ mod test_parse_variable_argument {
 
             let error = parse_variable_argument(&input).expect_err("it to return a variable");
 
+            assert_eq!(
+                format!(
+                    "'{input}' is not a valid variable argument - variable input should be '--var <KEY>=<VALUE>'"
+                ),
+                error.to_string()
+            );
+
             assert!(
                 matches!(&error, HittCliError::InvalidVariableArgument(invalid_variable) if invalid_variable == &input)
             );
