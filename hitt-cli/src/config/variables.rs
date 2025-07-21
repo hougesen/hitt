@@ -1,5 +1,6 @@
 use crate::error::HittCliError;
 
+#[inline]
 pub fn parse_variable_argument(argument: &str) -> Result<(String, String), HittCliError> {
     let pos = argument
         .find('=')

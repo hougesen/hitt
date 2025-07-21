@@ -5,6 +5,7 @@ use hitt_parser::HittRequest;
 
 use crate::error::HittCliError;
 
+#[inline]
 pub async fn parse_file(
     path: &std::path::Path,
     input_variables: Arc<std::collections::HashMap<String, String>>,
@@ -22,6 +23,7 @@ pub async fn parse_file(
     }
 }
 
+#[inline]
 pub async fn parse_files(
     paths: Vec<std::path::PathBuf>,
     input_variables: std::collections::HashMap<String, String>,
@@ -48,6 +50,7 @@ pub async fn parse_files(
     Ok(parsed_requests)
 }
 
+#[inline]
 pub fn find_http_files(path: &std::path::Path) -> Vec<std::path::PathBuf> {
     ignore::WalkBuilder::new(path)
         .git_ignore(true)

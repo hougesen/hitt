@@ -140,26 +140,26 @@ mod test_parse_header {
         {
             let input = "key===::value";
 
-            let output = parse_header(&mut to_enum_chars(input), &EMPTY_VARS)
+            let error = parse_header(&mut to_enum_chars(input), &EMPTY_VARS)
                 .expect_err("it to fail to parse");
 
-            assert_eq!(output.to_string(), "invalid header name 'key==='");
+            assert_eq!(error.to_string(), "invalid header name 'key==='");
 
             assert!(
-                matches!(output, RequestParseError::InvalidHeaderName(name) if name == "key===")
+                matches!(error, RequestParseError::InvalidHeaderName(name) if name == "key===")
             );
         };
 
         {
             let input = "key::v!###  `al\nue";
 
-            let output = parse_header(&mut to_enum_chars(input), &EMPTY_VARS)
+            let error = parse_header(&mut to_enum_chars(input), &EMPTY_VARS)
                 .expect_err("it to fail to parse");
 
-            assert_eq!(output.to_string(), "invalid header value ':v!###  `al\nue'");
+            assert_eq!(error.to_string(), "invalid header value ':v!###  `al\nue'");
 
             assert!(
-                matches!(output, RequestParseError::InvalidHeaderValue(val) if val == ":v!###  `al\nue")
+                matches!(error, RequestParseError::InvalidHeaderValue(val) if val == ":v!###  `al\nue")
             );
         };
 
@@ -242,24 +242,39 @@ mod test_parse_header {
     #[test]
     fn it_should_handle_bad_variables() {
         {
-            let input = "{key:value";
+            let key = "{key";
+            let value = "value";
+            let input = format!("{key}:{value}");
 
-            parse_header(&mut to_enum_chars(input), &EMPTY_VARS)
+            let error = parse_header(&mut to_enum_chars(&input), &EMPTY_VARS)
                 .expect_err("it to return an invalid error");
+
+            assert_eq!(format!("invalid header name '{key}'"), error.to_string());
+            assert!(matches!(error, RequestParseError::InvalidHeaderName(name) if name == key));
         };
 
         {
-            let input = "{key }:value";
+            let key = "{key }";
+            let value = "value";
+            let input = format!("{key}:{value}");
 
-            parse_header(&mut to_enum_chars(input), &EMPTY_VARS)
+            let error = parse_header(&mut to_enum_chars(&input), &EMPTY_VARS)
                 .expect_err("it to return an invalid error");
+
+            assert_eq!(format!("invalid header name '{key}'"), error.to_string());
+            assert!(matches!(error, RequestParseError::InvalidHeaderName(name) if name == key));
         };
 
         {
-            let input = "{key:value }}";
+            let key = "{key";
+            let value = ":value }}";
+            let input = format!("{key}:{value}");
 
-            parse_header(&mut to_enum_chars(input), &EMPTY_VARS)
+            let error = parse_header(&mut to_enum_chars(&input), &EMPTY_VARS)
                 .expect_err("it to return an invalid error");
+
+            assert_eq!(format!("invalid header name '{key}'"), error.to_string());
+            assert!(matches!(error, RequestParseError::InvalidHeaderName(name) if name == key));
         };
 
         {
@@ -274,17 +289,27 @@ mod test_parse_header {
         };
 
         {
-            let input = "key{:value";
+            let key = "key{";
+            let value = "value";
+            let input = format!("{key}:{value}");
 
-            parse_header(&mut to_enum_chars(input), &EMPTY_VARS)
+            let error = parse_header(&mut to_enum_chars(&input), &EMPTY_VARS)
                 .expect_err("it to return an invalid error");
+
+            assert_eq!(format!("invalid header name '{key}'"), error.to_string());
+            assert!(matches!(error, RequestParseError::InvalidHeaderName(name) if name == key));
         };
 
         {
-            let input = "key{:value}}";
+            let key = "key{";
+            let value = "value}}";
+            let input = format!("{key}:{value}");
 
-            parse_header(&mut to_enum_chars(input), &EMPTY_VARS)
+            let error = parse_header(&mut to_enum_chars(&input), &EMPTY_VARS)
                 .expect_err("it to return an invalid error");
+
+            assert_eq!(format!("invalid header name '{key}'"), error.to_string());
+            assert!(matches!(error, RequestParseError::InvalidHeaderName(name) if name == key));
         };
     }
 
@@ -306,20 +331,29 @@ mod test_parse_header {
         {
             let input = "{{key_var}}: value";
 
-            let output = parse_header(&mut to_enum_chars(input), &EMPTY_VARS)
+            let error = parse_header(&mut to_enum_chars(input), &EMPTY_VARS)
                 .expect_err("it to return missing variable 'key_var'");
 
-            assert!(matches!(output, RequestParseError::VariableNotFound(var) if var == "key_var"));
+            assert_eq!(
+                "variable 'key_var' was used, but not set",
+                error.to_string()
+            );
+
+            assert!(matches!(error, RequestParseError::VariableNotFound(var) if var == "key_var"));
         };
 
         {
             let input = "key: {{value_var}}";
 
-            let output = parse_header(&mut to_enum_chars(input), &EMPTY_VARS)
+            let error = parse_header(&mut to_enum_chars(input), &EMPTY_VARS)
                 .expect_err("it to return missing variable 'value_var'");
 
+            assert_eq!(
+                "variable 'value_var' was used, but not set",
+                error.to_string()
+            );
             assert!(
-                matches!(output, RequestParseError::VariableNotFound(var) if var == "value_var")
+                matches!(error, RequestParseError::VariableNotFound(var) if var == "value_var")
             );
         };
     }

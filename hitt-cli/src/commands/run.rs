@@ -49,6 +49,7 @@ mod test_build_variable_map {
     }
 }
 
+#[inline]
 async fn get_requests(
     input_paths: &[std::path::PathBuf],
     recursive: bool,
@@ -127,6 +128,10 @@ mod test_get_requests {
             .await
             .expect_err("expect it to return a missing recursive arg error");
 
+        assert_eq!(
+            "received directory path but --recursive is not enabled",
+            err.to_string()
+        );
         assert!(matches!(err, HittCliError::RecursiveNotEnabled));
     }
 
@@ -169,6 +174,7 @@ mod test_get_requests {
     }
 }
 
+#[inline]
 pub async fn run_command<W: std::io::Write + Send>(
     term: &mut W,
     args: &RunCommandArguments,

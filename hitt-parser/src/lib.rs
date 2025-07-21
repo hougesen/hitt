@@ -466,6 +466,10 @@ GET https://mhouge.dk/
 
         let err = tokenize(input, &EMPTY_VARS).expect_err("it to be a missing variable error");
 
+        assert_eq!(
+            "variable 'missing_variable' was used, but not set",
+            err.to_string()
+        );
         assert!(matches!(err, RequestParseError::VariableNotFound(v) if v == "missing_variable"));
     }
 
@@ -579,7 +583,7 @@ mod test_partial_http_request {
 
     #[test]
     fn build_should_reject_if_no_uri() {
-        let request = PartialHittRequest {
+        let error = PartialHittRequest {
             uri: None,
             method: Some(http::Method::GET),
             http_version: None,
@@ -589,16 +593,16 @@ mod test_partial_http_request {
         .build()
         .expect_err("it to raise RequestParseError::MissingUri");
 
-        assert!(matches!(request, RequestParseError::MissingUri));
+        assert!(matches!(error, RequestParseError::MissingUri));
 
-        assert_eq!(request.to_string(), "missing uri");
+        assert_eq!(error.to_string(), "missing uri");
     }
 
     #[test]
     fn build_should_reject_if_no_method() {
         let uri = Uri::from_static("https://mhouge.dk/");
 
-        let request = PartialHittRequest {
+        let error = PartialHittRequest {
             uri: Some(uri),
             method: None,
             http_version: None,
@@ -608,9 +612,9 @@ mod test_partial_http_request {
         .build()
         .expect_err("it to raise RequestParseError::MissingMethod");
 
-        assert!(matches!(request, RequestParseError::MissingMethod));
+        assert!(matches!(error, RequestParseError::MissingMethod));
 
-        assert_eq!(request.to_string(), "missing HTTP method");
+        assert_eq!(error.to_string(), "missing HTTP method");
     }
 }
 
@@ -944,12 +948,17 @@ GET https://mhouge.dk/
 
 {{ body_input }}";
 
-            let request = parse_requests(input, &EMPTY_VARS).expect_err("it to return an error");
+            let error = parse_requests(input, &EMPTY_VARS).expect_err("it to return an error");
 
+            assert_eq!(
+                "variable 'body_input' was used, but not set",
+                error.to_string()
+            );
             assert!(matches!(
-                request,
+                error,
                 RequestParseError::VariableNotFound(var)
                 if var == "body_input"
+
             ));
         }
     }

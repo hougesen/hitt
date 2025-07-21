@@ -20,9 +20,13 @@ pub fn print_running_file<W: std::io::Write + Send>(
     term: &mut W,
     path: &std::path::Path,
 ) -> std::io::Result<()> {
-    queue!(term, Print(format!("hitt: running {path:?}\n").cyan()))
+    queue!(
+        term,
+        Print(format!("hitt: running '{}'\n", path.display()).cyan())
+    )
 }
 
+#[inline]
 pub fn handle_response<W: std::io::Write + Send>(
     term: &mut W,
     response: &HittResponse,
@@ -378,6 +382,10 @@ mod test_handle_response {
 
         let error = handle_response(&mut term, &response, &args).expect_err("it to fail fast");
 
+        assert_eq!(
+            "exiting early since --fail-fast is enabled",
+            error.to_string()
+        );
         assert!(matches!(error, HittCliError::FailFast));
 
         let status = format!(

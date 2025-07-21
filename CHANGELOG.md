@@ -4,12 +4,15 @@ All notable changes to this project will be documented in this file. Dates are d
 
 #### [Unreleased](https://github.com/hougesen/hitt/compare/v0.0.20...HEAD)
 
+- build: upgrade cargo dist to v0.28.1 [`#514`](https://github.com/hougesen/hitt/pull/514)
 - build(deps): bump clap_complete from 4.5.54 to 4.5.55 [`#513`](https://github.com/hougesen/hitt/pull/513)
 - build(deps): bump clap_complete_nushell from 4.5.7 to 4.5.8 [`#511`](https://github.com/hougesen/hitt/pull/511)
 - build(deps): bump clap from 4.5.40 to 4.5.41 [`#512`](https://github.com/hougesen/hitt/pull/512)
 - build(deps): bump tokio from 1.45.1 to 1.46.1 [`#510`](https://github.com/hougesen/hitt/pull/510)
 - build(deps): bump reqwest from 0.12.20 to 0.12.22 [`#509`](https://github.com/hougesen/hitt/pull/509)
 - refactor: apply rust 1.88.0 fixes [`#508`](https://github.com/hougesen/hitt/pull/508)
+- test: validate invalid urls are rejected [`1560c81`](https://github.com/hougesen/hitt/commit/1560c81c03f6560d6544c41d881a868cc239df94)
+- test: validate parse_variable_argument returns HittCliError::InvalidVariableArgument [`5ac6d80`](https://github.com/hougesen/hitt/commit/5ac6d80644b3567d12353405e80d2ee063ca4d30)
 
 #### [v0.0.20](https://github.com/hougesen/hitt/compare/v0.0.19...v0.0.20)
 

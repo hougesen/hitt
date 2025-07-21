@@ -11,6 +11,7 @@ pub enum Event {
     Error(Error),
 }
 
+#[inline]
 pub async fn start_sse(
     url: reqwest::Url,
     tx: UnboundedSender<Event>,

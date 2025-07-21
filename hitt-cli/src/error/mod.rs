@@ -21,8 +21,12 @@ impl core::fmt::Display for HittCliError {
     #[inline]
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         match self {
-            Self::Parse(path, error) => write!(f, "error parsing file {path:?} - {error}"),
-            Self::IoRead(path, error) => write!(f, "error reading {path:?} - {error:#?}"),
+            Self::Parse(path, error) => {
+                write!(f, "error parsing file '{}' - {error}", path.display())
+            }
+            Self::IoRead(path, error) => {
+                write!(f, "error reading '{}' - {error:#?}", path.display())
+            }
             Self::Join(error) => write!(f, "error joining handles - {error:#?}"),
             Self::Io(error) => write!(f, "io error {error:#?}"),
             Self::Reqwest(method, uri, error) => write!(f, "{method} {uri} - {error}"),
