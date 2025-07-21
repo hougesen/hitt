@@ -18,7 +18,7 @@ pub fn parse_variable_argument(argument: &str) -> Result<(String, String), HittC
 
 #[cfg(test)]
 mod test_parse_variable_argument {
-    use crate::config::variables::parse_variable_argument;
+    use crate::{config::variables::parse_variable_argument, error::HittCliError};
 
     #[test]
     fn it_should_parse_valid_arguments() {
@@ -43,7 +43,11 @@ mod test_parse_variable_argument {
 
             let input = format!("{key}{value}");
 
-            parse_variable_argument(&input).expect_err("it to return a variable");
+            let error = parse_variable_argument(&input).expect_err("it to return a variable");
+
+            assert!(
+                matches!(&error, HittCliError::InvalidVariableArgument(invalid_variable) if invalid_variable == &input)
+            );
         }
     }
 
