@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file. Dates are d
 
 #### [Unreleased](https://github.com/hougesen/hitt/compare/v0.0.20...HEAD)
 
+- build(deps): bump clap_complete from 4.5.54 to 4.5.55 [`#513`](https://github.com/hougesen/hitt/pull/513)
+- build(deps): bump clap_complete_nushell from 4.5.7 to 4.5.8 [`#511`](https://github.com/hougesen/hitt/pull/511)
+- build(deps): bump clap from 4.5.40 to 4.5.41 [`#512`](https://github.com/hougesen/hitt/pull/512)
+- build(deps): bump tokio from 1.45.1 to 1.46.1 [`#510`](https://github.com/hougesen/hitt/pull/510)
+- build(deps): bump reqwest from 0.12.20 to 0.12.22 [`#509`](https://github.com/hougesen/hitt/pull/509)
+- refactor: apply rust 1.88.0 fixes [`#508`](https://github.com/hougesen/hitt/pull/508)
+
 #### [v0.0.20](https://github.com/hougesen/hitt/compare/v0.0.19...v0.0.20)
 
 > 11 June 2025
