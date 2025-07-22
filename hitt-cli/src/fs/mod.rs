@@ -5,23 +5,22 @@ use hitt_parser::HittRequest;
 
 use crate::error::HittCliError;
 
+#[inline]
 pub async fn parse_file(
     path: &std::path::Path,
     input_variables: Arc<std::collections::HashMap<String, String>>,
 ) -> Result<(std::path::PathBuf, Vec<HittRequest>), HittCliError> {
-    match tokio::fs::read(&path).await {
-        Ok(buf) => {
-            let content = String::from_utf8_lossy(&buf);
+    let content = tokio::fs::read_to_string(&path)
+        .await
+        .map_err(|err| HittCliError::IoRead(path.to_owned(), err))?;
 
-            match hitt_parser::parse_requests(&content, &input_variables) {
-                Ok(reqs) => Ok((path.to_owned(), reqs)),
-                Err(e) => Err(HittCliError::Parse(path.to_owned(), e)),
-            }
-        }
-        Err(err) => Err(HittCliError::IoRead(path.to_owned(), err)),
-    }
+    let reqs = hitt_parser::parse_requests(&content, &input_variables)
+        .map_err(|e| HittCliError::Parse(path.to_owned(), e))?;
+
+    Ok((path.to_owned(), reqs))
 }
 
+#[inline]
 pub async fn parse_files(
     paths: Vec<std::path::PathBuf>,
     input_variables: std::collections::HashMap<String, String>,
@@ -48,6 +47,7 @@ pub async fn parse_files(
     Ok(parsed_requests)
 }
 
+#[inline]
 pub fn find_http_files(path: &std::path::Path) -> Vec<std::path::PathBuf> {
     ignore::WalkBuilder::new(path)
         .git_ignore(true)

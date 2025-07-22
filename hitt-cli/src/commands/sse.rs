@@ -27,7 +27,7 @@ pub async fn sse_command<W: std::io::Write + Send>(
                         terminal::body::print_body(term, &message, ContentType::Unknown, true)
                             .map_err(HittCliError::Io)
                     }
-                    hitt_sse::Event::Error(error) => Err(HittCliError::SSEError(Box::new(error))),
+                    hitt_sse::Event::Error(error) => Err(HittCliError::SSEError(error)),
                 }?;
             }
 
@@ -35,5 +35,29 @@ pub async fn sse_command<W: std::io::Write + Send>(
         }
 
         Err(_error) => Err(HittCliError::SSEParseUrl(args.url)),
+    }
+}
+
+#[cfg(test)]
+mod test_sse_command {
+    use crate::{config::SSECommandArguments, error::HittCliError};
+
+    #[tokio::test]
+    async fn it_should_reject_invalid_urls() {
+        let url = "thisisnotaurl";
+
+        let mut buffer = Vec::new();
+
+        let error = super::sse_command(
+            &mut buffer,
+            SSECommandArguments {
+                url: url.to_string(),
+            },
+        )
+        .await
+        .expect_err("it to return an invalid url error");
+
+        assert_eq!(format!("'{url}' is not a valid url"), error.to_string());
+        assert!(matches!(error, HittCliError::SSEParseUrl(u) if u == url));
     }
 }

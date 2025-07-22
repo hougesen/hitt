@@ -8,9 +8,10 @@ pub type Error = reqwest_eventsource::Error;
 pub enum Event {
     Open,
     Message(String),
-    Error(Error),
+    Error(Box<Error>),
 }
 
+#[inline]
 pub async fn start_sse(
     url: reqwest::Url,
     tx: UnboundedSender<Event>,
@@ -19,19 +20,13 @@ pub async fn start_sse(
 
     while let Some(event) = ev.next().await {
         match event {
-            Ok(reqwest_eventsource::Event::Open) => {
-                tx.send(Event::Open)?;
-            }
-            Ok(reqwest_eventsource::Event::Message(m)) => {
-                tx.send(Event::Message(m.data))?;
-            }
-            Err(error) => {
-                tx.send(Event::Error(error))?;
-
-                ev.close();
-            }
-        }
+            Ok(reqwest_eventsource::Event::Open) => tx.send(Event::Open),
+            Ok(reqwest_eventsource::Event::Message(m)) => tx.send(Event::Message(m.data)),
+            Err(error) => tx.send(Event::Error(Box::new(error))),
+        }?;
     }
+
+    ev.close();
 
     Ok(())
 }

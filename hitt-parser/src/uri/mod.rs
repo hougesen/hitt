@@ -103,8 +103,11 @@ mod test_parse_uri_input {
         for invalid_uri in invalid_uris {
             let input = format!("{invalid_uri} HTTP/2");
 
-            parse_uri_input(&mut to_enum_chars(&input), &EMPTY_VARS)
+            let error = parse_uri_input(&mut to_enum_chars(&input), &EMPTY_VARS)
                 .expect_err("it should return an error");
+
+            assert_eq!(format!("invalid uri '{invalid_uri}'"), error.to_string());
+            assert!(matches!(error, RequestParseError::InvalidUri(u) if u == invalid_uri));
         }
     }
 

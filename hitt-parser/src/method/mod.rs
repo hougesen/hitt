@@ -114,10 +114,20 @@ mod test_parse_method_input {
     fn it_should_support_variables() {
         let mut vars = std::collections::HashMap::new();
 
-        parse_method_input(&mut to_enum_chars("{method"), &EMPTY_VARS).expect_err("invalid method");
+        {
+            let error = parse_method_input(&mut to_enum_chars("{method"), &EMPTY_VARS)
+                .expect_err("invalid method");
+            assert_eq!("invalid HTTP method '{METHOD'", error.to_string());
+            assert!(matches!(error, RequestParseError::InvalidHttpMethod(m) if m == "{METHOD"));
+        };
 
-        parse_method_input(&mut to_enum_chars("{method}"), &EMPTY_VARS)
-            .expect_err("invalid method");
+        {
+            #[allow(clippy::literal_string_with_formatting_args)]
+            let error = parse_method_input(&mut to_enum_chars("{method}"), &EMPTY_VARS)
+                .expect_err("invalid method");
+            assert_eq!("invalid HTTP method '{METHOD}'", error.to_string());
+            assert!(matches!(error, RequestParseError::InvalidHttpMethod(m) if m == "{METHOD}"));
+        };
 
         for method in HTTP_METHODS {
             vars.insert("method".to_owned(), method.to_owned());
