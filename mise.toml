@@ -1,0 +1,50 @@
+[tasks.build]
+run = ["cargo check", "cargo build", "cargo build --release"]
+
+[tasks.changelog]
+run = ["npx auto-changelog --hide-credit -u -l 100 -b 100"]
+
+[tasks.format]
+run = [
+  "mise fmt",
+  "tombi format",
+  "stylua .",
+  "mdsf format .",
+  "npx prettier --write --cache --ignore-unknown .",
+  "cargo fmt",
+]
+
+[tasks.lint]
+run = [
+  "cargo fmt -- --check --color always",
+  "cargo clippy --all-targets --all-features -- -D warnings",
+]
+
+[tasks.lint-aggressive]
+run = [
+  "cargo clean",
+  "cargo clippy --fix --allow-staged --all-targets --all-features -- -Dclippy::style -Dclippy::perf -Dclippy::pedantic -Dclippy::all -Dclippy::cargo -Dclippy::complexity -Dclippy::nursery -Dclippy::suspicious -Aclippy::module_name_repetitions -Aclippy::missing_errors_doc -Aclippy::must_use_candidate -Aclippy::multiple_crate_versions",
+  "cargo clean",
+]
+
+[tasks.precommit]
+run = [
+  "mise tasks run changelog",
+  "python3 readme-command-help.py",
+  "mise tasks run format",
+  "mise tasks run build",
+  "mise tasks run lint",
+  "mise tasks run test",
+  "typos --exclude CHANGELOG.md .",
+  "dist init --yes",
+]
+
+[tasks.test]
+run = ["mise tasks run lint", "RUST_BACKTRACE=full cargo test --release"]
+
+[tasks.test-coverage]
+run = [
+  "cargo llvm-cov clean --workspace",
+  "cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info",
+  "cargo llvm-cov --open",
+]
