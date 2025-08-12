@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file. Dates are d
 
 #### [Unreleased](https://github.com/hougesen/hitt/compare/v0.0.20...HEAD)
 
+- build(deps): bump clap_complete from 4.5.56 to 4.5.57 [`#523`](https://github.com/hougesen/hitt/pull/523)
+- build(deps): bump clap from 4.5.43 to 4.5.44 [`#522`](https://github.com/hougesen/hitt/pull/522)
+- build(deps): bump clap_complete from 4.5.55 to 4.5.56 [`#521`](https://github.com/hougesen/hitt/pull/521)
+- build(deps): bump clap from 4.5.41 to 4.5.43 [`#518`](https://github.com/hougesen/hitt/pull/518)
+- build(deps): bump tokio from 1.46.1 to 1.47.1 [`#519`](https://github.com/hougesen/hitt/pull/519)
+- chore: migrate from just to mise [`#516`](https://github.com/hougesen/hitt/pull/516)
 - test: validate error cases [`#515`](https://github.com/hougesen/hitt/pull/515)
 - build: upgrade cargo dist to v0.28.1 [`#514`](https://github.com/hougesen/hitt/pull/514)
 - build(deps): bump clap_complete from 4.5.54 to 4.5.55 [`#513`](https://github.com/hougesen/hitt/pull/513)
