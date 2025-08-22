@@ -2,7 +2,11 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
-#### [Unreleased](https://github.com/hougesen/hitt/compare/v0.0.20...HEAD)
+#### [Unreleased](https://github.com/hougesen/hitt/compare/v0.0.21...HEAD)
+
+#### [v0.0.21](https://github.com/hougesen/hitt/compare/v0.0.20...v0.0.21)
+
+> 23 August 2025
 
 - chore: release v0.0.21 [`#528`](https://github.com/hougesen/hitt/pull/528)
 - build(deps): bump tempfile from 3.20.0 to 3.21.0 [`#527`](https://github.com/hougesen/hitt/pull/527)
@@ -358,7 +362,7 @@ All notable changes to this project will be documented in this file. Dates are d
 
 - build(cli): move tempfile to dev deps [`#249`](https://github.com/hougesen/hitt/pull/249)
 - build(cli): remove shell-words dependency [`#248`](https://github.com/hougesen/hitt/pull/248)
-- feat(cli): command for listening to sse [`#247`](https://github.com/hougesen/hitt/pull/247)
+-  feat(cli): command for listening to sse  [`#247`](https://github.com/hougesen/hitt/pull/247)
 - refactor: seperate command logic [`#246`](https://github.com/hougesen/hitt/pull/246)
 - chore(deps): bump clap_complete to 4.5.5 [`#245`](https://github.com/hougesen/hitt/pull/245)
 - chore: set package msrvs [`#243`](https://github.com/hougesen/hitt/pull/243)
@@ -613,7 +617,7 @@ All notable changes to this project will be documented in this file. Dates are d
 - feat: implement plugin for neovim [`#39`](https://github.com/hougesen/hitt/pull/39)
 - refactor: use console::Term instead of println [`#38`](https://github.com/hougesen/hitt/pull/38)
 - Changed token body to parse request body for multi request files [`#37`](https://github.com/hougesen/hitt/pull/37)
-- feat(cli): implement threaded parsing of requests [`#36`](https://github.com/hougesen/hitt/pull/36)
+-  feat(cli): implement threaded parsing of requests  [`#36`](https://github.com/hougesen/hitt/pull/36)
 - feat(cli): ignore gitignored files [`#35`](https://github.com/hougesen/hitt/pull/35)
 - feat(cli): command for creating requests [`#34`](https://github.com/hougesen/hitt/pull/34)
 - fix(parser): respect multiline body [`#33`](https://github.com/hougesen/hitt/pull/33)
