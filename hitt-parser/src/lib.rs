@@ -250,7 +250,7 @@ mod test_tokenize {
                 writeln!(input, "{method} {uri} {version:?}").expect("it to write");
                 writeln!(input, "{header_key}: {header_value}\n").expect("it to write");
 
-                if input_request_index % 2 == 0 {
+                if input_request_index.is_multiple_of(2) {
                     writeln!(input, "{body}").expect("it to write");
                 }
 
@@ -290,7 +290,7 @@ mod test_tokenize {
                 token_index += 1;
 
                 let body_token = tokens.get(token_index).expect("it to be a body token");
-                if output_request_index % 2 == 0 {
+                if output_request_index.is_multiple_of(2) {
                     assert!(matches!(body_token, RequestToken::Body(b) if b == &body_option));
                 } else {
                     assert!(matches!(body_token, RequestToken::Body(b) if b.is_none()));
