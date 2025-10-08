@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file. Dates are d
 
 #### [Unreleased](https://github.com/hougesen/hitt/compare/v0.0.21...HEAD)
 
+- build(deps): bump actions/checkout from 4 to 5 [`#520`](https://github.com/hougesen/hitt/pull/520)
 - build(deps): bump tempfile from 3.22.0 to 3.23.0 [`#536`](https://github.com/hougesen/hitt/pull/536)
 - build(deps): bump clap_complete from 4.5.57 to 4.5.58 [`#534`](https://github.com/hougesen/hitt/pull/534)
 - build(deps): bump clap from 4.5.47 to 4.5.48 [`#535`](https://github.com/hougesen/hitt/pull/535)
@@ -11,7 +12,6 @@ All notable changes to this project will be documented in this file. Dates are d
 - build(deps): bump tempfile from 3.21.0 to 3.22.0 [`#532`](https://github.com/hougesen/hitt/pull/532)
 - build(deps): bump clap from 4.5.46 to 4.5.47 [`#531`](https://github.com/hougesen/hitt/pull/531)
 - build(deps): bump clap from 4.5.45 to 4.5.46 [`#529`](https://github.com/hougesen/hitt/pull/529)
-- build(deps): bump actions/checkout from 4 to 5 [`e88bf18`](https://github.com/hougesen/hitt/commit/e88bf18ace83cde214fe9ceb6b225a742e4b71f4)
 - chore: add citation file [`51a92e2`](https://github.com/hougesen/hitt/commit/51a92e291add5ec4f862e92cd63f4fcbd38d6db8)
 - chore: update changelog [`b54dbbd`](https://github.com/hougesen/hitt/commit/b54dbbd8124fa2d02ca12ed52a71d24ba023fd4a)
 
