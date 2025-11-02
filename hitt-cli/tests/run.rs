@@ -5,8 +5,7 @@ mod run_command {
     use predicates::prelude::PredicateBooleanExt;
 
     fn run_command(directory: Option<&std::path::Path>) -> assert_cmd::Command {
-        let mut command =
-            assert_cmd::Command::cargo_bin("hitt").expect("error setting up hitt binary");
+        let mut command = assert_cmd::cargo_bin_cmd!("hitt");
 
         command.arg("run");
 
