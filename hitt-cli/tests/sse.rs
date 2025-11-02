@@ -1,8 +1,7 @@
 #[cfg(test)]
 mod sse_command {
     fn sse_command(directory: Option<&std::path::Path>) -> assert_cmd::Command {
-        let mut command =
-            assert_cmd::Command::cargo_bin("hitt").expect("error setting up hitt binary");
+        let mut command = assert_cmd::cargo_bin_cmd!("hitt");
 
         command.arg("sse");
 

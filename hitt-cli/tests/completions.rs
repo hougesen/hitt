@@ -3,8 +3,7 @@ mod completions_command {
     use predicates::prelude::PredicateBooleanExt;
 
     fn completions_command() -> assert_cmd::Command {
-        let mut command =
-            assert_cmd::Command::cargo_bin("hitt").expect("error setting up hitt binary");
+        let mut command = assert_cmd::cargo_bin_cmd!("hitt");
 
         command.arg("completions");
 
