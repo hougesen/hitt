@@ -39,6 +39,7 @@ updates:
     assignees: [hougesen]
   - package-ecosystem: github-actions
     directory: /
+    exclude-paths: [".github/workflows/release.yml"]
     schedule:
       interval: weekly
     open-pull-requests-limit: 100
