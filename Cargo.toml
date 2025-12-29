@@ -58,7 +58,7 @@ reqwest = { version = "0.12.27", default-features = false, features = [
   "zstd",
 ] }
 reqwest-eventsource = { version = "0.6.0" }
-tempfile = { version = "3.23.0" }
+tempfile = { version = "3.24.0" }
 tokio = { version = "1.48.0", features = ["fs", "macros", "rt-multi-thread"] }
 
 [profile.release]
