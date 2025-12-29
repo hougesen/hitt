@@ -31,7 +31,7 @@ exclude = ["examples", "www"]
 [workspace.dependencies]
 assert_cmd = "2.1.1"
 clap = { version = "4.5.53", features = ["derive"] }
-clap_complete = { version = "4.5.62" }
+clap_complete = { version = "4.5.63" }
 clap_complete_nushell = { version = "4.5.10" }
 crossterm = { version = "0.29.0" }
 eventsource-stream = { version = "0.2.3" }
