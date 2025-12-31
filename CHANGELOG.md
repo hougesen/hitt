@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file. Dates are d
 
 #### [Unreleased](https://github.com/hougesen/hitt/compare/v0.0.21...HEAD)
 
+- build(deps): bump tempfile from 3.23.0 to 3.24.0 [`#566`](https://github.com/hougesen/hitt/pull/566)
+- build(deps): bump reqwest from 0.12.27 to 0.12.28 [`#565`](https://github.com/hougesen/hitt/pull/565)
+- build(deps): bump clap_complete from 4.5.62 to 4.5.63 [`#564`](https://github.com/hougesen/hitt/pull/564)
+- build(deps): bump clap_complete from 4.5.61 to 4.5.62 [`#562`](https://github.com/hougesen/hitt/pull/562)
+- build(deps): bump reqwest from 0.12.26 to 0.12.27 [`#563`](https://github.com/hougesen/hitt/pull/563)
+- build(cargo-dist): upgrade to v0.30.3 [`#561`](https://github.com/hougesen/hitt/pull/561)
 - build(deps): bump reqwest from 0.12.24 to 0.12.26 [`#560`](https://github.com/hougesen/hitt/pull/560)
 - build(deps): bump clap_complete from 4.5.60 to 4.5.61 [`#556`](https://github.com/hougesen/hitt/pull/556)
 - build(deps): bump http from 1.3.1 to 1.4.0 [`#558`](https://github.com/hougesen/hitt/pull/558)
