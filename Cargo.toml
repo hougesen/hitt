@@ -30,7 +30,7 @@ exclude = ["examples", "www"]
 
 [workspace.dependencies]
 assert_cmd = "2.1.1"
-clap = { version = "4.5.53", features = ["derive"] }
+clap = { version = "4.5.54", features = ["derive"] }
 clap_complete = "4.5.63"
 clap_complete_nushell = "4.5.10"
 crossterm = "0.29.0"
