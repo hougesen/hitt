@@ -35,7 +35,7 @@ clap_complete = "4.6.0"
 clap_complete_nushell = "4.5.10"
 crossterm = "0.29.0"
 eventsource-stream = "0.2.3"
-futures = "0.3.31"
+futures = "0.3.32"
 hitt-formatter = { path = "hitt-formatter", version = "0.0.21" }
 hitt-parser = { path = "hitt-parser", version = "0.0.21" }
 hitt-request = { path = "hitt-request", version = "0.0.21" }
