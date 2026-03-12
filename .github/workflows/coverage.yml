@@ -1,3 +1,4 @@
+---
 name: coverage
 on: [push]
 jobs:
