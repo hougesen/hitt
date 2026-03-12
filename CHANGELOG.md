@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file. Dates are d
 
 #### [Unreleased](https://github.com/hougesen/hitt/compare/v0.0.21...HEAD)
 
+- build(deps): bump clap_complete from 4.5.65 to 4.5.66 [`#579`](https://github.com/hougesen/hitt/pull/579)
+- build(deps): bump tokio from 1.49.0 to 1.50.0 [`#585`](https://github.com/hougesen/hitt/pull/585)
+- build(deps): bump reqwest from 0.13.1 to 0.13.2 [`#577`](https://github.com/hougesen/hitt/pull/577)
+- test: switch api uri [`#587`](https://github.com/hougesen/hitt/pull/587)
 - build(deps): bump assert_cmd from 2.1.1 to 2.1.2 [`#572`](https://github.com/hougesen/hitt/pull/572)
 - build(deps): bump clap_complete from 4.5.63 to 4.5.65 [`#571`](https://github.com/hougesen/hitt/pull/571)
 - build(deps): bump tokio from 1.48.0 to 1.49.0 [`#570`](https://github.com/hougesen/hitt/pull/570)
