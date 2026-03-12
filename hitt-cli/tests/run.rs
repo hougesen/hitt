@@ -43,11 +43,18 @@ mod run_command {
         let dir = tempfile::tempdir().unwrap();
 
         let method = "GET";
-        let url = "https://api.goout.dk/";
+        let url = "https://jsonplaceholder.typicode.com/todos/1";
 
         let input = format!("{method} {url}");
 
         let file = setup_test_input(dir.path(), &input);
+
+        let body = r#"{
+  "userId": 1,
+  "id": 1,
+  "title": "delectus aut autem",
+  "completed": false
+}"#;
 
         run_command(Some(dir.path()))
             .arg(file.path())
@@ -57,7 +64,7 @@ mod run_command {
             .stdout(predicates::str::contains(format!(
                 "HTTP/2.0 {method} {url} 200"
             )))
-            .stdout(predicates::str::contains("Hello World!"));
+            .stdout(predicates::str::contains(body));
     }
 
     #[test]
@@ -65,11 +72,18 @@ mod run_command {
         let dir = tempfile::tempdir().unwrap();
 
         let method = "GET";
-        let url = "https://api.goout.dk/";
+        let url = "https://jsonplaceholder.typicode.com/todos/1";
 
         let input = format!("{method} {url}");
 
         let file = setup_test_input(dir.path(), &input);
+
+        let body = r#"{
+  "userId": 1,
+  "id": 1,
+  "title": "delectus aut autem",
+  "completed": false
+}"#;
 
         run_command(Some(dir.path()))
             .arg("--hide-body")
@@ -80,7 +94,7 @@ mod run_command {
             .stdout(predicates::str::contains(format!(
                 "HTTP/2.0 {method} {url} 200"
             )))
-            .stdout(predicates::str::contains("Hello World!").not());
+            .stdout(predicates::str::contains(body).not());
     }
 
     #[test]
@@ -88,7 +102,7 @@ mod run_command {
         let dir = tempfile::tempdir().unwrap();
 
         let method = "GET";
-        let url = "https://api.goout.dk/";
+        let url = "https://jsonplaceholder.typicode.com/todos/1";
 
         let input = format!("{method} {url}");
 
@@ -110,7 +124,7 @@ mod run_command {
     fn with_fail_fast() {
         let dir = tempfile::tempdir().unwrap();
 
-        let url = "https://api.goout.dk/";
+        let url = "https://mhouge.dk/api/some-random-route";
         let input = format!(
             "POST {url}
 
@@ -128,7 +142,7 @@ GET {url}"
             .success()
             .stdout(predicates::str::is_empty().not())
             .stdout(predicates::str::contains(format!(
-                "HTTP/2.0 POST {url} 404"
+                "HTTP/2.0 POST {url} 405"
             )))
             .stdout(predicates::str::contains(
                 "exiting early since --fail-fast is enabled",
@@ -141,7 +155,7 @@ GET {url}"
         let dir = tempfile::tempdir().unwrap();
 
         let method = "GET";
-        let url = "https://api.goout.dk/";
+        let url = "https://jsonplaceholder.typicode.com/posts";
 
         let input = format!("{method} {url}");
 
@@ -157,7 +171,6 @@ GET {url}"
             .stdout(predicates::str::contains(format!(
                 "HTTP/2.0 {method} {url}?1 200"
             )))
-            .stdout(predicates::str::contains("Hello World!"))
             .stdout(predicates::str::contains(format!(
                 "HTTP/2.0 {method} {url}?2 200"
             )));
@@ -168,7 +181,7 @@ GET {url}"
         let dir = tempfile::TempDir::with_prefix("hitt-").unwrap();
 
         let method = "GET";
-        let url = "https://api.goout.dk/";
+        let url = "https://jsonplaceholder.typicode.com/posts";
 
         let input = format!("{method} {url}");
 
@@ -182,8 +195,7 @@ GET {url}"
             .stdout(predicates::str::contains(
                 "received directory path but --recursive is not enabled",
             ))
-            .stdout(predicates::str::contains(format!("HTTP/2.0 {method} {url} 200")).not())
-            .stdout(predicates::str::contains("Hello World!").not());
+            .stdout(predicates::str::contains(format!("HTTP/2.0 {method} {url} 200")).not());
 
         run_command(Some(dir.path()))
             .arg("--recursive")
@@ -193,8 +205,7 @@ GET {url}"
             .stdout(predicates::str::is_empty().not())
             .stdout(predicates::str::contains(format!(
                 "HTTP/2.0 {method} {url} 200"
-            )))
-            .stdout(predicates::str::contains("Hello World!"));
+            )));
 
         // Needed so the file isn't dropped
         assert!(std::fs::exists(file.path()).unwrap());
