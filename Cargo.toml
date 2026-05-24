@@ -10,7 +10,7 @@ members = [
 exclude = ["docs", "examples"]
 
 [workspace.package]
-version = "0.0.21"
+version = "0.0.22"
 authors = ["Mads Hougesen <mads@mhouge.dk>"]
 edition = "2024"
 description = "Command line HTTP testing tool focused on speed and simplicity"
@@ -36,10 +36,10 @@ clap_complete_nushell = "4.6.0"
 crossterm = "0.29.0"
 eventsource-stream = "0.2.3"
 futures = "0.3.32"
-hitt-formatter = { path = "hitt-formatter", version = "0.0.21" }
-hitt-parser = { path = "hitt-parser", version = "0.0.21" }
-hitt-request = { path = "hitt-request", version = "0.0.21" }
-hitt-sse = { path = "hitt-sse", version = "0.0.21" }
+hitt-formatter = { path = "hitt-formatter", version = "0.0.22" }
+hitt-parser = { path = "hitt-parser", version = "0.0.22" }
+hitt-request = { path = "hitt-request", version = "0.0.22" }
+hitt-sse = { path = "hitt-sse", version = "0.0.22" }
 http = "1.4.0"
 ignore = "0.4.25"
 jsonformat = "2.1.0"
