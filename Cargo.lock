@@ -792,7 +792,7 @@ dependencies = [
  "http",
  "ignore",
  "predicates",
- "reqwest 0.13.3",
+ "reqwest 0.13.4",
  "tempfile",
  "tokio",
 ]
@@ -818,7 +818,7 @@ version = "0.0.22"
 dependencies = [
  "hitt-parser",
  "http",
- "reqwest 0.13.3",
+ "reqwest 0.13.4",
  "tokio",
 ]
 
@@ -828,7 +828,7 @@ version = "0.0.22"
 dependencies = [
  "eventsource-stream",
  "futures",
- "reqwest 0.13.3",
+ "reqwest 0.13.4",
  "reqwest-eventsource",
  "tokio",
 ]
@@ -1585,9 +1585,9 @@ dependencies = [
 
 [[package]]
 name = "reqwest"
-version = "0.13.3"
+version = "0.13.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "62e0021ea2c22aed41653bc7e1419abb2c97e038ff2c33d0e1309e49a97deec0"
+checksum = "219c5811de6525e5416c7d5d53bb656d3afdbc6c5af816e0802bcfa42dbdc1c3"
 dependencies = [
  "base64",
  "bytes",

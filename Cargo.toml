@@ -45,7 +45,7 @@ ignore = "0.4.25"
 jsonformat = "2.1.0"
 mime = "0.3.17"
 predicates = "3.1.4"
-reqwest = { version = "0.13.3", features = [
+reqwest = { version = "0.13.4", features = [
   "brotli",
   "charset",
   "cookies",
