@@ -41,7 +41,7 @@ hitt-parser = { path = "hitt-parser", version = "0.0.22" }
 hitt-request = { path = "hitt-request", version = "0.0.22" }
 hitt-sse = { path = "hitt-sse", version = "0.0.22" }
 http = "1.4.0"
-ignore = "0.4.25"
+ignore = "0.4.26"
 jsonformat = "2.1.0"
 mime = "0.3.17"
 predicates = "3.1.4"
